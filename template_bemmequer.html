@@ -111,11 +111,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .conj-card{background:var(--surface2);border-radius:6px;padding:8px;margin-bottom:4px;}
 .conj-card-name{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px;}
 .conj-card-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
-.ads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.ads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
 .ad-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s;}
 .ad-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
-.ad-img-wrap{width:100%;height:150px;background:linear-gradient(135deg,#e5e7eb,#d1d5db);overflow:hidden;position:relative;}
-.ad-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.ad-img-wrap{width:100%;aspect-ratio:4/5;background:linear-gradient(135deg,#e5e7eb,#d1d5db);overflow:hidden;position:relative;}
+.ad-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
 .ad-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#9ca3af;}
 .ad-info{padding:8px 10px;}
 .ad-name{font-size:11px;font-weight:600;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;}
@@ -1042,10 +1042,10 @@ function renderGDash(){
   }}});
 
   dc('chGCTR');
-  CH['chGCTR']=new Chart(document.getElementById('chGCTR'),{type:'line',data:{labels:days,datasets:[{label:'CTR',data:ctr,borderColor:GCOL,backgroundColor:'rgba(251,188,4,.1)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+  CH['chGCTR']=new Chart(document.getElementById('chGCTR'),{type:'line',data:{labels:days,datasets:[{label:'CTR',data:ctr,borderColor:GCOL,backgroundColor:'rgba(251,188,4,.1)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:gShowLabels,color:GCOL,font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?v.toFixed(1)+'%':null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
 
   dc('chGCPC');
-  CH['chGCPC']=new Chart(document.getElementById('chGCPC'),{type:'line',data:{labels:days,datasets:[{label:'CPC',data:cpc,borderColor:'#ea4335',backgroundColor:'rgba(234,67,53,.08)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
+  CH['chGCPC']=new Chart(document.getElementById('chGCPC'),{type:'line',data:{labels:days,datasets:[{label:'CPC',data:cpc,borderColor:'#ea4335',backgroundColor:'rgba(234,67,53,.08)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:gShowLabels,color:'#ea4335',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(2):null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
 
   const ym=getCampKeyG();
   const mesLblsG={'2026-03':'Mar/26','2026-02':'Fev/26','2025-12':'Dez/25','2025-11':'Nov/25','2025-10':'Out/25','2025-09':'Set/25','2025-08':'Ago/25','2025-07':'Jul/25','2025-06':'Jun/25'};
