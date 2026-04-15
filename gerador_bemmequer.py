@@ -12,10 +12,25 @@ import requests
 from datetime import date
 from pathlib import Path
 
-# ── CONFIG ────────────────────────────────────────────────────────────────────
-SHEET_ID     = "1rNDwriAHBml5Qv7tK99nRzZrKB3N1VF9r8zZGt7eRag"
-OUTPUT_FILE  = "index.html"
+# ══════════════════════════════════════════════════════════════════════════════
+# CONFIG DO CLIENTE — edite apenas esta seção
+# ══════════════════════════════════════════════════════════════════════════════
+
+SHEET_ID      = "1rNDwriAHBml5Qv7tK99nRzZrKB3N1VF9r8zZGt7eRag"
 TEMPLATE_FILE = "template_bemmequer.html"
+OUTPUT_FILE   = "index.html"
+
+# Metas de CPL — Meta Ads
+META_CPL_BOM    = 11    # ≤ este valor → verde
+META_CPL_MEDIO  = 15    # ≤ este valor → amarelo  |  acima → vermelho
+
+# Metas de CPL — Google Ads
+GOOGLE_CPL_BOM   = 10   # ≤ este valor → verde
+GOOGLE_CPL_MEDIO = 30   # ≤ este valor → amarelo  |  acima → vermelho
+
+# ══════════════════════════════════════════════════════════════════════════════
+# NÃO PRECISA MEXER ABAIXO DESTA LINHA
+# ══════════════════════════════════════════════════════════════════════════════
 
 def sheet_url(tab):
     return f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={tab}"
@@ -600,6 +615,24 @@ def inject_all(template_path,
     # Dates
     html = re.sub(r"Meta: \d{2}/\d{2}", f"Meta: {meta_last}", html)
     html = re.sub(r"Google: \d{2}/\d{2}", f"Google: {g_last}", html)
+    # CPL thresholds → CONFIG block no JS
+    html = re.sub(
+        r'(const CONFIG = \{[\s\S]*?meta:\s*\{[\s\S]*?cplBom:\s*)\d+',
+        rf'\g<1>{META_CPL_BOM}', html, count=1
+    )
+    html = re.sub(
+        r'(const CONFIG = \{[\s\S]*?meta:\s*\{[\s\S]*?cplMedio:\s*)\d+',
+        rf'\g<1>{META_CPL_MEDIO}', html, count=1
+    )
+    html = re.sub(
+        r'(const CONFIG = \{[\s\S]*?google:\s*\{[\s\S]*?cplBom:\s*)\d+',
+        rf'\g<1>{GOOGLE_CPL_BOM}', html, count=1
+    )
+    html = re.sub(
+        r'(const CONFIG = \{[\s\S]*?google:\s*\{[\s\S]*?cplMedio:\s*)\d+',
+        rf'\g<1>{GOOGLE_CPL_MEDIO}', html, count=1
+    )
+
     html = re.sub(r"Dados até \d{2}/\d{2}", f"Dados até {meta_last}", html)
     today = date.today().strftime("%d/%m/%Y")
     html = re.sub(r"\d{2}/\d{2}/\d{4} · via planilha", f"{today} · via planilha", html)
