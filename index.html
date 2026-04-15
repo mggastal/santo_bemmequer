@@ -675,7 +675,6 @@ function buildCampTable(){
       <td class="num ${cls(c.cpl)}">${fR(c.cpl)}</td>
       <td class="num">${fR(c.cpm)}</td>
       <td class="num" style="color:${(c.ctr||0)>=2?'#059669':(c.ctr||0)>=1?'#d97706':'#9ca3af'}">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
-      <td><canvas id="spk-${cid}" width="72" height="28"></canvas></td>
     </tr>`;
     if(c.conjs){
       c.conjs.forEach((j,ji)=>{
@@ -689,7 +688,6 @@ function buildCampTable(){
           <td class="num ${cls(j.cpl)}">${fR(j.cpl)}</td>
           <td class="num" style="color:var(--muted2)">${fR(j.cpm)}</td>
           <td class="num" style="color:${(j.ctr||0)>=2?'#059669':(j.ctr||0)>=1?'#d97706':'#9ca3af'}">${j.ctr!=null?j.ctr.toFixed(2)+'%':'—'}</td>
-          <td></td>
         </tr>`;
         if(j.ads){
           j.ads.forEach((ad,ai)=>{
@@ -711,21 +709,9 @@ function buildCampTable(){
   });
 
   tbl.innerHTML=`<div class="tc"><table>
-    <thead><tr><th style="width:20px"></th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPM</th><th class="num">CTR</th><th style="width:80px">Tendência CPL</th></tr></thead>
+    <thead><tr><th style="width:20px"></th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPM</th><th class="num">CTR</th></tr></thead>
     <tbody>${rows}</tbody></table></div>`;
 
-  function drawSpk(id, spkData){
-    const cv=document.getElementById(id);
-    if(!cv||!spkData) return;
-    const vals=spkData.filter(v=>v!=null);
-    if(vals.length<1) return;
-    const plotData=vals.length===1?[vals[0],vals[0]]:spkData;
-    const plotLabels=vals.length===1?[0,1]:spkData.map((_,j)=>j);
-    const last=vals[vals.length-1], first=vals[0];
-    const col=last<=first?'#059669':'#dc2626';
-    new Chart(cv,{type:'line',data:{labels:plotLabels,datasets:[{data:plotData,borderColor:col,backgroundColor:col==='#059669'?'rgba(5,150,105,.1)':'rgba(220,38,38,.1)',fill:true,tension:.35,pointRadius:plotData.map(v=>v!=null?2:0),pointBackgroundColor:col,borderWidth:1.5,spanGaps:false,datalabels:{display:false}}]},
-      options:{responsive:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false},datalabels:{display:false}},scales:{x:{display:false},y:{display:false,min:Math.min(...vals)*.8,max:Math.max(...vals)*1.2}}}});
-  }
   data.forEach((c,i)=>{
     const cid=`c${ym.replace('-','')}${i}`;
     drawSpk(`spk-${cid}`, c.spk);
@@ -802,11 +788,11 @@ function renderGeral(){
 
   // CPM mensal
   dc('chGeralCPM');
-  CH['chGeralCPM']=new Chart(document.getElementById('chGeralCPM'),{type:'line',data:{labels:lbl,datasets:[{label:'CPM',data:cpmG,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
+  CH['chGeralCPM']=new Chart(document.getElementById('chGeralCPM'),{type:'line',data:{labels:lbl,datasets:[{label:'CPM',data:cpmG,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:showLabelsGeral,color:'#2563eb',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(2):null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
 
   // CTR mensal
   dc('chGeralCTR');
-  CH['chGeralCTR']=new Chart(document.getElementById('chGeralCTR'),{type:'line',data:{labels:lbl,datasets:[{label:'CTR',data:ctrG,borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+  CH['chGeralCTR']=new Chart(document.getElementById('chGeralCTR'),{type:'line',data:{labels:lbl,datasets:[{label:'CTR',data:ctrG,borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:showLabelsGeral,color:'#7c3aed',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?v.toFixed(2)+'%':null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
 
   const withData=lbl.map((l,i)=>({l,cpl:cplG[i],leads:totalL[i]})).filter(m=>m.cpl!=null&&m.leads>0);
   const bCPL=[...withData].sort((a,b)=>a.cpl-b.cpl).slice(0,6);
@@ -1077,7 +1063,6 @@ function buildGCampTable(ym){
       <td class="num ${gcls(c.cpl)}">${fR(c.cpl)}</td>
       <td class="num">${fR(c.cpc)}</td>
       <td class="num" style="color:${(c.ctr||0)>=5?'#059669':(c.ctr||0)>=2?'#d97706':'#9ca3af'}">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
-      <td><canvas id="gspk-${cid}" width="72" height="28"></canvas></td>
     </tr>`;
     if(hasAg){
       c.adgroups.forEach((ag,agi)=>{
@@ -1092,7 +1077,6 @@ function buildGCampTable(ym){
           <td class="num ${gcls(ag.cpl)}">${fR(ag.cpl)}</td>
           <td class="num" style="color:var(--muted2)">${fR(ag.cpc)}</td>
           <td class="num" style="color:${(ag.ctr||0)>=5?'#059669':(ag.ctr||0)>=2?'#d97706':'#9ca3af'}">${ag.ctr!=null?ag.ctr.toFixed(2)+'%':'—'}</td>
-          <td></td>
         </tr>`;
         if(hasKw){
           ag.keywords.forEach((kw,ki)=>{
@@ -1115,22 +1099,9 @@ function buildGCampTable(ym){
   });
 
   tbl.innerHTML=`<div class="tc"><table>
-    <thead><tr><th style="width:20px"></th><th>Campanha / Grupo / Palavra-chave</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">CTR / Cliques</th><th style="width:80px">Tendência CPL</th></tr></thead>
+    <thead><tr><th style="width:20px"></th><th>Campanha / Grupo / Palavra-chave</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">CTR / Cliques</th></tr></thead>
     <tbody>${rows}</tbody></table></div>`;
 
-  // Sparklines
-  data.forEach((c,i)=>{
-    const cid=`gc${ym.replace('-','')}${i}`;
-    const cv=document.getElementById(`gspk-${cid}`);
-    if(!cv||!c.spk)return;
-    const vals=c.spk.filter(v=>v!=null);
-    if(vals.length<1)return;
-    const plotData=vals.length===1?[vals[0],vals[0]]:c.spk;
-    const last=vals[vals.length-1],first=vals[0];
-    const col=last<=first?'#059669':'#dc2626';
-    new Chart(cv,{type:'line',data:{labels:plotData.map((_,j)=>j),datasets:[{data:plotData,borderColor:col,backgroundColor:col==='#059669'?'rgba(5,150,105,.1)':'rgba(220,38,38,.1)',fill:true,tension:.35,pointRadius:plotData.map(v=>v!=null?2:0),pointBackgroundColor:col,borderWidth:1.5,spanGaps:false,datalabels:{display:false}}]},
-      options:{responsive:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false},datalabels:{display:false}},scales:{x:{display:false},y:{display:false,min:Math.min(...vals)*.8,max:Math.max(...vals)*1.2}}}});
-  });
 }
 
 function toggleGC(id){
