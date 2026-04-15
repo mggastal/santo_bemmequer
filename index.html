@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório Bem Me Quer — Dashboard Meta Ads</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{--bg:#f0f2f7;--surface:#fff;--surface2:#f7f8fc;--border:rgba(0,0,0,0.07);--text:#0f1523;--muted:#6b7280;--muted2:#9ca3af;--accent:#7c3aed;--abg:#f5f3ff;--aborder:#ddd6fe;--sh:0 1px 4px rgba(0,0,0,.06);--sh2:0 2px 12px rgba(0,0,0,.08);--r:14px;}
+[data-theme="dark"]{--bg:#0a0f1e;--surface:#111827;--surface2:#1a2236;--border:rgba(255,255,255,0.08);--text:#f0f4ff;--muted:#8b95a9;--muted2:#5a6478;--abg:rgba(124,58,237,.1);--aborder:rgba(124,58,237,.3);--sh:0 1px 4px rgba(0,0,0,.3);--sh2:0 2px 12px rgba(0,0,0,.4);}
+[data-theme="dark"] .sb{background:#060b14;}
+[data-theme="dark"] .tc tbody tr.camp-row td{background:#1a2236;}
+[data-theme="dark"] .tc tbody tr.camp-row:hover td{background:#1f2d45;}
+[data-theme="dark"] .tc thead th{background:#1a2236;}
+[data-theme="dark"] .tc tbody td{color:var(--text);}
+[data-theme="dark"] .pb.active{background:#1a2236;}
+[data-theme="dark"] .cf-btn.active{background:#f0f4ff;color:#0a0f1e;}
+[data-theme="dark"] .ad-card{background:#111827;}
+[data-theme="dark"] .camp-card{background:#111827;}
+[data-theme="dark"] .conj-card{background:#1a2236;}
+[data-theme="dark"] .kpi-val{color:var(--text);}
+[data-theme="dark"] .page-title{color:var(--text);}
+[data-theme="dark"] .cc-title{color:var(--text);}
+[data-theme="dark"] .sec-hd{color:var(--text);}
+[data-theme="dark"] .mes-header{background:#1a2236;}
+[data-theme="dark"] .mes-header:hover{background:#222f45;}
+[data-theme="dark"] .camp-card{background:#111827;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;overflow-y:auto;}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:100vh;align-items:start;}
+.sb{background:#0f1523;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);}
+.logo-box{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;font-family:'Syne',sans-serif;}
+.logo-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.2;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px;}
+.sb-section{padding:16px 10px 4px;}
+.sb-sec-label{font-size:10px;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:2px;padding:0 8px 8px;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.45);font-size:12px;font-weight:500;transition:all .15s;margin-bottom:1px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);}
+.sb-item.active{background:rgba(255,255,255,.1);color:#fff;}
+.sb-item .ico{font-size:14px;width:18px;text-align:center;}
+.sb-dot{width:5px;height:5px;border-radius:50%;margin-left:auto;}
+.period-info{padding:12px 18px;}
+.pi-label{font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.pi-val{font-family:'Syne',sans-serif;font-size:13px;color:#a78bfa;font-weight:700;}
+.pi-dates{font-size:10px;color:rgba(255,255,255,.28);margin-top:2px;}
+.sb-footer{margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,.06);}
+.sb-footer div{font-size:10px;color:rgba(255,255,255,.25);margin-bottom:2px;}
+.sb-footer span{font-size:11px;color:rgba(255,255,255,.4);}
+.main{display:flex;flex-direction:column;min-height:0;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh);gap:12px;flex-wrap:wrap;}
+.topbar-l{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.page-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.live-badge{display:flex;align-items:center;gap:5px;background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.pulse{width:5px;height:5px;border-radius:50%;background:#7c3aed;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.period-bar{display:flex;gap:3px;background:var(--bg);padding:3px;border-radius:9px;flex-wrap:wrap;}
+.pb{padding:5px 11px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.pb.active{background:var(--surface);color:var(--text);box-shadow:var(--sh);}
+.content{padding:18px 24px;flex:1;}
+.page-section{display:none;}
+.page-section.active{display:block;}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,#e2e8f0);}
+.kpi-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:4px;}
+.kpi-val{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;line-height:1;color:var(--kc,var(--text));margin-bottom:3px;}
+.chart-filter{display:flex;gap:5px;margin-bottom:10px;}
+.cf-btn{padding:5px 13px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.cf-btn.active{background:#0f1523;border-color:#0f1523;color:#fff;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);min-width:0;overflow:hidden;}
+.cc-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;}
+.cc-sub{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.cw{position:relative;width:100%;overflow:hidden;max-width:100%;}
+.chart-main{margin-bottom:12px;}
+.chart-sub-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;min-width:0;}
+.section{margin-bottom:18px;}
+.sec-hd{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec-hd span{font-size:11px;font-weight:400;color:var(--muted);font-family:'DM Sans',sans-serif;}
+.stabs{display:flex;gap:5px;margin-bottom:10px;}
+.stab{padding:5px 13px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.stab.active{background:#0f1523;border-color:#0f1523;color:#fff;}
+.tpane{display:none;}
+.tpane.active{display:block;}
+.tc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);}
+.tc table{width:100%;border-collapse:collapse;}
+.tc thead th{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;padding:8px 12px;text-align:left;background:var(--surface2);border-bottom:1px solid var(--border);}
+.tc thead th.num{text-align:right;}
+.tc tbody td{padding:7px 12px;font-size:12px;border-bottom:1px solid var(--border);}
+.tc tbody tr:last-child td{border-bottom:none;}
+.tc tbody tr.camp-row{cursor:pointer;user-select:none;}
+.tc tbody tr.camp-row td{background:#f7f8fc;font-weight:700;}
+.tc tbody tr.camp-row:hover td{background:#eef0f5;}
+.tc tbody tr.conj-row td{padding:5px 12px;font-size:11px;}
+.tc tbody tr.conj-row:hover td{background:var(--surface2);}
+.tc tbody tr.conj-row.hidden{display:none;}
+.conj-name{padding-left:28px!important;border-left:2px solid #e2e8f0;color:#374151;}
+.num{text-align:right;font-family:'DM Mono',monospace;font-size:11px;}
+.cg{color:#059669;font-weight:700;} .cw2{color:#d97706;font-weight:700;} .cr{color:#dc2626;font-weight:700;}
+.camp-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:var(--sh);}
+.camp-card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;cursor:pointer;}
+.camp-card-name{font-size:12px;font-weight:700;flex:1;line-height:1.3;}
+.camp-card-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.camp-card-metric{text-align:center;}
+.camp-card-metric .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.camp-card-metric .val{font-size:12px;font-weight:700;font-family:'DM Mono',monospace;}
+.camp-card-conjs{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:none;}
+.camp-card-conjs.open{display:block;}
+.conj-card{background:var(--surface2);border-radius:6px;padding:8px;margin-bottom:4px;}
+.conj-card-name{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+.conj-card-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.ads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.ad-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s;}
+.ad-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.ad-img-wrap{width:100%;height:150px;background:linear-gradient(135deg,#e5e7eb,#d1d5db);overflow:hidden;position:relative;}
+.ad-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.ad-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#9ca3af;}
+.ad-info{padding:8px 10px;}
+.ad-name{font-size:11px;font-weight:600;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;}
+.ad-stats{display:flex;justify-content:space-between;}
+.as-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.as-v{font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
+.mes-accordion{margin-bottom:8px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.mes-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);cursor:pointer;user-select:none;font-weight:700;font-size:12px;}
+.mes-header:hover{background:#eef0f5;}
+.mes-header .mes-arrow{color:var(--muted);font-size:11px;transition:transform .2s;}
+.mes-header.open .mes-arrow{transform:rotate(90deg);}
+.mes-body{display:none;}
+.mes-body.open{display:block;}
+.ranking-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.rank-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--sh);}
+.rank-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;margin-bottom:10px;}
+.rank-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);}
+.rank-item:last-child{border-bottom:none;}
+.rank-num{font-size:10px;color:var(--muted2);width:16px;font-weight:700;flex-shrink:0;}
+.rank-name{flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rank-bar{width:50px;height:3px;background:var(--bg);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.rank-bar-f{height:100%;border-radius:2px;}
+.rank-val{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;flex-shrink:0;}
+@media(max-width:768px){
+  .app{grid-template-columns:1fr;}
+  .sb{display:none;position:fixed;top:0;left:0;width:260px;height:100vh;z-index:200;overflow-y:auto;}
+  .sb.open{display:flex;}
+  .mob-menu{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:18px;flex-shrink:0;}
+  .topbar{flex-wrap:wrap;gap:8px;}
+  .period-bar{flex-wrap:wrap;}
+  .kpi-strip{grid-template-columns:repeat(2,1fr)!important;}
+  .chart-sub-row{grid-template-columns:1fr!important;}
+  .ranking-row{grid-template-columns:1fr!important;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;}
+  .overlay.open{display:block;}
+  .content{padding:12px;}
+  .tc{overflow-x:auto;}
+  .tc table{min-width:100%;width:max-content;}
+  .tc thead th,.tc tbody td{padding:6px 8px;white-space:nowrap;}
+}
+@media(min-width:769px){.mob-menu{display:none;}.mob-nav{display:none;}}
+.mob-nav{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:6px 12px;gap:6px;z-index:99;}
+@media(max-width:768px){.mob-nav{display:flex;}}
+.mob-nav-btn{flex:1;padding:7px 10px;border-radius:8px;border:none;background:var(--surface2);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .15s;}
+.mob-nav-btn.active{background:#0f1523;color:#fff;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
+@media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="app">
+<aside class="sb" id="sidebar">
+  <div class="sb-logo">
+    <div class="logo-box">B</div>
+    <div><div class="logo-name">Bem Me Quer</div><div class="logo-sub">Meta Ads</div></div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-sec-label">Painéis</div>
+    <a href="#" class="sb-item active" onclick="showPage('dash',this);return false;"><span class="ico">📊</span>Dashboard Diário<span class="sb-dot" style="background:#a78bfa"></span></a>
+    <a href="#" class="sb-item" onclick="showPage('geral',this);return false;"><span class="ico">📋</span>Dados Gerais da Conta</a>
+  </div>
+  <div class="period-info" style="margin-top:12px;">
+    <div class="pi-label">Período ativo</div>
+    <div class="pi-val" id="sbPeriod">Últimos 30 dias</div>
+    <div class="pi-dates" id="sbDates"></div>
+  </div>
+  <div class="sb-footer">
+    <div>Última atualização</div>
+    <span>10/2004 · via planilha</span>
+  </div>
+</aside>
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="mob-menu" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">Dashboard Diário</div>
+      <div class="live-badge"><div class="pulse"></div><span>Dados até 10/04</span></div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+      <div class="period-bar" id="pbDash">
+        <button class="pb" onclick="setPeriod(1,'Ontem',this)">Ontem</button>
+        <button class="pb" onclick="setPeriod(7,'7 dias',this)">7 dias</button>
+        <button class="pb" onclick="setPeriod(14,'14 dias',this)">14 dias</button>
+        <button class="pb active" onclick="setPeriod(30,'30 dias',this)">30 dias</button>
+        <select class="pb" id="mesSelect" onchange="setPeriodMes(this.value, this.options[this.selectedIndex].text, this)">
+          <option value="">Meses</option>
+        </select>
+      </div>
+      <div class="period-bar" id="pbGeral" style="display:none;">
+        <button class="pb active" onclick="setGeralQ('all',this)">Tudo</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;white-space:nowrap;" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span>
+      </label>
+    </div>
+  </div>
+  <div class="mob-nav" id="mobNav">
+    <button class="mob-nav-btn active" id="mobBtnDash" onclick="showPage('dash',this);updateMobNav('dash')">📊 Dashboard</button>
+    <button class="mob-nav-btn" id="mobBtnGeral" onclick="showPage('geral',this);updateMobNav('geral')">📋 Dados Gerais</button>
+  </div>
+  <div class="content">
+    <!-- DASHBOARD PAGE -->
+    <div class="page-section active" id="page-dash">
+      <div class="kpi-strip" id="kpiStrip"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted)">Gráficos do período selecionado</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
+          <input type="checkbox" id="chkLabels" onchange="toggleLabels(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#7c3aed;">
+          Rótulos
+        </label>
+      </div>
+      <div class="chart-main">
+        <div class="chart-card">
+          <div class="cc-title">Conversões · Investimento · Custo por Conversão</div>
+          <div class="cc-sub">Conversões (colunas) · Investimento (linha roxa) · CPL (linha tracejada)</div>
+          <div class="cw" style="height:210px"><canvas id="chMain"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-sub-row">
+        <div class="chart-card">
+          <div class="cc-title">CTR Diário (%)</div>
+          <div class="cc-sub">Taxa de cliques nos links</div>
+          <div class="cw" style="height:160px"><canvas id="chCTR"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">CPM Diário (R$)</div>
+          <div class="cc-sub">Custo por 1.000 impressões</div>
+          <div class="cw" style="height:160px"><canvas id="chCPM"></canvas></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Campanhas <span id="campLbl">— últimos 30 dias</span></div>
+        <div id="campContainer"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Criativos <span id="adsLbl">— período selecionado</span></div>
+        <div class="ads-grid" id="agALL"></div>
+      </div>
+      <div class="section" id="breakdownSection">
+        <div class="sec-hd">Análise por Segmento <span id="breakdownLbl">— período selecionado</span></div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#fefce8;border:1px solid #fde047;color:#854d0e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:14px;">
+          <span>⚠️</span> Dados a nível de conta
+        </div>
+        <div style="display:grid;gap:16px;">
+          <div class="chart-card"><div class="cc-title">📊 Por Faixa Etária</div><div id="bdAge"></div></div>
+          <div class="chart-card"><div class="cc-title">👤 Por Gênero</div><div id="bdGender"></div></div>
+          <div class="chart-card"><div class="cc-title">📱 Por Posicionamento</div><div id="bdPlatform"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DADOS GERAIS PAGE -->
+    <div class="page-section" id="page-geral">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px;">Dados Gerais da Conta</div>
+          <div style="font-size:12px;color:var(--muted);">Análise histórica Jan/2026 – Abr/2026 · dados reais da planilha</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
+          <input type="checkbox" id="chkLabelsGeral" onchange="toggleLabelsGeral(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#1877f2;">
+          Rótulos
+        </label>
+      </div>
+      <div class="kpi-strip" id="geralKpis"></div>
+      <div class="chart-card" style="margin-bottom:12px;">
+        <div class="cc-title">Conversões · Investimento · CPL Mensal</div>
+        <div class="cc-sub" id="geralSub">Conversões (barras azuis) · Investimento (linha verde) · CPL (linha preta tracejada)</div>
+        <div class="cw" style="height:220px"><canvas id="chGeralMensal"></canvas></div>
+      </div>
+      <div class="chart-sub-row">
+        <div class="chart-card">
+          <div class="cc-title">CPM Mensal (R$)</div>
+          <div class="cc-sub">Custo por 1.000 impressões</div>
+          <div class="cw" style="height:170px"><canvas id="chGeralCPM"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">CTR Mensal (%)</div>
+          <div class="cc-sub">Taxa de cliques nos links</div>
+          <div class="cw" style="height:170px"><canvas id="chGeralCTR"></canvas></div>
+        </div>
+      </div>
+      <div class="sec-hd" style="margin-top:4px;">Rankings <span id="rankLbl">— todos os meses</span></div>
+      <div class="ranking-row">
+        <div class="rank-card">
+          <div class="rank-title">🏆 Melhores Meses por CPL</div>
+          <div id="rankCPL"></div>
+        </div>
+        <div class="rank-card">
+          <div class="rank-title">📈 Maior Volume de Conversões</div>
+          <div id="rankLeads"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Campanhas <span id="geralCampLbl">— todos os meses</span></div>
+        <div class="tc" id="tGeralCamp"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Conjuntos <span id="geralPubLbl">— todos os meses</span></div>
+        <div class="tc" id="tGeralPub"></div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+// ═══ DADOS REAIS ═══════════════════════════════════════
+const KPIS_PERIODO={"1": {"spend": 9.6, "leads": 1, "cpl": 9.6, "ctr": 0.38, "cpm": 7.29}, "7": {"spend": 227.83, "leads": 18, "cpl": 12.66, "ctr": 0.39, "cpm": 7.28}, "14": {"spend": 449.39, "leads": 37, "cpl": 12.15, "ctr": 0.34, "cpm": 7.29}, "30": {"spend": 878.52, "leads": 87, "cpl": 10.1, "ctr": 0.37, "cpm": 7.69}, "2026-01": {"spend": 69.44, "leads": 6, "cpl": 11.57, "ctr": 0.49, "cpm": 7.79}, "2026-02": {"spend": 154.85, "leads": 7, "cpl": 22.12, "ctr": 0.39, "cpm": 8.66}, "2026-03": {"spend": 565.22, "leads": 61, "cpl": 9.27, "ctr": 0.37, "cpm": 7.93}, "2026-04": {"spend": 313.3, "leads": 26, "cpl": 12.05, "ctr": 0.37, "cpm": 7.29}};
+const BREAKDOWN_DATA={"1": {"age": [{"n": "18-24", "spend": 0.12, "leads": 0, "cpl": null, "cpm": 5.22}, {"n": "25-34", "spend": 2.59, "leads": 1, "cpl": 2.59, "cpm": 6.73}, {"n": "35-44", "spend": 6.23, "leads": 0, "cpl": null, "cpm": 7.39}, {"n": "45-54", "spend": 0.66, "leads": 0, "cpl": null, "cpm": 10.15}], "gender": [{"n": "female", "spend": 8.58, "leads": 1, "cpl": 8.58, "cpm": 7.23}, {"n": "male", "spend": 1.02, "leads": 0, "cpl": null, "cpm": 7.91}], "platform": [{"n": "feed", "spend": 6.15, "leads": 1, "cpl": 6.15, "cpm": 8.16}, {"n": "facebook_reels", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 2.5}, {"n": "facebook_stories", "spend": 0.06, "leads": 0, "cpl": null, "cpm": 2.73}, {"n": "instagram_reels", "spend": 0.12, "leads": 0, "cpl": null, "cpm": 9.23}, {"n": "instagram_stories", "spend": 3.01, "leads": 0, "cpl": null, "cpm": 6.07}, {"n": "search", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 10.0}, {"n": "status", "spend": 0.24, "leads": 0, "cpl": null, "cpm": 11.43}]}, "7": {"age": [{"n": "18-24", "spend": 8.14, "leads": 1, "cpl": 8.14, "cpm": 5.9}, {"n": "25-34", "spend": 57.39, "leads": 3, "cpl": 19.13, "cpm": 5.95}, {"n": "35-44", "spend": 150.7, "leads": 12, "cpl": 12.56, "cpm": 8.03}, {"n": "45-54", "spend": 11.59, "leads": 2, "cpl": 5.8, "cpm": 7.87}], "gender": [{"n": "female", "spend": 202.31, "leads": 16, "cpl": 12.64, "cpm": 7.26}, {"n": "male", "spend": 24.86, "leads": 2, "cpl": 12.43, "cpm": 7.47}], "platform": [{"n": "feed", "spend": 137.35, "leads": 11, "cpl": 12.49, "cpm": 7.69}, {"n": "instagram_stories", "spend": 72.09, "leads": 6, "cpl": 12.02, "cpm": 7.06}, {"n": "facebook_stories", "spend": 6.57, "leads": 1, "cpl": 6.57, "cpm": 5.44}, {"n": "facebook_reels", "spend": 1.29, "leads": 0, "cpl": null, "cpm": 5.56}, {"n": "facebook_reels_overlay", "spend": 2.28, "leads": 0, "cpl": null, "cpm": 3.77}, {"n": "instagram_reels", "spend": 5.4, "leads": 0, "cpl": null, "cpm": 7.31}, {"n": "instream_video", "spend": 0.08, "leads": 0, "cpl": null, "cpm": 0.79}, {"n": "search", "spend": 0.14, "leads": 0, "cpl": null, "cpm": 10.77}, {"n": "status", "spend": 2.63, "leads": 0, "cpl": null, "cpm": 9.04}]}, "14": {"age": [{"n": "18-24", "spend": 12.32, "leads": 1, "cpl": 12.32, "cpm": 5.29}, {"n": "25-34", "spend": 120.08, "leads": 9, "cpl": 13.34, "cpm": 6.09}, {"n": "35-44", "spend": 293.27, "leads": 25, "cpl": 11.73, "cpm": 7.97}, {"n": "45-54", "spend": 23.69, "leads": 2, "cpl": 11.84, "cpm": 8.39}], "gender": [{"n": "female", "spend": 406.84, "leads": 34, "cpl": 11.97, "cpm": 7.3}, {"n": "male", "spend": 41.39, "leads": 3, "cpl": 13.8, "cpm": 7.11}], "platform": [{"n": "feed", "spend": 272.45, "leads": 21, "cpl": 12.97, "cpm": 8.02}, {"n": "instagram_stories", "spend": 147.59, "leads": 13, "cpl": 11.35, "cpm": 6.63}, {"n": "facebook_stories", "spend": 11.54, "leads": 2, "cpl": 5.77, "cpm": 5.16}, {"n": "instagram_reels", "spend": 8.78, "leads": 1, "cpl": 8.78, "cpm": 7.05}, {"n": "facebook_reels", "spend": 2.37, "leads": 0, "cpl": null, "cpm": 5.6}, {"n": "facebook_reels_overlay", "spend": 2.64, "leads": 0, "cpl": null, "cpm": 3.12}, {"n": "instream_video", "spend": 0.14, "leads": 0, "cpl": null, "cpm": 0.94}, {"n": "search", "spend": 0.2, "leads": 0, "cpl": null, "cpm": 8.7}, {"n": "status", "spend": 3.68, "leads": 0, "cpl": null, "cpm": 8.36}]}, "30": {"age": [{"n": "18-24", "spend": 20.74, "leads": 3, "cpl": 6.91, "cpm": 5.31}, {"n": "25-34", "spend": 238.0, "leads": 21, "cpl": 11.33, "cpm": 6.48}, {"n": "35-44", "spend": 574.42, "leads": 58, "cpl": 9.9, "cpm": 8.4}, {"n": "45-54", "spend": 45.3, "leads": 5, "cpl": 9.06, "cpm": 8.51}], "gender": [{"n": "female", "spend": 803.51, "leads": 79, "cpl": 10.17, "cpm": 7.71}, {"n": "male", "spend": 73.09, "leads": 8, "cpl": 9.14, "cpm": 7.37}], "platform": [{"n": "feed", "spend": 546.05, "leads": 50, "cpl": 10.92, "cpm": 8.64}, {"n": "instagram_stories", "spend": 294.68, "leads": 31, "cpl": 9.51, "cpm": 6.64}, {"n": "facebook_stories", "spend": 14.92, "leads": 3, "cpl": 4.97, "cpm": 5.38}, {"n": "facebook_reels", "spend": 3.36, "leads": 1, "cpl": 3.36, "cpm": 5.65}, {"n": "facebook_reels_overlay", "spend": 2.87, "leads": 1, "cpl": 2.87, "cpm": 3.11}, {"n": "instagram_reels", "spend": 11.82, "leads": 1, "cpl": 11.82, "cpm": 7.53}, {"n": "instagram_explore", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 10.0}, {"n": "instream_video", "spend": 0.2, "leads": 0, "cpl": null, "cpm": 0.98}, {"n": "search", "spend": 0.34, "leads": 0, "cpl": null, "cpm": 9.71}, {"n": "status", "spend": 4.27, "leads": 0, "cpl": null, "cpm": 7.98}]}, "2026-01": {"age": [{"n": "18-24", "spend": 2.41, "leads": 0, "cpl": null, "cpm": 6.1}, {"n": "25-34", "spend": 27.07, "leads": 3, "cpl": 9.02, "cpm": 7.32}, {"n": "35-44", "spend": 37.27, "leads": 3, "cpl": 12.42, "cpm": 8.11}, {"n": "45-54", "spend": 2.69, "leads": 0, "cpl": null, "cpm": 12.28}], "gender": [{"n": "female", "spend": 63.11, "leads": 4, "cpl": 15.78, "cpm": 7.55}, {"n": "male", "spend": 5.95, "leads": 2, "cpl": 2.98, "cpm": 11.02}], "platform": [{"n": "feed", "spend": 49.96, "leads": 3, "cpl": 16.65, "cpm": 8.59}, {"n": "instagram_stories", "spend": 17.08, "leads": 3, "cpl": 5.69, "cpm": 6.18}, {"n": "facebook_reels", "spend": 0.13, "leads": 0, "cpl": null, "cpm": 4.06}, {"n": "facebook_stories", "spend": 0.85, "leads": 0, "cpl": null, "cpm": 4.83}, {"n": "facebook_reels_overlay", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 3.33}, {"n": "instagram_explore", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 5.0}, {"n": "instagram_reels", "spend": 1.36, "leads": 0, "cpl": null, "cpm": 11.93}, {"n": "search", "spend": 0.02, "leads": 0, "cpl": null, "cpm": 20.0}, {"n": "status", "spend": 0.02, "leads": 0, "cpl": null, "cpm": 6.67}]}, "2026-02": {"age": [{"n": "18-24", "spend": 6.81, "leads": 2, "cpl": 3.4, "cpm": 6.65}, {"n": "25-34", "spend": 59.41, "leads": 4, "cpl": 14.85, "cpm": 7.44}, {"n": "35-44", "spend": 83.99, "leads": 1, "cpl": 83.99, "cpm": 9.93}, {"n": "45-54", "spend": 4.64, "leads": 0, "cpl": null, "cpm": 11.51}], "gender": [{"n": "female", "spend": 134.91, "leads": 7, "cpl": 19.27, "cpm": 8.07}, {"n": "male", "spend": 19.59, "leads": 0, "cpl": null, "cpm": 17.41}], "platform": [{"n": "instagram_stories", "spend": 41.8, "leads": 4, "cpl": 10.45, "cpm": 6.37}, {"n": "feed", "spend": 95.31, "leads": 3, "cpl": 31.77, "cpm": 10.26}, {"n": "facebook_reels_overlay", "spend": 0.37, "leads": 0, "cpl": null, "cpm": 2.47}, {"n": "facebook_reels", "spend": 0.67, "leads": 0, "cpl": null, "cpm": 4.59}, {"n": "instagram_explore", "spend": 0.04, "leads": 0, "cpl": null, "cpm": 13.33}, {"n": "facebook_stories", "spend": 5.45, "leads": 0, "cpl": null, "cpm": 5.14}, {"n": "instagram_reels", "spend": 9.26, "leads": 0, "cpl": null, "cpm": 23.87}, {"n": "instream_video", "spend": 0.08, "leads": 0, "cpl": null, "cpm": 1.14}, {"n": "search", "spend": 0.29, "leads": 0, "cpl": null, "cpm": 12.08}, {"n": "status", "spend": 1.58, "leads": 0, "cpl": null, "cpm": 11.53}]}, "2026-03": {"age": [{"n": "18-24", "spend": 10.77, "leads": 2, "cpl": 5.38, "cpm": 5.14}, {"n": "25-34", "spend": 157.71, "leads": 17, "cpl": 9.28, "cpm": 6.75}, {"n": "35-44", "spend": 368.85, "leads": 39, "cpl": 9.46, "cpm": 8.67}, {"n": "45-54", "spend": 27.84, "leads": 3, "cpl": 9.28, "cpm": 8.41}], "gender": [{"n": "female", "spend": 523.61, "leads": 55, "cpl": 9.52, "cpm": 7.98}, {"n": "male", "spend": 40.53, "leads": 6, "cpl": 6.76, "cpm": 7.27}], "platform": [{"n": "feed", "spend": 359.74, "leads": 35, "cpl": 10.28, "cpm": 9.19}, {"n": "instagram_stories", "spend": 192.72, "leads": 23, "cpl": 8.38, "cpm": 6.44}, {"n": "facebook_reels_overlay", "spend": 0.44, "leads": 1, "cpl": 0.44, "cpm": 2.35}, {"n": "facebook_reels", "spend": 1.53, "leads": 1, "cpl": 1.53, "cpm": 6.25}, {"n": "facebook_stories", "spend": 5.5, "leads": 1, "cpl": 5.5, "cpm": 5.62}, {"n": "instagram_explore", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 10.0}, {"n": "instagram_reels", "spend": 4.08, "leads": 0, "cpl": null, "cpm": 8.36}, {"n": "instream_video", "spend": 0.09, "leads": 0, "cpl": null, "cpm": 1.2}, {"n": "search", "spend": 0.16, "leads": 0, "cpl": null, "cpm": 11.43}, {"n": "status", "spend": 0.95, "leads": 0, "cpl": null, "cpm": 6.25}]}, "2026-04": {"age": [{"n": "18-24", "spend": 9.97, "leads": 1, "cpl": 9.97, "cpm": 5.51}, {"n": "25-34", "spend": 80.29, "leads": 4, "cpl": 20.07, "cpm": 6.02}, {"n": "35-44", "spend": 205.57, "leads": 19, "cpl": 10.82, "cpm": 7.96}, {"n": "45-54", "spend": 17.46, "leads": 2, "cpl": 8.73, "cpm": 8.66}], "gender": [{"n": "female", "spend": 279.9, "leads": 24, "cpl": 11.66, "cpm": 7.26}, {"n": "male", "spend": 32.56, "leads": 2, "cpl": 16.28, "cpm": 7.5}], "platform": [{"n": "feed", "spend": 186.31, "leads": 15, "cpl": 12.42, "cpm": 7.75}, {"n": "instagram_stories", "spend": 101.96, "leads": 8, "cpl": 12.74, "cpm": 7.06}, {"n": "facebook_stories", "spend": 9.42, "leads": 2, "cpl": 4.71, "cpm": 5.25}, {"n": "instagram_reels", "spend": 7.74, "leads": 1, "cpl": 7.74, "cpm": 7.16}, {"n": "facebook_reels", "spend": 1.83, "leads": 0, "cpl": null, "cpm": 5.23}, {"n": "facebook_reels_overlay", "spend": 2.43, "leads": 0, "cpl": null, "cpm": 3.31}, {"n": "instream_video", "spend": 0.11, "leads": 0, "cpl": null, "cpm": 0.85}, {"n": "search", "spend": 0.18, "leads": 0, "cpl": null, "cpm": 8.57}, {"n": "status", "spend": 3.32, "leads": 0, "cpl": null, "cpm": 8.67}]}};
+const ADS_DATA={"1": [{"n": "AD01", "leads": 1, "cpl": 9.6, "ctr": 0.38, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}], "7": [{"n": "AD02", "leads": 16, "cpl": 12.51, "ctr": 0.41, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}, {"n": "AD01", "leads": 2, "cpl": 13.85, "ctr": 0.25, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}], "14": [{"n": "AD02", "leads": 27, "cpl": 12.24, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}, {"n": "AD01", "leads": 10, "cpl": 11.89, "ctr": 0.28, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}], "30": [{"n": "AD01", "leads": 56, "cpl": 8.62, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}, {"n": "AD02", "leads": 31, "cpl": 12.77, "ctr": 0.38, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}], "2026-01": [{"n": "AD01", "leads": 3, "cpl": 5.51, "ctr": 0.57, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/6809146067390192418?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJinpGVdP4gZvSkGXjYqA7s6Sk59EJx3QDYsyhP1OS_o6w9uJmmud5IS30_3Omh9aQL22LVAottOWwbDpk3vgXb8hcudzg9p9GfhcpGPKxY6fvSDL13T8YdZ1bcBL3k0-SGoHOBQH1UYVvSVNNpodE9&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdqT7k3p0gP8jlmLsbvUDPk_Vtk0sNh5CTYRHxzK8zwzIvOXDGm0wbj7G-QqJVb2-8Q&ccb=13-1&oh=06_Q3--AS4XVm9VMcGzfJ6ZDEt9B4sZcCcm5xofAnoqdAPwYwpC&oe=69E1D3B0&_nc_sid=58080a"}, {"n": "AD02", "leads": 3, "cpl": 13.4, "ctr": 0.47, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdomY7Y1YrWNcUto9Dby1NALqCZtS3Vdo6i9uUFbmA-ehIuHScDhlIExZzx7WVL3qf4&ccb=13-1&oh=06_Q3--AaNTCzjTosalGqA5wsIfcJs5PI8qrTW6N3aSouXe7a3-&oe=69E1D894&_nc_sid=58080a"}, {"n": "AD03", "leads": 0, "cpl": null, "ctr": 0.0, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdppC9b6OcMyQ385375UPk41j5UfywsOInQEOTil5yF0vQ9uvzJFHcd6w08C_k5a83g&ccb=13-1&oh=06_Q3--AfbzDY6orXN9gtbeUOQSh07av1uC6ouZP9iT9JCLcxo5&oe=69E1D97A&_nc_sid=58080a"}, {"n": "AD04", "leads": 0, "cpl": null, "ctr": 0.51, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEgj4f8&_nc_oc=AdpwyeblCLtcU9UzJJbrvP_2ktmT3wxdBLqU2gZDuZQPrt73KgSLivnHXYhqmBEUi3I&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_tpa=Q5bMBQH_O8jK-Yz3hq-NaXextE3-Rl7krIF5FJXoOzQ02tgOJ_6nBIJi6CSQ7L9HG3v1gse4KMZBKwJy&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af1JOKpA-auEasKsDFLDstXGihHPOFZJG4hmKhWikI-6NQ&oe=69E5A0DF"}], "2026-02": [{"n": "AD02", "leads": 4, "cpl": 23.08, "ctr": 0.35, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdomY7Y1YrWNcUto9Dby1NALqCZtS3Vdo6i9uUFbmA-ehIuHScDhlIExZzx7WVL3qf4&ccb=13-1&oh=06_Q3--AaNTCzjTosalGqA5wsIfcJs5PI8qrTW6N3aSouXe7a3-&oe=69E1D894&_nc_sid=58080a"}, {"n": "AD03", "leads": 2, "cpl": 23.3, "ctr": 0.55, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdppC9b6OcMyQ385375UPk41j5UfywsOInQEOTil5yF0vQ9uvzJFHcd6w08C_k5a83g&ccb=13-1&oh=06_Q3--AfbzDY6orXN9gtbeUOQSh07av1uC6ouZP9iT9JCLcxo5&oe=69E1D97A&_nc_sid=58080a"}, {"n": "AD04", "leads": 1, "cpl": 15.9, "ctr": 0.34, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEgj4f8&_nc_oc=AdpwyeblCLtcU9UzJJbrvP_2ktmT3wxdBLqU2gZDuZQPrt73KgSLivnHXYhqmBEUi3I&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_tpa=Q5bMBQH_O8jK-Yz3hq-NaXextE3-Rl7krIF5FJXoOzQ02tgOJ_6nBIJi6CSQ7L9HG3v1gse4KMZBKwJy&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af1JOKpA-auEasKsDFLDstXGihHPOFZJG4hmKhWikI-6NQ&oe=69E5A0DF"}], "2026-03": [{"n": "AD01", "leads": 54, "cpl": 8.43, "ctr": 0.37, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}, {"n": "AD02", "leads": 7, "cpl": 15.73, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}], "2026-04": [{"n": "AD02", "leads": 24, "cpl": 11.9, "ctr": 0.39, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}, {"n": "AD01", "leads": 2, "cpl": 13.85, "ctr": 0.25, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}]};
+const DAILY={"days": ["28/01", "29/01", "30/01", "31/01", "01/02", "02/02", "03/02", "04/02", "05/02", "06/02", "07/02", "08/02", "09/02", "17/03", "18/03", "19/03", "20/03", "21/03", "22/03", "23/03", "24/03", "25/03", "26/03", "27/03", "28/03", "29/03", "30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04"], "spend": [11.53, 15.37, 16.87, 25.67, 21.06, 18.62, 27.86, 17.69, 14.41, 19.39, 18.73, 11.69, 5.4, 42.42, 51.69, 47.69, 36.9, 51.58, 20.97, 38.34, 48.92, 28.52, 29.4, 32.7, 32.15, 32.95, 28.84, 42.15, 31.92, 25.94, 27.61, 41.58, 34.46, 48.03, 40.09, 28.54, 25.53, 9.6], "leads": [3, 1, 1, 1, 0, 1, 2, 1, 2, 1, 0, 0, 0, 3, 7, 7, 7, 5, 1, 4, 7, 2, 3, 4, 1, 5, 2, 3, 0, 8, 0, 2, 3, 6, 2, 0, 4, 1], "cpl": [3.84, 15.37, 16.87, 25.67, null, 18.62, 13.93, 17.69, 7.21, 19.39, null, null, null, 14.14, 7.38, 6.81, 5.27, 10.32, 20.97, 9.59, 6.99, 14.26, 9.8, 8.18, 32.15, 6.59, 14.42, 14.05, null, 3.24, null, 20.79, 11.49, 8.01, 20.05, null, 6.38, 9.6], "ctr": [0.73, 0.35, 0.54, 0.43, 0.3, 0.22, 0.41, 0.58, 0.65, 0.42, 0.09, 0.48, 1.05, 0.37, 0.45, 0.41, 0.36, 0.39, 0.29, 0.45, 0.39, 0.28, 0.39, 0.53, 0.19, 0.4, 0.28, 0.21, 0.34, 0.45, 0.23, 0.28, 0.44, 0.5, 0.47, 0.33, 0.22, 0.38], "cpm": [7.05, 6.79, 7.65, 9.14, 6.29, 6.92, 9.47, 10.26, 10.46, 11.72, 8.79, 8.08, 9.47, 9.31, 8.94, 8.2, 8.25, 8.04, 8.54, 8.21, 8.74, 7.31, 7.14, 6.72, 6.1, 6.55, 9.05, 8.13, 7.15, 7.8, 7.04, 7.65, 7.23, 7.12, 7.83, 6.81, 6.86, 7.29]};
+const MES_DAYS={"2026-01": ["28/01", "29/01", "30/01", "31/01"], "2026-02": ["01/02", "02/02", "03/02", "04/02", "05/02", "06/02", "07/02", "08/02", "09/02"], "2026-03": ["17/03", "18/03", "19/03", "20/03", "21/03", "22/03", "23/03", "24/03", "25/03", "26/03", "27/03", "28/03", "29/03", "30/03", "31/03"], "2026-04": ["01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04"]};
+const MONTHLY={"meses": ["2026-01", "2026-02", "2026-03", "2026-04"], "lbl": ["Jan/26", "Fev/26", "Mar/26", "Abr/26"], "totalS": [69.44, 154.85, 565.22, 313.3], "totalL": [6, 7, 61, 26], "cplG": [11.57, 22.12, 9.27, 12.05], "cpmG": [7.79, 8.66, 7.93, 7.29], "ctrG": [0.49, 0.39, 0.37, 0.37]};
+const CAMPS_MES={"1": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "ads": [{"n": "AD01", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}]}]}], "7": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 227.83, "leads": 18, "cpl": 12.66, "cpm": 7.28, "ctr": 0.39, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 227.83, "leads": 18, "cpl": 12.66, "cpm": 7.28, "ctr": 0.39, "ads": [{"n": "AD02", "spend": 200.13, "leads": 16, "cpl": 12.51, "cpm": 7.36, "ctr": 0.41, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}, {"n": "AD01", "spend": 27.7, "leads": 2, "cpl": 13.85, "cpm": 6.79, "ctr": 0.25, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}]}]}], "14": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 449.39, "leads": 37, "cpl": 12.15, "cpm": 7.29, "ctr": 0.34, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 449.39, "leads": 37, "cpl": 12.15, "cpm": 7.29, "ctr": 0.34, "ads": [{"n": "AD02", "spend": 330.46, "leads": 27, "cpl": 12.24, "cpm": 7.43, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}, {"n": "AD01", "spend": 118.93, "leads": 10, "cpl": 11.89, "cpm": 6.91, "ctr": 0.28, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}]}]}], "30": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 878.52, "leads": 87, "cpl": 10.1, "cpm": 7.69, "ctr": 0.37, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 878.52, "leads": 87, "cpl": 10.1, "cpm": 7.69, "ctr": 0.37, "ads": [{"n": "AD01", "spend": 482.79, "leads": 56, "cpl": 8.62, "cpm": 7.84, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}, {"n": "AD02", "spend": 395.73, "leads": 31, "cpl": 12.77, "cpm": 7.51, "ctr": 0.38, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}]}]}], "2026-01": [{"n": "SANTO - MENSAGEM - MENINGITE", "spend": 69.44, "leads": 6, "cpl": 11.57, "cpm": 7.79, "ctr": 0.49, "spk": [11.57], "conjs": [{"n": "CA01 - PELOTAS - PAIS ATE 5 ANOS", "spend": 69.44, "leads": 6, "cpl": 11.57, "cpm": 7.79, "ctr": 0.49, "ads": [{"n": "AD01", "spend": 16.52, "leads": 3, "cpl": 5.51, "cpm": 7.81, "ctr": 0.57, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/6809146067390192418?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJinpGVdP4gZvSkGXjYqA7s6Sk59EJx3QDYsyhP1OS_o6w9uJmmud5IS30_3Omh9aQL22LVAottOWwbDpk3vgXb8hcudzg9p9GfhcpGPKxY6fvSDL13T8YdZ1bcBL3k0-SGoHOBQH1UYVvSVNNpodE9&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdqT7k3p0gP8jlmLsbvUDPk_Vtk0sNh5CTYRHxzK8zwzIvOXDGm0wbj7G-QqJVb2-8Q&ccb=13-1&oh=06_Q3--AS4XVm9VMcGzfJ6ZDEt9B4sZcCcm5xofAnoqdAPwYwpC&oe=69E1D3B0&_nc_sid=58080a"}, {"n": "AD02", "spend": 40.19, "leads": 3, "cpl": 13.4, "cpm": 7.61, "ctr": 0.47, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdomY7Y1YrWNcUto9Dby1NALqCZtS3Vdo6i9uUFbmA-ehIuHScDhlIExZzx7WVL3qf4&ccb=13-1&oh=06_Q3--AaNTCzjTosalGqA5wsIfcJs5PI8qrTW6N3aSouXe7a3-&oe=69E1D894&_nc_sid=58080a"}, {"n": "AD03", "spend": 1.14, "leads": 0, "cpl": null, "cpm": 7.55, "ctr": 0.0, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdppC9b6OcMyQ385375UPk41j5UfywsOInQEOTil5yF0vQ9uvzJFHcd6w08C_k5a83g&ccb=13-1&oh=06_Q3--AfbzDY6orXN9gtbeUOQSh07av1uC6ouZP9iT9JCLcxo5&oe=69E1D97A&_nc_sid=58080a"}, {"n": "AD04", "spend": 11.59, "leads": 0, "cpl": null, "cpm": 8.47, "ctr": 0.51, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEgj4f8&_nc_oc=AdpwyeblCLtcU9UzJJbrvP_2ktmT3wxdBLqU2gZDuZQPrt73KgSLivnHXYhqmBEUi3I&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_tpa=Q5bMBQH_O8jK-Yz3hq-NaXextE3-Rl7krIF5FJXoOzQ02tgOJ_6nBIJi6CSQ7L9HG3v1gse4KMZBKwJy&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af1JOKpA-auEasKsDFLDstXGihHPOFZJG4hmKhWikI-6NQ&oe=69E5A0DF"}]}]}], "2026-02": [{"n": "SANTO - MENSAGEM - MENINGITE", "spend": 154.85, "leads": 7, "cpl": 22.12, "cpm": 8.66, "ctr": 0.39, "spk": [11.57, 22.12], "conjs": [{"n": "CA01 - PELOTAS - PAIS ATE 5 ANOS", "spend": 154.85, "leads": 7, "cpl": 22.12, "cpm": 8.66, "ctr": 0.39, "ads": [{"n": "AD02", "spend": 92.34, "leads": 4, "cpl": 23.08, "cpm": 7.85, "ctr": 0.35, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdomY7Y1YrWNcUto9Dby1NALqCZtS3Vdo6i9uUFbmA-ehIuHScDhlIExZzx7WVL3qf4&ccb=13-1&oh=06_Q3--AaNTCzjTosalGqA5wsIfcJs5PI8qrTW6N3aSouXe7a3-&oe=69E1D894&_nc_sid=58080a"}, {"n": "AD03", "spend": 46.61, "leads": 2, "cpl": 23.3, "cpm": 13.49, "ctr": 0.55, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdppC9b6OcMyQ385375UPk41j5UfywsOInQEOTil5yF0vQ9uvzJFHcd6w08C_k5a83g&ccb=13-1&oh=06_Q3--AfbzDY6orXN9gtbeUOQSh07av1uC6ouZP9iT9JCLcxo5&oe=69E1D97A&_nc_sid=58080a"}, {"n": "AD04", "spend": 15.9, "leads": 1, "cpl": 15.9, "cpm": 5.97, "ctr": 0.34, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEgj4f8&_nc_oc=AdpwyeblCLtcU9UzJJbrvP_2ktmT3wxdBLqU2gZDuZQPrt73KgSLivnHXYhqmBEUi3I&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_tpa=Q5bMBQH_O8jK-Yz3hq-NaXextE3-Rl7krIF5FJXoOzQ02tgOJ_6nBIJi6CSQ7L9HG3v1gse4KMZBKwJy&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af1JOKpA-auEasKsDFLDstXGihHPOFZJG4hmKhWikI-6NQ&oe=69E5A0DF"}]}]}], "2026-03": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 565.22, "leads": 61, "cpl": 9.27, "cpm": 7.93, "ctr": 0.37, "spk": [null, null, 9.27], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 565.22, "leads": 61, "cpl": 9.27, "cpm": 7.93, "ctr": 0.37, "ads": [{"n": "AD01", "spend": 455.09, "leads": 54, "cpl": 8.43, "cpm": 7.91, "ctr": 0.37, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}, {"n": "AD02", "spend": 110.13, "leads": 7, "cpl": 15.73, "cpm": 7.98, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}]}]}], "2026-04": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 313.3, "leads": 26, "cpl": 12.05, "cpm": 7.29, "ctr": 0.37, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 313.3, "leads": 26, "cpl": 12.05, "cpm": 7.29, "ctr": 0.37, "ads": [{"n": "AD02", "spend": 285.6, "leads": 24, "cpl": 11.9, "cpm": 7.34, "ctr": 0.39, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdrYeQkD1lYN10A5uGgZi0EuQOTCuzTRbfXzvL7wUBwiuhSymKkN1m7LMonprKEggEA&ccb=13-1&oh=06_Q3--ARMurDdf4RkkXxaf-Z38KY-fK72Hya-WYbV45HXXaneH&oe=69E1B4EC&_nc_sid=58080a"}, {"n": "AD01", "spend": 27.7, "leads": 2, "cpl": 13.85, "cpm": 6.79, "ctr": 0.25, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=PoZ1MPT5HynRJpfUzBuMNw&_nc_oc=AdphxBVMlCJs9nb7hJ7eP-ERbmu_yTNbNeZP2x4ngOswaT8M8TZwHrCqjX34Px7plDw&ccb=13-1&oh=06_Q3--Aca6Bz7Bp9G2ImT7TOKxu5C-UGgDU7kngdmsLNwKF44q&oe=69E1B9AD&_nc_sid=58080a"}]}]}]};
+
+// ═══ ESTADO ════════════════════════════════════════════
+let period=30,mesMode=null,showLabels=false,showLabelsGeral=false,geralQ='all';
+
+function initDynamicControls(){
+  const sel=document.getElementById('mesSelect');
+  if(!sel)return;
+  while(sel.options.length>1) sel.remove(1);
+  const months=[...MONTHLY.meses].reverse();
+  const lbls=[...MONTHLY.lbl].reverse();
+  months.forEach((ym,i)=>{
+    if(!CAMPS_MES[ym]||CAMPS_MES[ym].length===0) return;
+    const opt=document.createElement('option');
+    opt.value=ym; opt.textContent=lbls[i];
+    sel.appendChild(opt);
+  });
+  const pb=document.getElementById('pbGeral');
+  if(!pb)return;
+  while(pb.children.length>1) pb.removeChild(pb.lastChild);
+}
+
+const CH={};
+Chart.register(ChartDataLabels);
+const ACCENT='#2563eb', ACCENT2='#3b82f6', GR='#6b7280', BL='#2563eb';
+const GRID='rgba(0,0,0,0.05)', TXT='#9ca3af';
+function getChartColors(){
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  return {txt:dark?'#8b95a9':'#9ca3af',grid:dark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.05)',tooltip:dark?'#1a2236':'#0f1523'};
+}
+const bf={family:"'DM Sans',sans-serif",size:10};
+function sm(a){return a.reduce((s,v)=>(s||0)+(v||0),0);}
+function av(a){const v=a.filter(x=>x!=null&&x>0);return v.length?v.reduce((s,x)=>s+x,0)/v.length:0;}
+function cc(v){return v==null?GR:v<=11?'#059669':v<=15?'#d97706':'#dc2626';}
+function cls(v){return v==null?'':v<=11?'cg':v<=15?'cw2':'cr';}
+function fR(v){if(v==null||isNaN(v))return '—';return 'R$'+Number(v).toFixed(2).replace('.',',');}
+function fR2(v){if(v==null||isNaN(v))return '—';return 'R$'+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fN(v){return Number(v).toLocaleString('pt-BR');}
+function getDlColor(){return document.documentElement.getAttribute('data-theme')==='dark'?'#ffffff':'#111827';}
+function bo(){
+  const cc2=getChartColors();
+  return{responsive:true,maintainAspectRatio:false,resizeDelay:50,plugins:{legend:{labels:{color:cc2.txt,font:bf,boxWidth:9,padding:10}},tooltip:{backgroundColor:cc2.tooltip,borderColor:'rgba(255,255,255,.08)',borderWidth:1,titleFont:{size:10},bodyFont:{size:10}},datalabels:{display:false}},scales:{x:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}},y:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}}}};}
+function dc(id){if(CH[id]){CH[id].destroy();delete CH[id];}}
+
+function showPage(p,btn){
+  document.querySelectorAll('.page-section').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(btn&&btn.classList&&btn.classList.contains('sb-item')) btn.classList.add('active');
+  document.getElementById('pageTitle').textContent=p==='dash'?'Dashboard Diário':'Dados Gerais da Conta';
+  document.getElementById('pbDash').style.display=p==='dash'?'flex':'none';
+  document.getElementById('pbGeral').style.display=p==='geral'?'flex':'none';
+  if(p==='geral') renderGeral();
+  updateMobNav(p);
+  if(window.innerWidth<=768) closeSidebar();
+}
+
+function setPeriod(n,lbl,btn){
+  period=n; mesMode=null;
+  document.querySelectorAll('#pbDash .pb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sbPeriod').textContent='Últimos '+lbl;
+  render();
+}
+function setPeriodMes(ym,lbl,btn){
+  if(!ym) return;
+  mesMode=ym;
+  document.querySelectorAll('#pbDash .pb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sbPeriod').textContent=lbl;
+  render();
+}
+function toggleLabels(checked){showLabels=checked;render();}
+function toggleLabelsGeral(checked){showLabelsGeral=checked;renderGeral();}
+function setGeralQ(q,btn){
+  geralQ=q;
+  document.querySelectorAll('#pbGeral .pb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGeral();
+}
+
+function getIdxs(){
+  if(mesMode){
+    const ds=MES_DAYS[mesMode]||[];
+    return DAILY.days.map((d,i)=>ds.includes(d)?i:-1).filter(i=>i>=0);
+  }
+  return DAILY.days.map((_,i)=>i).slice(-Math.min(period,DAILY.days.length));
+}
+function sl(arr,idxs){return idxs.map(i=>arr[i]);}
+function getCampKey(){
+  if(mesMode) return mesMode;
+  return String(period);
+}
+
+function render(){
+  const idxs=getIdxs();
+  const days=sl(DAILY.days,idxs), spend=sl(DAILY.spend,idxs), leads=sl(DAILY.leads,idxs);
+  const cpl=sl(DAILY.cpl,idxs), ctr=sl(DAILY.ctr,idxs), cpm=sl(DAILY.cpm,idxs);
+
+  const kKey=mesMode||String(period);
+  const K=KPIS_PERIODO[kKey]||{};
+  const tS=(K.spend!=null)?K.spend:sm(spend);
+  const tL=(K.leads!=null)?K.leads:sm(leads);
+  const avgCPL=K.cpl!=null?K.cpl:(tL>0?tS/tL:0);
+  const avgCTR=K.ctr!=null?K.ctr:av(ctr);
+  const avgCPM=K.cpm!=null?K.cpm:av(cpm);
+
+  if(days.length){
+    document.getElementById('sbDates').textContent=days[0]+(days.length>1?' → '+days[days.length-1]:'');
+  }
+
+  document.getElementById('kpiStrip').innerHTML=`
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento</div><div class="kpi-val" style="font-size:15px">${fR2(tS)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Conversões</div><div class="kpi-val">${fN(tL)}</div></div>
+    <div class="kpi" style="--kc:${cc(avgCPL)}"><div class="kpi-lbl">Custo / Conversão</div><div class="kpi-val">${fR(avgCPL)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR Médio</div><div class="kpi-val">${avgCTR?avgCTR.toFixed(2)+'%':'—'}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPM Médio</div><div class="kpi-val">${fR(avgCPM)}</div></div>`;
+
+  // Main chart — leads (bars) + spend (line green) + cpl (line black dashed)
+  dc('chMain');
+  const spDs={label:'Invest.',data:spend,borderColor:'#059669',backgroundColor:'transparent',tension:.3,pointRadius:2,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,
+    datalabels:{display:false}};
+  const cplDs={label:'CPL',data:cpl,borderColor:document.documentElement.getAttribute('data-theme')==='dark'?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:2,borderWidth:1.5,tension:.3,spanGaps:false,type:'line',yAxisID:'y2',
+    datalabels:{display:showLabels,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null&&v>0?'R$'+v.toFixed(1):null,color:document.documentElement.getAttribute('data-theme')==='dark'?'#f9fafb':'#111827',clip:false}};
+  const leadsDs={label:'Conversões',data:leads,backgroundColor:'rgba(24,119,242,.75)',stack:'s',borderRadius:2,type:'bar',datalabels:{display:showLabels,color:'#1877f2',font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?fN(v):null,clip:false}};
+
+  CH['chMain']=new Chart(document.getElementById('chMain'),{data:{labels:days,datasets:[leadsDs,spDs,cplDs]},options:{...bo(),scales:{
+    x:{ticks:{color:TXT,font:bf,maxTicksLimit:12},grid:{color:'rgba(0,0,0,0.04)'}},
+    y:{ticks:{color:TXT,font:bf},grid:{color:'rgba(0,0,0,0.04)'}},
+    y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'R$'+v.toLocaleString()},grid:{display:false}},
+    y2:{position:'right',ticks:{color:'#374151',font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{display:false},offset:true},
+  }}});
+
+  dc('chCTR');
+  CH['chCTR']=new Chart(document.getElementById('chCTR'),{type:'line',data:{labels:days,datasets:[{label:'CTR',data:ctr,borderColor:BL,backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:showLabels,color:BL,font:{size:9,weight:'bold'},formatter:v=>v!=null?v.toFixed(1)+'%':null,anchor:'top',align:'top',offset:2}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+
+  dc('chCPM');
+  CH['chCPM']=new Chart(document.getElementById('chCPM'),{type:'line',data:{labels:days,datasets:[{label:'CPM',data:cpm,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:showLabels,color:'#2563eb',font:{size:9,weight:'bold'},formatter:v=>v!=null?'R$'+v.toFixed(0):null,anchor:'top',align:'top',offset:2}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(0)},grid:{color:GRID},min:0}}}});
+
+  const ym=getCampKey();
+  const mesLbls={'2026-04':'Abr/26','2026-03':'Mar/26','2026-02':'Fev/26','2026-01':'Jan/26'};
+  const lbl=mesMode?(mesLbls[mesMode]||mesMode):`últimos ${period} dias`;
+  document.getElementById('campLbl').textContent=`— ${lbl}`;
+  buildCampTable();
+  buildAds();
+  buildBreakdowns();
+}
+
+// ═══ CAMP TABLE ════════════════════════════════════════
+const OPEN=new Set();
+function buildCampTable(){
+  const ym=getCampKey();
+  const data=CAMPS_MES[ym]||CAMPS_MES['30']||[];
+  const tbl=document.getElementById('campContainer');
+
+  if(window.innerWidth<=768){
+    let cards='';
+    data.forEach((c,i)=>{
+      const cid=`c${ym.replace('-','')}${i}`;
+      const hasConjs=c.conjs&&c.conjs.length>0;
+      cards+=`<div class="camp-card">
+        <div class="camp-card-hd" onclick="toggleCard('${cid}')">
+          <div class="camp-card-name">${c.n}</div>
+          ${hasConjs?`<span style="color:var(--muted);font-size:12px">${OPEN.has(cid)?'▼':'▶'}</span>`:''}
+        </div>
+        <div class="camp-card-metrics">
+          <div class="camp-card-metric"><div class="lbl">Invest.</div><div class="val">${fR(c.spend)}</div></div>
+          <div class="camp-card-metric"><div class="lbl">Conversões</div><div class="val">${fN(c.leads)}</div></div>
+          <div class="camp-card-metric"><div class="lbl">CPL</div><div class="val ${cls(c.cpl)}">${fR(c.cpl)}</div></div>
+        </div>
+        ${hasConjs?`<div class="camp-card-conjs ${OPEN.has(cid)?'open':''}" id="conj-${cid}">
+          ${c.conjs.map((j,ji)=>`<div class="conj-card">
+            <div class="conj-card-name">↳ ${j.n}</div>
+            <div class="conj-card-metrics">
+              <div class="camp-card-metric"><div class="lbl">Invest.</div><div class="val">${fR(j.spend)}</div></div>
+              <div class="camp-card-metric"><div class="lbl">Conv.</div><div class="val">${fN(j.leads)}</div></div>
+              <div class="camp-card-metric"><div class="lbl">CPL</div><div class="val ${cls(j.cpl)}">${fR(j.cpl)}</div></div>
+            </div>
+          </div>`).join('')}
+        </div>`:''}
+      </div>`;
+    });
+    tbl.innerHTML=cards;
+    return;
+  }
+
+  let rows='';
+  data.forEach((c,i)=>{
+    const cid=`c${ym.replace('-','')}${i}`;
+    const hasMulti=c.conjs&&c.conjs.length>1;
+    rows+=`<tr class="camp-row" onclick="toggleC('${cid}')">
+      <td style="width:20px;text-align:center;color:var(--muted2);font-size:11px">${hasMulti?(OPEN.has(cid)?'▼':'▶'):''}</td>
+      <td style="font-weight:700;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
+      <td class="num">${fR(c.spend)}</td>
+      <td class="num">${fN(c.leads)}</td>
+      <td class="num ${cls(c.cpl)}">${fR(c.cpl)}</td>
+      <td class="num">${fR(c.cpm)}</td>
+      <td class="num" style="color:${(c.ctr||0)>=2?'#059669':(c.ctr||0)>=1?'#d97706':'#9ca3af'}">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
+      <td><canvas id="spk-${cid}" width="72" height="28"></canvas></td>
+    </tr>`;
+    if(c.conjs){
+      c.conjs.forEach((j,ji)=>{
+        const jid=`${cid}j${ji}`;
+        const hidden=!OPEN.has(cid)?'hidden':'';
+        rows+=`<tr class="conj-row ${hidden}" data-cid="${cid}">
+          <td style="text-align:center;color:#d1d5db;font-size:11px">↳</td>
+          <td class="conj-name">${j.n}</td>
+          <td class="num" style="color:var(--muted2)">${fR(j.spend)}</td>
+          <td class="num" style="color:var(--muted2)">${fN(j.leads)}</td>
+          <td class="num ${cls(j.cpl)}">${fR(j.cpl)}</td>
+          <td class="num" style="color:var(--muted2)">${fR(j.cpm)}</td>
+          <td class="num" style="color:${(j.ctr||0)>=2?'#059669':(j.ctr||0)>=1?'#d97706':'#9ca3af'}">${j.ctr!=null?j.ctr.toFixed(2)+'%':'—'}</td>
+          <td></td>
+        </tr>`;
+        if(j.ads){
+          j.ads.forEach((ad,ai)=>{
+            const adHidden=(!OPEN.has(cid)||!OPEN.has(jid))?'hidden':'';
+            rows+=`<tr class="conj-row ${adHidden}" data-cid="${cid}" data-jid="${jid}">
+              <td style="text-align:center;color:#e2e8f0;font-size:10px;padding-left:8px">↳↳</td>
+              <td style="padding-left:44px;font-size:11px;color:var(--muted);border-left:2px solid #e2e8f0;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ad.n}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fR(ad.spend)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fN(ad.leads)}</td>
+              <td class="num ${cls(ad.cpl)}" style="font-size:10px">${fR(ad.cpl)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fR(ad.cpm)}</td>
+              <td class="num" style="font-size:10px">${ad.ctr!=null?ad.ctr.toFixed(2)+'%':'—'}</td>
+              <td></td>
+            </tr>`;
+          });
+        }
+      });
+    }
+  });
+
+  tbl.innerHTML=`<div class="tc"><table>
+    <thead><tr><th style="width:20px"></th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPM</th><th class="num">CTR</th><th style="width:80px">Tendência CPL</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+
+  function drawSpk(id, spkData){
+    const cv=document.getElementById(id);
+    if(!cv||!spkData) return;
+    const vals=spkData.filter(v=>v!=null);
+    if(vals.length<1) return;
+    const plotData=vals.length===1?[vals[0],vals[0]]:spkData;
+    const plotLabels=vals.length===1?[0,1]:spkData.map((_,j)=>j);
+    const last=vals[vals.length-1], first=vals[0];
+    const col=last<=first?'#059669':'#dc2626';
+    new Chart(cv,{type:'line',data:{labels:plotLabels,datasets:[{data:plotData,borderColor:col,backgroundColor:col==='#059669'?'rgba(5,150,105,.1)':'rgba(220,38,38,.1)',fill:true,tension:.35,pointRadius:plotData.map(v=>v!=null?2:0),pointBackgroundColor:col,borderWidth:1.5,spanGaps:false,datalabels:{display:false}}]},
+      options:{responsive:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false},datalabels:{display:false}},scales:{x:{display:false},y:{display:false,min:Math.min(...vals)*.8,max:Math.max(...vals)*1.2}}}});
+  }
+  data.forEach((c,i)=>{
+    const cid=`c${ym.replace('-','')}${i}`;
+    drawSpk(`spk-${cid}`, c.spk);
+  });
+}
+
+function toggleC(id){
+  const rows=document.querySelectorAll(`[data-cid="${id}"]`);
+  const isOpen=OPEN.has(id);
+  if(isOpen){OPEN.delete(id);rows.forEach(r=>r.classList.add('hidden'));}
+  else{OPEN.add(id);rows.forEach(r=>r.classList.remove('hidden'));}
+  document.querySelectorAll('.camp-row').forEach(tr=>{
+    if(tr.getAttribute('onclick')===`toggleC('${id}')`){
+      const td=tr.querySelector('td:first-child');
+      if(td)td.textContent=OPEN.has(id)?'▼':'▶';
+    }
+  });
+}
+function toggleCard(id){
+  const el=document.getElementById('conj-'+id);
+  if(!el)return;
+  const isOpen=OPEN.has(id);
+  if(isOpen){OPEN.delete(id);el.classList.remove('open');}
+  else{OPEN.add(id);el.classList.add('open');}
+}
+
+// ═══ ADS GRID ════════════════════════════════════════
+function buildAds(){
+  const aKey=mesMode||String(period);
+  const list=ADS_DATA[aKey]||ADS_DATA['30']||[];
+  const el=document.getElementById('agALL');
+  if(!el) return;
+  el.innerHTML='';
+  if(list.length===0){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:12px">Nenhum criativo disponível</div>';
+    return;
+  }
+  list.forEach(ad=>{
+    const d=document.createElement('div'); d.className='ad-card';
+    const img=ad.thumb?`<div class="ad-img-wrap"><img src="${ad.thumb}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'ad-img-placeholder\'>🖼️</div>'"></div>`:'<div class="ad-img-wrap"><div class="ad-img-placeholder">🖼️</div></div>';
+    d.innerHTML=`${img}<div class="ad-info"><div class="ad-name">${ad.n}</div><div class="ad-stats"><div><div class="as-l">Conv.</div><div class="as-v">${fN(ad.leads)}</div></div><div><div class="as-l">CPL</div><div class="as-v" style="color:${cc(ad.cpl)}">${fR(ad.cpl)}</div></div></div></div>`;
+    el.appendChild(d);
+  });
+}
+
+// ═══ DADOS GERAIS ════════════════════════════════════
+function renderGeral(){
+  const lbl=MONTHLY.lbl, totalS=MONTHLY.totalS, totalL=MONTHLY.totalL, cplG=MONTHLY.cplG;
+  const cpmG=MONTHLY.cpmG||[], ctrG=MONTHLY.ctrG||[];
+  const qlbl='Todos os meses';
+  document.getElementById('geralSub').textContent='Conversões (barras azuis) · Investimento (linha verde) · CPL (linha preta tracejada)';
+  document.getElementById('rankLbl').textContent='— '+qlbl;
+  document.getElementById('geralCampLbl').textContent='— '+qlbl;
+  document.getElementById('geralPubLbl').textContent='— '+qlbl;
+
+  const tS=totalS.reduce((a,b)=>a+b,0), tL=totalL.reduce((a,b)=>a+b,0);
+  document.getElementById('geralKpis').innerHTML=`
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento Total</div><div class="kpi-val">R$${(tS/1000).toFixed(1)}k</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Total Conversões</div><div class="kpi-val">${fN(tL)}</div></div>
+    <div class="kpi" style="--kc:${cc(tL>0?tS/tL:0)}"><div class="kpi-lbl">CPL Geral</div><div class="kpi-val">${fR(tL>0?tS/tL:0)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Meses Ativos</div><div class="kpi-val">${lbl.length}</div></div>`;
+
+  // Gráfico combinado: Conversões (barras azuis) + Investimento (linha verde) + CPL (linha preta tracejada)
+  dc('chGeralMensal');
+  const gSpDs={label:'Invest.',data:totalS,borderColor:'#059669',backgroundColor:'transparent',tension:.35,pointRadius:4,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,datalabels:{display:false}};
+  const gCplDs={label:'CPL',data:cplG,borderColor:document.documentElement.getAttribute('data-theme')==='dark'?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:3,borderWidth:1.5,tension:.35,spanGaps:false,type:'line',yAxisID:'y2',datalabels:{display:showLabelsGeral,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(1):null,color:document.documentElement.getAttribute('data-theme')==='dark'?'#f9fafb':'#111827',clip:false}};
+  const gLeadsDs={label:'Conversões',data:totalL,backgroundColor:'rgba(24,119,242,.75)',borderRadius:4,type:'bar',datalabels:{display:showLabelsGeral,color:'#1877f2',font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?fN(v):null,clip:false}};
+  CH['chGeralMensal']=new Chart(document.getElementById('chGeralMensal'),{data:{labels:lbl,datasets:[gLeadsDs,gSpDs,gCplDs]},options:{...bo(),scales:{
+    x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},
+    y:{ticks:{color:TXT,font:bf},grid:{color:GRID}},
+    y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'R$'+v.toLocaleString()},grid:{display:false}},
+    y2:{position:'right',ticks:{color:document.documentElement.getAttribute('data-theme')==='dark'?'#9ca3af':'#374151',font:bf,callback:v=>'R$'+v.toFixed(1)},grid:{display:false},offset:true},
+  }}});
+
+  // CPM mensal
+  dc('chGeralCPM');
+  CH['chGeralCPM']=new Chart(document.getElementById('chGeralCPM'),{type:'line',data:{labels:lbl,datasets:[{label:'CPM',data:cpmG,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
+
+  // CTR mensal
+  dc('chGeralCTR');
+  CH['chGeralCTR']=new Chart(document.getElementById('chGeralCTR'),{type:'line',data:{labels:lbl,datasets:[{label:'CTR',data:ctrG,borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+
+  const withData=lbl.map((l,i)=>({l,cpl:cplG[i],leads:totalL[i]})).filter(m=>m.cpl!=null&&m.leads>0);
+  const bCPL=[...withData].sort((a,b)=>a.cpl-b.cpl).slice(0,6);
+  const bLeads=[...withData].sort((a,b)=>b.leads-a.leads).slice(0,6);
+  const mxL=Math.max(...bLeads.map(m=>m.leads),1);
+  const mnC=Math.min(...bCPL.map(m=>m.cpl),0), mxC=Math.max(...bCPL.map(m=>m.cpl),1);
+  document.getElementById('rankCPL').innerHTML=bCPL.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round((1-(m.cpl-mnC)/(mxC-mnC||1))*100)}%;background:#059669"></div></div><div class="rank-val ${cls(m.cpl)}">${fR(m.cpl)}</div></div>`).join('');
+  document.getElementById('rankLeads').innerHTML=bLeads.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round(m.leads/mxL*100)}%;background:${BL}"></div></div><div class="rank-val" style="color:${BL}">${fN(m.leads)}</div></div>`).join('');
+
+  buildGeralCampTable();
+  buildGeralPubTable();
+}
+
+function buildGeralCampTable(){
+  const map={};
+  MONTHLY.meses.forEach(ym=>{
+    (CAMPS_MES[ym]||[]).forEach(c=>{
+      if(!map[c.n]) map[c.n]={n:c.n,spend:0,leads:0};
+      map[c.n].spend+=c.spend; map[c.n].leads+=c.leads;
+    });
+  });
+  const all=Object.values(map).map(c=>({...c,cpl:c.leads>0?c.spend/c.leads:null})).sort((a,b)=>b.leads-a.leads).slice(0,15);
+  document.getElementById('tGeralCamp').innerHTML=`<table>
+    <thead><tr><th>#</th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th></tr></thead>
+    <tbody>${all.map((c,i)=>`<tr>
+      <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
+      <td class="num">${fR(c.spend)}</td>
+      <td class="num">${fN(c.leads)}</td>
+      <td class="num ${cls(c.cpl)}">${fR(c.cpl)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function buildGeralPubTable(){
+  const map={};
+  MONTHLY.meses.forEach(ym=>{
+    (CAMPS_MES[ym]||[]).forEach(c=>{
+      (c.conjs||[]).forEach(j=>{
+        if(!map[j.n]) map[j.n]={n:j.n,spend:0,leads:0};
+        map[j.n].spend+=j.spend; map[j.n].leads+=j.leads;
+      });
+    });
+  });
+  const all=Object.values(map).filter(a=>a.leads>0).map(a=>({...a,cpl:a.leads>0?a.spend/a.leads:null})).sort((a,b)=>b.leads-a.leads).slice(0,12);
+  document.getElementById('tGeralPub').innerHTML=`<table>
+    <thead><tr><th>#</th><th>Conjunto / Público</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th></tr></thead>
+    <tbody>${all.map((a,i)=>`<tr>
+      <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px">${a.n}</td>
+      <td class="num">${fR(a.spend)}</td>
+      <td class="num">${fN(a.leads)}</td>
+      <td class="num ${cls(a.cpl)}">${fR(a.cpl)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+// ═══ BREAKDOWNS ══════════════════════════════════════
+function buildBreakdowns(){
+  const kKey=mesMode||String(period);
+  const bd=BREAKDOWN_DATA[kKey]||BREAKDOWN_DATA['30']||{};
+  buildBreakdownTable('bdAge', bd.age||[]);
+  buildBreakdownTable('bdGender', bd.gender||[]);
+  buildBreakdownTable('bdPlatform', bd.platform||[]);
+}
+function buildBreakdownTable(containerId, data){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  if(!data||data.length===0){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Sem dados para este período</div>';
+    return;
+  }
+  const mx=Math.max(...data.map(r=>r.leads||r.spend),1);
+  const hasL=data.some(r=>r.leads>0);
+  let rows='';
+  data.forEach((r,i)=>{
+    const barW=Math.round((hasL?(r.leads||0):r.spend)/mx*100);
+    rows+=`<tr>
+      <td style="color:#9ca3af;font-size:10px;width:24px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px">${r.n}</td>
+      <td style="width:80px;padding:0 12px"><div style="background:var(--bg);border-radius:3px;height:4px;overflow:hidden"><div style="width:${barW}%;height:100%;background:#2563eb;border-radius:3px"></div></div></td>
+      <td class="num">${fR2(r.spend)}</td>
+      ${hasL?`<td class="num">${r.leads>0?fN(r.leads):'—'}</td><td class="num ${cls(r.cpl)}">${fR(r.cpl)}</td>`:''}
+      <td class="num">${fR(r.cpm)}</td>
+    </tr>`;
+  });
+  const hdL=hasL?'<th class="num">Conv.</th><th class="num">CPL</th>':'';
+  el.innerHTML=`<div class="tc"><table><thead><tr><th style="width:24px">#</th><th>Segmento</th><th style="width:80px"></th><th class="num">Invest.</th>${hdL}<th class="num">CPM</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ═══ THEME ════════════════════════════════════════════
+function toggleTheme(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('themeIcon').textContent='🌙';
+    document.getElementById('themeLabel').textContent='Dark';
+    localStorage.setItem('bmq-theme','light');
+  } else {
+    document.documentElement.setAttribute('data-theme','dark');
+    document.getElementById('themeIcon').textContent='☀️';
+    document.getElementById('themeLabel').textContent='Claro';
+    localStorage.setItem('bmq-theme','dark');
+  }
+  render();
+  if(document.getElementById('page-geral').classList.contains('active')) renderGeral();
+}
+(function(){
+  const saved=localStorage.getItem('bmq-theme');
+  if(saved==='dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+    document.addEventListener('DOMContentLoaded',function(){
+      const ti=document.getElementById('themeIcon'); const tl=document.getElementById('themeLabel');
+      if(ti) ti.textContent='☀️'; if(tl) tl.textContent='Claro';
+    });
+  }
+})();
+
+function updateMobNav(p){
+  document.getElementById('mobBtnDash').classList.toggle('active',p==='dash');
+  document.getElementById('mobBtnGeral').classList.toggle('active',p==='geral');
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+initDynamicControls();
+render();
+</script>
+</body>
+</html>
