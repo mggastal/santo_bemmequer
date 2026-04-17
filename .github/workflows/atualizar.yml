@@ -24,7 +24,7 @@ jobs:
         run: pip install pandas requests openpyxl
 
       - name: Rodar gerador
-        run: python gerador_bemmequer.py
+        run: python gerador.py
 
       - name: Commit e push
         run: |
