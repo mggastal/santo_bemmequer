@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Laboratório Bem Me Quer — Gerador automático do Dashboard
+Gerador automático do Dashboard
 Meta Ads + Google Ads — 4 painéis completos
 """
 
@@ -17,16 +17,22 @@ from pathlib import Path
 # ══════════════════════════════════════════════════════════════════════════════
 
 SHEET_ID      = "1rNDwriAHBml5Qv7tK99nRzZrKB3N1VF9r8zZGt7eRag"
-TEMPLATE_FILE = "template_bemmequer.html"
+TEMPLATE_FILE = "dashboard_template.html"
 OUTPUT_FILE   = "index.html"
+
+NOME_CLIENTE  = "Laboratório Bem Me Quer"  # aparece na sidebar e no <title>
+LOGO_LETRA    = "B"      # letra dentro do ícone na sidebar
+COR_ACENTO    = "#00bfd9"  # cor principal: sidebar ativa, badge, período (ex: "#1877f2", "#e11d48")
+GOOGLE_ADS    = True    # False = painel Google oculto (cliente só Meta)
+META_ADS      = True     # False = painel Meta oculto (cliente só Google)
 
 # Metas de CPL — Meta Ads
 META_CPL_BOM    = 11    # ≤ este valor → verde
-META_CPL_MEDIO  = 15    # ≤ este valor → amarelo  |  acima → vermelho
+META_CPL_MEDIO  = 16    # ≤ este valor → amarelo  |  acima → vermelho
 
 # Metas de CPL — Google Ads
-GOOGLE_CPL_BOM   = 10   # ≤ este valor → verde
-GOOGLE_CPL_MEDIO = 30   # ≤ este valor → amarelo  |  acima → vermelho
+GOOGLE_CPL_BOM   = 11   # ≤ este valor → verde
+GOOGLE_CPL_MEDIO = 16   # ≤ este valor → amarelo  |  acima → vermelho
 
 # ══════════════════════════════════════════════════════════════════════════════
 # NÃO PRECISA MEXER ABAIXO DESTA LINHA
@@ -93,12 +99,26 @@ def load_meta():
         "Spend (Cost, Amount Spent)": "spend",
         "Impressions": "impressions", "Clicks": "clicks",
         "Action Link Clicks": "link_clicks",
-        "Action Messaging Conversations Started (Onsite Conversion)": "leads",
     })
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
-    for c in ["spend", "leads", "impressions", "clicks", "link_clicks"]:
+    for c in ["spend", "impressions", "clicks", "link_clicks"]:
         if c in df.columns:
             df[c] = to_num(df[c])
+
+    # Somar todas as colunas de conversão disponíveis (sem dupla contagem)
+    CONV_COLS = [
+        "Action Messaging Conversations Started (Onsite Conversion)",
+        "Action Leads",
+        "Conversion Contact Total",
+        "Action FB Pixel Complete Registration (Offsite Conversion)",
+        "Action FB Pixel Lead (Offsite Conversion)",
+    ]
+    conv_present = [c for c in CONV_COLS if c in df.columns]
+    if conv_present:
+        df["leads"] = sum(to_num(df[c]) for c in conv_present)
+    else:
+        df["leads"] = 0.0
+    print(f"     Colunas de conversão usadas: {conv_present}")
     df["ym"] = df["date"].dt.to_period("M")
     df = df.dropna(subset=["date"])
     print(f"     {len(df)} linhas | {df['date'].min().date()} → {df['date'].max().date()}")
@@ -221,11 +241,11 @@ def meta_camps_period(df, p, all_months, cur_ym_str):
                 th = str(th_rows.iloc[0]) if len(th_rows)>0 else ""
                 if th == "nan": th = ""
                 anuncios.append({"n":str(ad["ad"]),"spend":round(float(ad["spend"]),2),"leads":int(ad["leads"]),
-                    "cpl":safe(ad["cpl"]),"cpm":safe(ad["cpm"]),"ctr":safe(ad["ctr"]),"thumb":th})
+                    "cpl":safe(ad["cpl"]),"cpm":safe(ad["cpm"]),"ctr":safe(ad["ctr"]),"imp":int(ad["impressions"]),"clicks":int(ad["link_clicks"]),"thumb":th})
             conjs.append({"n":str(a["adset"]),"spend":round(float(a["spend"]),2),"leads":int(a["leads"]),
-                "cpl":safe(a["cpl"]),"cpm":safe(a["cpm"]),"ctr":safe(a["ctr"]),"ads":anuncios})
+                "cpl":safe(a["cpl"]),"cpm":safe(a["cpm"]),"ctr":safe(a["ctr"]),"imp":int(a["impressions"]),"clicks":int(a["link_clicks"]),"ads":anuncios})
         out.append({"n":str(r["campaign"]),"spend":round(float(r["spend"]),2),"leads":int(r["leads"]),
-            "cpl":safe(r["cpl"]),"cpm":safe(r["cpm"]),"ctr":safe(r["ctr"]),"spk":spk,"conjs":conjs})
+            "cpl":safe(r["cpl"]),"cpm":safe(r["cpm"]),"ctr":safe(r["ctr"]),"imp":int(r["impressions"]),"clicks":int(r["link_clicks"]),"spk":spk,"conjs":conjs})
     return out
 
 
@@ -275,7 +295,15 @@ def load_meta_ga():
     df = pd.read_csv(URL_META_GA)
     df["date"] = pd.to_datetime(df["Date"], errors="coerce")
     df["spend"] = to_num(df["Spend (Cost, Amount Spent)"])
-    df["leads"] = to_num(df["Action Messaging Conversations Started (Onsite Conversion)"])
+    CONV_COLS_GA = [
+        "Action Messaging Conversations Started (Onsite Conversion)",
+        "Action Leads",
+        "Conversion Contact Total",
+        "Action FB Pixel Complete Registration (Offsite Conversion)",
+        "Action FB Pixel Lead (Offsite Conversion)",
+    ]
+    conv_ga = [c for c in CONV_COLS_GA if c in df.columns]
+    df["leads"] = sum(to_num(df[c]) for c in conv_ga) if conv_ga else 0.0
     df["impressions"] = to_num(df["Impressions"])
     df["age"] = df["Age (Breakdown)"].astype(str)
     df["gender"] = df["Gender (Breakdown)"].astype(str)
@@ -287,7 +315,15 @@ def load_meta_pt():
     df = pd.read_csv(URL_META_PT)
     df["date"] = pd.to_datetime(df["Date"], errors="coerce")
     df["spend"] = to_num(df["Spend (Cost, Amount Spent)"])
-    df["leads"] = to_num(df["Action Messaging Conversations Started (Onsite Conversion)"])
+    CONV_COLS_PT = [
+        "Action Messaging Conversations Started (Onsite Conversion)",
+        "Action Leads",
+        "Conversion Contact Total",
+        "Action FB Pixel Complete Registration (Offsite Conversion)",
+        "Action FB Pixel Lead (Offsite Conversion)",
+    ]
+    conv_pt = [c for c in CONV_COLS_PT if c in df.columns]
+    df["leads"] = sum(to_num(df[c]) for c in conv_pt) if conv_pt else 0.0
     df["impressions"] = to_num(df["Impressions"])
     df["platform"] = df["Platform Position (Breakdown)"]
     return df.dropna(subset=["date"])
@@ -469,10 +505,10 @@ def google_camps_period(df, p, all_months, cur_ym_str):
                     "cpl":safe(k["cpl"]),"cpc":safe(k["cpc"]),"clicks":int(k["clicks"])})
             conjs.append({"n":str(ag["adgroup"]),"spend":round(float(ag["spend"]),2),
                 "conv":round(float(ag["conversions"]),2),"cpl":safe(ag["cpl"]),"cpc":safe(ag["cpc"]),
-                "ctr":safe(ag["ctr"]),"clicks":int(ag["clicks"]),"keywords":kw_list})
+                "ctr":safe(ag["ctr"]),"clicks":int(ag["clicks"]),"imp":int(ag["impressions"]),"keywords":kw_list})
         out.append({"n":str(r["campaign"]),"spend":round(float(r["spend"]),2),
             "conv":round(float(r["conversions"]),2),"cpl":safe(r["cpl"]),"cpc":safe(r["cpc"]),
-            "ctr":safe(r["ctr"]),"clicks":int(r["clicks"]),"spk":spk,"adgroups":conjs})
+            "ctr":safe(r["ctr"]),"clicks":int(r["clicks"]),"imp":int(r["impressions"]),"spk":spk,"adgroups":conjs})
     return out
 
 
@@ -633,6 +669,25 @@ def inject_all(template_path,
         rf'\g<1>{GOOGLE_CPL_MEDIO}', html, count=1
     )
 
+    # Meta ADS visibility flag
+    if META_ADS:
+        html = html.replace('const META_ATIVO=false;', 'const META_ATIVO=true;')
+    else:
+        html = html.replace('const META_ATIVO=true;', 'const META_ATIVO=false;')
+
+    # Logo letra e cor de acento
+    html = re.sub(r"const LOGO_LETRA='[^']*'", f"const LOGO_LETRA='{LOGO_LETRA}'", html, count=1)
+    html = re.sub(r"const COR_ACENTO='[^']*'", f"const COR_ACENTO='{COR_ACENTO}'", html, count=1)
+
+    # Nome do cliente
+    html = re.sub(r"const NOME_CLIENTE='[^']*'", f"const NOME_CLIENTE='{NOME_CLIENTE}'", html, count=1)
+
+    # Google ADS visibility flag
+    if GOOGLE_ADS:
+        html = html.replace('const GOOGLE_ATIVO=false;', 'const GOOGLE_ATIVO=true;')
+    else:
+        html = html.replace('const GOOGLE_ATIVO=true;', 'const GOOGLE_ATIVO=false;')
+
     html = re.sub(r"Dados até \d{2}/\d{2}", f"Dados até {meta_last}", html)
     today = date.today().strftime("%d/%m/%Y")
     html = re.sub(r"\d{2}/\d{2}/\d{4} · via planilha", f"{today} · via planilha", html)
@@ -646,62 +701,84 @@ def inject_all(template_path,
 
 def main():
     print("=" * 60)
-    print("Laboratório Bem Me Quer — Dashboard Meta + Google Ads")
+    print("Dashboard Meta")
     print("=" * 60)
 
     # ── META ──────────────────────────────────────────────────
-    print("\n[META ADS]")
-    df_meta = load_meta()
-    all_months_meta = sorted(df_meta["ym"].unique())
-
-    print("  Diário...")
-    m_daily, m_last, m_all_days = meta_daily(df_meta)
-    print(f"     {len(m_daily['days'])} dias | último: {m_last}")
-
-    print("  KPIs...")
-    m_kpis = meta_kpis(df_meta, m_all_days)
-
-    print("  Mensal...")
-    m_monthly = meta_monthly(df_meta)
-
-    print("  Campanhas...")
-    m_camps = meta_camps(df_meta, m_all_days)
-
-    m_mes_days = meta_mes_days(df_meta)
-
-    print("  Criativos...")
     img_dir = Path("imgs")
     img_dir.mkdir(exist_ok=True)
-    m_ads = meta_ads(df_meta, img_dir, m_all_days)
+    if META_ADS:
+        print("\n[META ADS]")
+        df_meta = load_meta()
+        all_months_meta = sorted(df_meta["ym"].unique())
 
-    print("  Breakdowns...")
-    df_meta_ga = load_meta_ga()
-    df_meta_pt = load_meta_pt()
-    m_bd = meta_breakdowns(df_meta_ga, df_meta_pt, m_all_days, all_months_meta)
+        print("  Diário...")
+        m_daily, m_last, m_all_days = meta_daily(df_meta)
+        print(f"     {len(m_daily['days'])} dias | último: {m_last}")
+
+        print("  KPIs...")
+        m_kpis = meta_kpis(df_meta, m_all_days)
+
+        print("  Mensal...")
+        m_monthly = meta_monthly(df_meta)
+
+        print("  Campanhas...")
+        m_camps = meta_camps(df_meta, m_all_days)
+
+        m_mes_days = meta_mes_days(df_meta)
+
+        print("  Criativos...")
+        m_ads = meta_ads(df_meta, img_dir, m_all_days)
+
+        print("  Breakdowns...")
+        df_meta_ga = load_meta_ga()
+        df_meta_pt = load_meta_pt()
+        m_bd = meta_breakdowns(df_meta_ga, df_meta_pt, m_all_days, all_months_meta)
+    else:
+        print("\n[META ADS] desativado")
+        m_daily   = {"days":[],"spend":[],"leads":[],"cpl":[],"ctr":[],"cpm":[]}
+        m_last    = "—"
+        m_monthly = {"meses":[],"lbl":[],"totalS":[],"totalL":[],"cplG":[],"cpmG":[],"ctrG":[]}
+        m_camps   = {}
+        m_mes_days= {}
+        m_kpis    = {}
+        m_ads     = {}
+        m_bd      = {}
 
     # ── GOOGLE ────────────────────────────────────────────────
-    print("\n[GOOGLE ADS]")
-    df_google = load_google()
+    if GOOGLE_ADS:
+        print("\n[GOOGLE ADS]")
+        df_google = load_google()
 
-    print("  Diário...")
-    g_daily, g_last, g_all_days = google_daily(df_google)
-    print(f"     {len(g_daily['days'])} dias | último: {g_last}")
+        print("  Diário...")
+        g_daily, g_last, g_all_days = google_daily(df_google)
+        print(f"     {len(g_daily['days'])} dias | último: {g_last}")
 
-    print("  KPIs...")
-    g_kpis = google_kpis(df_google, g_all_days)
+        print("  KPIs...")
+        g_kpis = google_kpis(df_google, g_all_days)
 
-    print("  Mensal...")
-    g_monthly = google_monthly(df_google)
+        print("  Mensal...")
+        g_monthly = google_monthly(df_google)
 
-    print("  Campanhas + palavras-chave...")
-    g_camps = google_camps(df_google, g_all_days)
-    g_kw    = google_keywords(df_google, g_all_days)
+        print("  Campanhas + palavras-chave...")
+        g_camps = google_camps(df_google, g_all_days)
+        g_kw    = google_keywords(df_google, g_all_days)
 
-    g_mes_days = google_mes_days(df_google)
+        g_mes_days = google_mes_days(df_google)
 
-    print("  Breakdowns...")
-    df_google_age, df_google_gen = load_google_ga()
-    g_bd = google_breakdowns(df_google_age, df_google_gen, g_all_days)
+        print("  Breakdowns...")
+        df_google_age, df_google_gen = load_google_ga()
+        g_bd = google_breakdowns(df_google_age, df_google_gen, g_all_days)
+    else:
+        print("\n[GOOGLE ADS] desativado")
+        g_daily   = {"days":[],"spend":[],"conversions":[],"cpl":[],"ctr":[],"cpc":[]}
+        g_last    = "—"
+        g_monthly = {"meses":[],"lbl":[],"totalS":[],"totalConv":[],"totalClicks":[],"totalImp":[],"cplG":[],"cpcG":[],"ctrG":[]}
+        g_camps   = {}
+        g_mes_days= {}
+        g_kpis    = {}
+        g_kw      = {}
+        g_bd      = {}
 
     # ── GERAR HTML ────────────────────────────────────────────
     print("\n[HTML]")
