@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTab">Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{--bg:#f0f2f7;--surface:#fff;--surface2:#f7f8fc;--border:rgba(0,0,0,0.07);--text:#0f1523;--muted:#6b7280;--muted2:#9ca3af;--accent:#7c3aed;--abg:#f5f3ff;--aborder:#ddd6fe;--sh:0 1px 4px rgba(0,0,0,.06);--sh2:0 2px 12px rgba(0,0,0,.08);--r:14px;}
+[data-theme="dark"]{--bg:#0a0f1e;--surface:#111827;--surface2:#1a2236;--border:rgba(255,255,255,0.08);--text:#f0f4ff;--muted:#8b95a9;--muted2:#5a6478;--abg:rgba(124,58,237,.1);--aborder:rgba(124,58,237,.3);--sh:0 1px 4px rgba(0,0,0,.3);--sh2:0 2px 12px rgba(0,0,0,.4);}
+[data-theme="dark"] .sb{background:#060b14;}
+[data-theme="dark"] .tc tbody tr.camp-row td{background:#1a2236;}
+[data-theme="dark"] .tc tbody tr.camp-row:hover td{background:#1f2d45;}
+[data-theme="dark"] .tc thead th{background:#1a2236;}
+[data-theme="dark"] .tc tbody td{color:var(--text);}
+[data-theme="dark"] .pb.active{background:#1a2236;}
+[data-theme="dark"] .cf-btn.active{background:#f0f4ff;color:#0a0f1e;}
+[data-theme="dark"] .ad-card{background:#111827;}
+[data-theme="dark"] .camp-card{background:#111827;}
+[data-theme="dark"] .conj-card{background:#1a2236;}
+[data-theme="dark"] .kpi-val{color:var(--text);}
+[data-theme="dark"] .page-title{color:var(--text);}
+[data-theme="dark"] .cc-title{color:var(--text);}
+[data-theme="dark"] .sec-hd{color:var(--text);}
+[data-theme="dark"] .mes-header{background:#1a2236;}
+[data-theme="dark"] .mes-header:hover{background:#222f45;}
+[data-theme="dark"] .camp-card{background:#111827;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;overflow-y:auto;}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:100vh;align-items:start;}
+.sb{background:#0f1523;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);}
+.logo-box{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;font-family:'Syne',sans-serif;}
+.logo-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.2;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px;}
+.sb-section{padding:16px 10px 4px;}
+.sb-sec-label{font-size:10px;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:2px;padding:0 8px 8px;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.45);font-size:12px;font-weight:500;transition:all .15s;margin-bottom:1px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);}
+.sb-item.active{background:rgba(255,255,255,.1);color:#fff;}
+.sb-item .ico{font-size:14px;width:18px;text-align:center;}
+.sb-dot{width:5px;height:5px;border-radius:50%;margin-left:auto;}
+.period-info{padding:12px 18px;}
+.pi-label{font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.pi-val{font-family:'Syne',sans-serif;font-size:13px;color:#a78bfa;font-weight:700;}
+.pi-dates{font-size:10px;color:rgba(255,255,255,.28);margin-top:2px;}
+.sb-footer{margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,.06);}
+.sb-footer div{font-size:10px;color:rgba(255,255,255,.25);margin-bottom:2px;}
+.sb-footer span{font-size:11px;color:rgba(255,255,255,.4);}
+.main{display:flex;flex-direction:column;min-height:0;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh);gap:12px;flex-wrap:wrap;}
+.topbar-l{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.page-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.live-badge{display:flex;align-items:center;gap:5px;background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.pulse{width:5px;height:5px;border-radius:50%;background:#7c3aed;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.period-bar{display:flex;gap:3px;background:var(--bg);padding:3px;border-radius:9px;flex-wrap:wrap;}
+.pb{padding:5px 11px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.pb.active{background:var(--surface);color:var(--text);box-shadow:var(--sh);}
+.content{padding:18px 24px;flex:1;}
+.page-section{display:none;}
+.page-section.active{display:block;}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,#e2e8f0);}
+.kpi-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:4px;}
+.kpi-val{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;line-height:1;color:var(--kc,var(--text));margin-bottom:3px;}
+.chart-filter{display:flex;gap:5px;margin-bottom:10px;}
+.cf-btn{padding:5px 13px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.cf-btn.active{background:#0f1523;border-color:#0f1523;color:#fff;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);min-width:0;overflow:hidden;}
+.cc-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;}
+.cc-sub{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.cw{position:relative;width:100%;overflow:hidden;max-width:100%;}
+.chart-main{margin-bottom:12px;}
+.chart-sub-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;min-width:0;}
+.section{margin-bottom:18px;}
+.sec-hd{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec-hd span{font-size:11px;font-weight:400;color:var(--muted);font-family:'DM Sans',sans-serif;}
+.stabs{display:flex;gap:5px;margin-bottom:10px;}
+.stab{padding:5px 13px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.stab.active{background:#0f1523;border-color:#0f1523;color:#fff;}
+.tpane{display:none;}
+.tpane.active{display:block;}
+.tc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);}
+.tc table{width:100%;border-collapse:collapse;}
+.tc thead th{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;padding:8px 12px;text-align:left;background:var(--surface2);border-bottom:1px solid var(--border);}
+.tc thead th.num{text-align:right;}
+.tc tbody td{padding:7px 12px;font-size:12px;border-bottom:1px solid var(--border);}
+.tc tbody tr:last-child td{border-bottom:none;}
+.tc tbody tr.camp-row{cursor:pointer;user-select:none;}
+.tc tbody tr.camp-row td{background:#f7f8fc;font-weight:700;}
+.tc tbody tr.camp-row:hover td{background:#eef0f5;}
+.tc tbody tr.conj-row td{padding:5px 12px;font-size:11px;}
+.tc tbody tr.conj-row:hover td{background:var(--surface2);}
+.tc tbody tr.conj-row.hidden{display:none;}
+.conj-name{padding-left:28px!important;border-left:2px solid #e2e8f0;color:#374151;}
+.num{text-align:right;font-family:'DM Mono',monospace;font-size:11px;}
+.cg{color:#059669;font-weight:700;} .cw2{color:#d97706;font-weight:700;} .cr{color:#dc2626;font-weight:700;}
+.camp-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:var(--sh);}
+.camp-card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;cursor:pointer;}
+.camp-card-name{font-size:12px;font-weight:700;flex:1;line-height:1.3;}
+.camp-card-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.camp-card-metric{text-align:center;}
+.camp-card-metric .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.camp-card-metric .val{font-size:12px;font-weight:700;font-family:'DM Mono',monospace;}
+.camp-card-conjs{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:none;}
+.camp-card-conjs.open{display:block;}
+.conj-card{background:var(--surface2);border-radius:6px;padding:8px;margin-bottom:4px;}
+.conj-card-name{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+.conj-card-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.ads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.ad-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s;}
+.ad-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.ad-img-wrap{width:100%;aspect-ratio:4/5;background:linear-gradient(135deg,#e5e7eb,#d1d5db);overflow:hidden;position:relative;}
+.ad-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+.ad-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#9ca3af;}
+.ad-info{padding:8px 10px;}
+.ad-name{font-size:11px;font-weight:600;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;}
+.ad-stats{display:flex;justify-content:space-between;gap:4px;}
+.as-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.as-v{font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
+.mes-accordion{margin-bottom:8px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.mes-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);cursor:pointer;user-select:none;font-weight:700;font-size:12px;}
+.mes-header:hover{background:#eef0f5;}
+.mes-header .mes-arrow{color:var(--muted);font-size:11px;transition:transform .2s;}
+.mes-header.open .mes-arrow{transform:rotate(90deg);}
+.mes-body{display:none;}
+.mes-body.open{display:block;}
+.ranking-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.rank-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--sh);}
+.rank-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;margin-bottom:10px;}
+.rank-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);}
+.rank-item:last-child{border-bottom:none;}
+.rank-num{font-size:10px;color:var(--muted2);width:16px;font-weight:700;flex-shrink:0;}
+.rank-name{flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rank-bar{width:50px;height:3px;background:var(--bg);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.rank-bar-f{height:100%;border-radius:2px;}
+.rank-val{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;flex-shrink:0;}
+@media(max-width:768px){
+  .app{grid-template-columns:1fr;}
+  .sb{display:none;position:fixed;top:0;left:0;width:260px;height:100vh;z-index:200;overflow-y:auto;}
+  .sb.open{display:flex;}
+  .mob-menu{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:18px;flex-shrink:0;}
+  .topbar{flex-wrap:wrap;gap:8px;}
+  .period-bar{flex-wrap:wrap;}
+  .kpi-strip{grid-template-columns:repeat(2,1fr)!important;}
+  .chart-sub-row{grid-template-columns:1fr!important;}
+  .ranking-row{grid-template-columns:1fr!important;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;}
+  .overlay.open{display:block;}
+  .content{padding:12px;overflow-x:hidden;}
+  .main{overflow-x:hidden;max-width:100vw;}
+  .page-section{max-width:100%;overflow-x:hidden;}
+  .chart-card{max-width:100%;overflow:hidden;}
+  .cw{max-width:100%!important;overflow:hidden;}
+  .rank-card{max-width:100%;overflow:hidden;}
+  .section{max-width:100%;overflow-x:hidden;}
+  .tc{overflow-x:auto;max-width:100%;}
+  .tc table{min-width:600px;width:max-content;}
+  #tGeralCamp,#tGeralPub,#tGGeralCamp,#tGGeralGrp,#tGGeralKw{overflow-x:auto;display:block;max-width:100%;}
+  #tGeralCamp table,#tGeralPub table,#tGGeralCamp table,#tGGeralGrp table,#tGGeralKw table{min-width:500px;width:max-content;border-collapse:collapse;}
+  .tc thead th,.tc tbody td{padding:6px 8px;white-space:nowrap;}
+  .kpi-strip{overflow:hidden;}
+  .ads-grid{grid-template-columns:repeat(2,1fr)!important;}
+}
+@media(min-width:769px){.mob-menu{display:none;}}
+
+
+.sb-platform-group{padding:4px 4px 0;}
+.sb-platform-hd{display:flex;align-items:center;gap:8px;padding:6px 10px 4px;margin-bottom:2px;}
+.sb-platform-icon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;font-family:'Syne',sans-serif;flex-shrink:0;}
+.sb-platform-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1.5px;}
+.sb-divider{height:1px;background:rgba(255,255,255,.06);margin:8px 18px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
+@media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="app">
+<aside class="sb" id="sidebar">
+  <div class="sb-logo">
+    <div class="logo-box" id="logoBox">B</div>
+    <div><div class="logo-name" id="sidebarNome"></div><div class="logo-sub">Analytics</div></div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-platform-group">
+      <div class="sb-platform-hd">
+        <div class="sb-platform-icon" style="background:linear-gradient(135deg,#1877f2,#42a5f5)">f</div>
+        <span class="sb-platform-lbl">Meta Ads</span>
+      </div>
+      <a href="#" class="sb-item active" data-page="dash" onclick="showPage('dash',this);return false;"><span class="ico">📊</span>Diário<span class="sb-dot" style="background:#1877f2"></span></a>
+      <a href="#" class="sb-item" data-page="geral" onclick="showPage('geral',this);return false;"><span class="ico">📋</span>Geral</a>
+    </div>
+    <div class="sb-platform-group" style="margin-top:8px">
+      <div class="sb-platform-hd">
+        <div class="sb-platform-icon" style="background:linear-gradient(135deg,#fbbc04,#ea4335)">G</div>
+        <span class="sb-platform-lbl">Google Ads</span>
+      </div>
+      <a href="#" class="sb-item" data-page="gdash" onclick="showPage('gdash',this);return false;"><span class="ico">📊</span>Diário<span class="sb-dot" style="background:#fbbc04"></span></a>
+      <a href="#" class="sb-item" data-page="ggeral" onclick="showPage('ggeral',this);return false;"><span class="ico">📋</span>Geral</a>
+    </div>
+  </div>
+  <div class="period-info" style="margin-top:12px;">
+    <div class="pi-label">Período ativo</div>
+    <div class="pi-val" id="sbPeriod">Últimos 30 dias</div>
+    <div class="pi-dates" id="sbDates"></div>
+  </div>
+  <div class="sb-footer">
+    <div>Última atualização</div>
+    <span>--/---- · via planilha</span>
+  </div>
+</aside>
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="mob-menu" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">Dashboard Diário</div>
+      <div class="live-badge"><div class="pulse"></div><span id="liveBadgeDate">Dados até --/--</span></div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+      <div class="period-bar" id="pbDash">
+        <button class="pb" onclick="setPeriod(1,'Ontem',this)">Ontem</button>
+        <button class="pb" onclick="setPeriod(7,'7 dias',this)">7 dias</button>
+        <button class="pb" onclick="setPeriod(14,'14 dias',this)">14 dias</button>
+        <button class="pb active" onclick="setPeriod(30,'30 dias',this)">30 dias</button>
+        <select class="pb" id="mesSelect" onchange="setPeriodMes(this.value, this.options[this.selectedIndex].text, this)">
+          <option value="">Meses</option>
+        </select>
+      </div>
+      <div class="period-bar" id="pbGeral" style="display:none;">
+        <button class="pb active" onclick="setGeralQ('all',this)">Tudo</button>
+      </div>
+      <div class="period-bar" id="pbGDash" style="display:none;">
+        <button class="pb" onclick="setGPeriod(1,'Ontem',this)">Ontem</button>
+        <button class="pb" onclick="setGPeriod(7,'7 dias',this)">7 dias</button>
+        <button class="pb" onclick="setGPeriod(14,'14 dias',this)">14 dias</button>
+        <button class="pb active" onclick="setGPeriod(30,'30 dias',this)">30 dias</button>
+        <select class="pb" id="gMesSelect" onchange="setGPeriodMes(this.value,this.options[this.selectedIndex].text,this)">
+          <option value="">Meses</option>
+        </select>
+      </div>
+      <div class="period-bar" id="pbGGeral" style="display:none;">
+        <button class="pb active" onclick="setGGeralQ('all',this)">Tudo</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;white-space:nowrap;" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- DASHBOARD PAGE -->
+    <div class="page-section active" id="page-dash">
+      <div class="kpi-strip" id="kpiStrip"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted)">Gráficos do período selecionado</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
+          <input type="checkbox" id="chkLabels" onchange="toggleLabels(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#7c3aed;">
+          Rótulos
+        </label>
+      </div>
+      <div class="chart-main">
+        <div class="chart-card">
+          <div class="cc-title">Conversões · Investimento · Custo por Conversão</div>
+          <div class="cc-sub">Conversões (colunas) · Investimento (linha roxa) · CPL (linha tracejada)</div>
+          <div class="cw" style="height:210px"><canvas id="chMain"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-sub-row">
+        <div class="chart-card">
+          <div class="cc-title">CTR Diário (%)</div>
+          <div class="cc-sub">Taxa de cliques nos links</div>
+          <div class="cw" style="height:160px"><canvas id="chCTR"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">CPM Diário (R$)</div>
+          <div class="cc-sub">Custo por 1.000 impressões</div>
+          <div class="cw" style="height:160px"><canvas id="chCPM"></canvas></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Campanhas <span id="campLbl">— últimos 30 dias</span></div>
+        <div id="campContainer"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Criativos <span id="adsLbl">— período selecionado</span></div>
+        <div class="ads-grid" id="agALL"></div>
+      </div>
+      <div class="section" id="breakdownSection">
+        <div class="sec-hd">Análise por Segmento <span id="breakdownLbl">— período selecionado</span></div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#fefce8;border:1px solid #fde047;color:#854d0e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:14px;">
+          <span>⚠️</span> Dados a nível de conta
+        </div>
+        <div style="display:grid;gap:16px;">
+          <div class="chart-card"><div class="cc-title">📊 Por Faixa Etária</div><div id="bdAge"></div></div>
+          <div class="chart-card"><div class="cc-title">👤 Por Gênero</div><div id="bdGender"></div></div>
+          <div class="chart-card"><div class="cc-title">📱 Por Posicionamento</div><div id="bdPlatform"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DADOS GERAIS PAGE -->
+    <div class="page-section" id="page-geral">
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px;">Dados Gerais da Conta</div>
+        <div style="font-size:12px;color:var(--muted);" id="metaHistoricaRange">Análise histórica · dados reais da planilha</div>
+      </div>
+      <div class="kpi-strip" id="geralKpis"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted)">Gráficos do período selecionado</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
+          <input type="checkbox" id="chkLabelsGeral" onchange="toggleLabelsGeral(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#1877f2;">
+          Rótulos
+        </label>
+      </div>
+      <div class="chart-card" style="margin-bottom:12px;">
+        <div class="cc-title">Conversões · Investimento · CPL Mensal</div>
+        <div class="cc-sub" id="geralSub">Conversões (barras azuis) · Investimento (linha verde) · CPL (linha preta tracejada)</div>
+        <div class="cw" style="height:220px"><canvas id="chGeralMensal"></canvas></div>
+      </div>
+      <div class="chart-sub-row">
+        <div class="chart-card">
+          <div class="cc-title">CPM Mensal (R$)</div>
+          <div class="cc-sub">Custo por 1.000 impressões</div>
+          <div class="cw" style="height:170px"><canvas id="chGeralCPM"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">CTR Mensal (%)</div>
+          <div class="cc-sub">Taxa de cliques nos links</div>
+          <div class="cw" style="height:170px"><canvas id="chGeralCTR"></canvas></div>
+        </div>
+      </div>
+      <div class="sec-hd" style="margin-top:4px;">Rankings <span id="rankLbl">— todos os meses</span></div>
+      <div class="ranking-row">
+        <div class="rank-card">
+          <div class="rank-title">🏆 Melhores Meses por CPL</div>
+          <div id="rankCPL"></div>
+        </div>
+        <div class="rank-card">
+          <div class="rank-title">📈 Maior Volume de Conversões</div>
+          <div id="rankLeads"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Campanhas <span id="geralCampLbl">— todos os meses</span></div>
+        <div class="tc" id="tGeralCamp"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Conjuntos <span id="geralPubLbl">— todos os meses</span></div>
+        <div class="tc" id="tGeralPub"></div>
+      </div>
+    </div>
+
+    <!-- GOOGLE DIÁRIO PAGE -->
+    <div class="page-section" id="page-gdash">
+      <div class="kpi-strip" id="gKpiStrip"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted)">Gráficos do período selecionado</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
+          <input type="checkbox" id="chkLabelsG" onchange="toggleLabelsG(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#fbbc04;">
+          Rótulos
+        </label>
+      </div>
+      <div class="chart-main">
+        <div class="chart-card">
+          <div class="cc-title">Conversões · Investimento · CPL</div>
+          <div class="cc-sub">Conversões (barras amarelas) · Investimento (linha verde) · CPL (linha tracejada)</div>
+          <div class="cw" style="height:210px"><canvas id="chGMain"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-sub-row">
+        <div class="chart-card">
+          <div class="cc-title">CTR Diário (%)</div>
+          <div class="cc-sub">Cliques ÷ Impressões</div>
+          <div class="cw" style="height:160px"><canvas id="chGCTR"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">CPC Diário (R$)</div>
+          <div class="cc-sub">Custo por clique</div>
+          <div class="cw" style="height:160px"><canvas id="chGCPC"></canvas></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Campanhas <span id="gCampLbl">— últimos 30 dias</span></div>
+        <div id="gCampContainer"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Palavras-chave <span id="gKwLbl">— período selecionado</span></div>
+        <div class="tc" id="gKwTable"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Análise por Segmento <span style="font-size:11px;font-weight:400;color:var(--muted)">&nbsp;— dados de conta</span></div>
+        <div style="display:grid;gap:16px;">
+          <div class="chart-card"><div class="cc-title">📊 Por Faixa Etária</div><div id="gBdAge"></div></div>
+          <div class="chart-card"><div class="cc-title">👤 Por Gênero</div><div id="gBdGender"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOOGLE GERAL PAGE -->
+    <div class="page-section" id="page-ggeral">
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px;">Google Ads — Dados Gerais</div>
+        <div style="font-size:12px;color:var(--muted);" id="googleHistoricaRange">Análise histórica · dados reais</div>
+      </div>
+      <div class="kpi-strip" id="gGeralKpis"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted)">Gráficos do período selecionado</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
+          <input type="checkbox" id="chkLabelsGG" onchange="toggleLabelsGG(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#fbbc04;">
+          Rótulos
+        </label>
+      </div>
+      <div class="chart-card" style="margin-bottom:12px;">
+        <div class="cc-title">Conversões · Investimento · CPL Mensal</div>
+        <div class="cc-sub">Conversões (barras amarelas) · Investimento (linha verde) · CPL (linha tracejada)</div>
+        <div class="cw" style="height:220px"><canvas id="chGGeralMensal"></canvas></div>
+      </div>
+      <div class="chart-sub-row">
+        <div class="chart-card">
+          <div class="cc-title">CPC Mensal (R$)</div>
+          <div class="cc-sub">Custo por clique</div>
+          <div class="cw" style="height:170px"><canvas id="chGGeralCPC"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">CTR Mensal (%)</div>
+          <div class="cc-sub">Taxa de cliques</div>
+          <div class="cw" style="height:170px"><canvas id="chGGeralCTR"></canvas></div>
+        </div>
+      </div>
+      <div class="sec-hd" style="margin-top:4px;">Rankings <span id="gRankLbl">— todos os meses</span></div>
+      <div class="ranking-row">
+        <div class="rank-card">
+          <div class="rank-title">🏆 Melhores Meses por CPL</div>
+          <div id="gRankCPL"></div>
+        </div>
+        <div class="rank-card">
+          <div class="rank-title">📈 Maior Volume de Conversões</div>
+          <div id="gRankConv"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Campanhas <span id="gGeralCampLbl">— todos os meses</span></div>
+        <div class="tc" id="tGGeralCamp"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Grupos de Anúncios <span id="gGeralGrpLbl">— todos os meses</span></div>
+        <div class="tc" id="tGGeralGrp"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Palavras-chave <span id="gGeralKwLbl">— todos os meses</span></div>
+        <div class="tc" id="tGGeralKw"></div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+// ═══ DADOS REAIS ═══════════════════════════════════════
+const KPIS_PERIODO={};
+const BREAKDOWN_DATA={};
+const ADS_DATA={};
+const DAILY={"days":[],"spend":[],"leads":[],"cpl":[],"ctr":[],"cpm":[]};
+const MES_DAYS={};
+const MONTHLY={"meses":[],"lbl":[],"totalS":[],"totalL":[],"cplG":[],"cpmG":[],"ctrG":[]};
+const CAMPS_MES={};
+const GDAILY={"days":[],"spend":[],"conversions":[],"cpl":[],"ctr":[],"cpc":[]};
+const GKPIS_PERIODO={};
+const GMONTHLY={"meses":[],"lbl":[],"totalS":[],"totalConv":[],"totalClicks":[],"totalImp":[],"cplG":[],"cpcG":[],"ctrG":[]};
+const GCAMPS_MES={};
+const GMES_DAYS={};
+const GKEYWORDS_DATA={};
+const GBD={};
+
+
+// ═══ CONFIG DO CLIENTE ════════════════════════════════
+const CONFIG = {
+  meta: {
+    cplBom:   0,   // CPL ≤ este valor → verde
+    cplMedio: 0,   // CPL ≤ este valor → amarelo (acima → vermelho)
+  },
+  google: {
+    cplBom:   0,   // CPL ≤ este valor → verde
+    cplMedio: 0,   // CPL ≤ este valor → amarelo (acima → vermelho)
+  },
+};
+
+const GOOGLE_ATIVO=true; // controlado pelo gerador.py
+const META_ATIVO=true; // controlado pelo gerador.py
+const LOGO_LETRA='?'; // controlado pelo gerador.py
+const COR_ACENTO='#334155'; // controlado pelo gerador.py
+const NOME_CLIENTE='Cliente'; // controlado pelo gerador.py
+
+// ═══ ESTADO ════════════════════════════════════════════
+let period=30,mesMode=null,showLabels=false,showLabelsGeral=false,geralQ='all';
+
+function initDynamicControls(){
+  const sel=document.getElementById('mesSelect');
+  if(!sel)return;
+  while(sel.options.length>1) sel.remove(1);
+  const months=[...MONTHLY.meses].reverse();
+  const lbls=[...MONTHLY.lbl].reverse();
+  months.forEach((ym,i)=>{
+    if(!CAMPS_MES[ym]||CAMPS_MES[ym].length===0) return;
+    const opt=document.createElement('option');
+    opt.value=ym; opt.textContent=lbls[i];
+    sel.appendChild(opt);
+  });
+  const pb=document.getElementById('pbGeral');
+  if(!pb)return;
+  while(pb.children.length>1) pb.removeChild(pb.lastChild);
+}
+
+const CH={};
+Chart.register(ChartDataLabels);
+const ACCENT='#2563eb', ACCENT2='#3b82f6', GR='#6b7280', BL='#2563eb';
+const GRID='rgba(0,0,0,0.05)', TXT='#9ca3af';
+function getChartColors(){
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  return {txt:dark?'#8b95a9':'#9ca3af',grid:dark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.05)',tooltip:dark?'#1a2236':'#0f1523'};
+}
+const bf={family:"'DM Sans',sans-serif",size:10};
+function sm(a){return a.reduce((s,v)=>(s||0)+(v||0),0);}
+function av(a){const v=a.filter(x=>x!=null&&x>0);return v.length?v.reduce((s,x)=>s+x,0)/v.length:0;}
+function cc(v){return v==null?GR:v<=CONFIG.meta.cplBom?'#059669':v<=CONFIG.meta.cplMedio?'#d97706':'#dc2626';}
+function cls(v){return v==null?'':v<=CONFIG.meta.cplBom?'cg':v<=CONFIG.meta.cplMedio?'cw2':'cr';}
+function fR(v){if(v==null||isNaN(v))return '—';return 'R$'+Number(v).toFixed(2).replace('.',',');}
+function fR2(v){if(v==null||isNaN(v))return '—';return 'R$'+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fN(v){return Number(v).toLocaleString('pt-BR');}
+function fGC(v){return v==null||v===0?'—':String(Math.round(v));}
+function calcImp(obj){return obj.imp!=null?obj.imp:(obj.cpm&&obj.cpm>0?Math.round(obj.spend/obj.cpm*1000):null);}
+function calcClicks(obj){const imp=calcImp(obj);return obj.clicks!=null?obj.clicks:(imp&&obj.ctr?Math.round(imp*obj.ctr/100):null);}
+function fImp(obj){const v=calcImp(obj);return v!=null?fN(v):'—';}
+function fClk(obj){const v=calcClicks(obj);return v!=null?fN(v):'—';}
+function getDlColor(){return document.documentElement.getAttribute('data-theme')==='dark'?'#ffffff':'#111827';}
+function bo(){
+  const cc2=getChartColors();
+  return{responsive:true,maintainAspectRatio:false,resizeDelay:50,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:cc2.txt,font:bf,boxWidth:9,padding:10}},tooltip:{backgroundColor:cc2.tooltip,borderColor:'rgba(255,255,255,.08)',borderWidth:1,titleFont:{size:10},bodyFont:{size:10},mode:'index',intersect:false},datalabels:{display:false}},scales:{x:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}},y:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}}}};}
+function dc(id){if(CH[id]){CH[id].destroy();delete CH[id];}}
+
+function showPage(p,btn){
+  document.querySelectorAll('.page-section').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(btn&&btn.classList&&btn.classList.contains('sb-item')) btn.classList.add('active');
+  const titles={dash:'Meta Ads — Diário',geral:'Meta Ads — Dados Gerais',gdash:'Google Ads — Diário',ggeral:'Google Ads — Dados Gerais'};
+  document.getElementById('pageTitle').textContent=titles[p]||p;
+  document.getElementById('pbDash').style.display=p==='dash'?'flex':'none';
+  document.getElementById('pbGeral').style.display=p==='geral'?'flex':'none';
+  document.getElementById('pbGDash').style.display=p==='gdash'?'flex':'none';
+  document.getElementById('pbGGeral').style.display=p==='ggeral'?'flex':'none';
+  if(p==='geral') renderGeral();
+  if(p==='gdash') renderGDash();
+  if(p==='ggeral') renderGGeral();
+  updateMobNav(p);
+  if(window.innerWidth<=768) closeSidebar();
+  // Forçar resize dos charts após a página ficar visível
+  setTimeout(()=>{
+    Object.values(CH).forEach(ch=>{try{ch.resize();}catch(e){}});
+  }, 50);
+}
+
+function setPeriod(n,lbl,btn){
+  period=n; mesMode=null;
+  document.querySelectorAll('#pbDash .pb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sbPeriod').textContent=n===1?lbl:'Últimos '+lbl;
+  render();
+}
+function setPeriodMes(ym,lbl,btn){
+  if(!ym) return;
+  mesMode=ym;
+  document.querySelectorAll('#pbDash .pb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sbPeriod').textContent=lbl;
+  render();
+}
+function toggleLabels(checked){showLabels=checked;render();}
+function toggleLabelsGeral(checked){showLabelsGeral=checked;renderGeral();}
+function setGeralQ(q,btn){
+  geralQ=q;
+  document.querySelectorAll('#pbGeral .pb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGeral();
+}
+
+function getIdxs(){
+  if(mesMode){
+    const ds=MES_DAYS[mesMode]||[];
+    return DAILY.days.map((d,i)=>ds.includes(d)?i:-1).filter(i=>i>=0);
+  }
+  return DAILY.days.map((_,i)=>i).slice(-Math.min(period,DAILY.days.length));
+}
+function sl(arr,idxs){return idxs.map(i=>arr[i]);}
+function getCampKey(){
+  if(mesMode) return mesMode;
+  return String(period);
+}
+
+function render(){
+  const idxs=getIdxs();
+  const days=sl(DAILY.days,idxs), spend=sl(DAILY.spend,idxs), leads=sl(DAILY.leads,idxs);
+  const cpl=sl(DAILY.cpl,idxs), ctr=sl(DAILY.ctr,idxs), cpm=sl(DAILY.cpm,idxs);
+
+  const kKey=mesMode||String(period);
+  const K=KPIS_PERIODO[kKey]||{};
+  const tS=(K.spend!=null)?K.spend:sm(spend);
+  const tL=(K.leads!=null)?K.leads:sm(leads);
+  const avgCPL=K.cpl!=null?K.cpl:(tL>0?tS/tL:0);
+  const avgCTR=K.ctr!=null?K.ctr:av(ctr);
+  const avgCPM=K.cpm!=null?K.cpm:av(cpm);
+
+  if(days.length){
+    document.getElementById('sbDates').textContent=days[0]+(days.length>1?' → '+days[days.length-1]:'');
+  }
+
+  document.getElementById('kpiStrip').innerHTML=`
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento</div><div class="kpi-val" style="font-size:15px">${fR2(tS)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Conversões</div><div class="kpi-val">${fN(tL)}</div></div>
+    <div class="kpi" style="--kc:${cc(avgCPL)}"><div class="kpi-lbl">Custo / Conversão</div><div class="kpi-val">${fR(avgCPL)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR Médio</div><div class="kpi-val">${avgCTR?avgCTR.toFixed(2)+'%':'—'}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPM Médio</div><div class="kpi-val">${fR(avgCPM)}</div></div>`;
+
+  // Main chart — leads (bars) + spend (line green) + cpl (line black dashed)
+  dc('chMain');
+  const spDs={label:'Invest.',data:spend,borderColor:'#059669',backgroundColor:'transparent',tension:.3,pointRadius:2,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,
+    datalabels:{display:false}};
+  const cplDs={label:'CPL',data:cpl,borderColor:document.documentElement.getAttribute('data-theme')==='dark'?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:2,borderWidth:1.5,tension:.3,spanGaps:false,type:'line',yAxisID:'y2',
+    datalabels:{display:showLabels,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null&&v>0?'R$'+v.toFixed(1):null,color:document.documentElement.getAttribute('data-theme')==='dark'?'#f9fafb':'#111827',clip:false}};
+  const leadsDs={label:'Conversões',data:leads,backgroundColor:'rgba(24,119,242,.75)',stack:'s',borderRadius:2,type:'bar',datalabels:{display:showLabels,color:'#1877f2',font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?fN(v):null,clip:false}};
+
+  CH['chMain']=new Chart(document.getElementById('chMain'),{data:{labels:days,datasets:[leadsDs,spDs,cplDs]},options:{...bo(),scales:{
+    x:{ticks:{color:TXT,font:bf,maxTicksLimit:12},grid:{color:'rgba(0,0,0,0.04)'}},
+    y:{ticks:{color:TXT,font:bf},grid:{color:'rgba(0,0,0,0.04)'}},
+    y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'R$'+v.toLocaleString()},grid:{display:false}},
+    y2:{position:'right',ticks:{color:'#374151',font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{display:false},offset:true},
+  }}});
+
+  dc('chCTR');
+  CH['chCTR']=new Chart(document.getElementById('chCTR'),{type:'line',data:{labels:days,datasets:[{label:'CTR',data:ctr,borderColor:BL,backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:showLabels,color:BL,font:{size:9,weight:'bold'},formatter:v=>v!=null?v.toFixed(1)+'%':null,anchor:'top',align:'top',offset:2}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+
+  dc('chCPM');
+  CH['chCPM']=new Chart(document.getElementById('chCPM'),{type:'line',data:{labels:days,datasets:[{label:'CPM',data:cpm,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:showLabels,color:'#2563eb',font:{size:9,weight:'bold'},formatter:v=>v!=null?'R$'+v.toFixed(0):null,anchor:'top',align:'top',offset:2}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(0)},grid:{color:GRID},min:0}}}});
+
+  const ym=getCampKey();
+  const mesLbls={'2026-04':'Abr/26','2026-03':'Mar/26','2026-02':'Fev/26','2026-01':'Jan/26'};
+  const lbl=mesMode?(mesLbls[mesMode]||mesMode):`últimos ${period} dias`;
+  document.getElementById('campLbl').textContent=`— ${lbl}`;
+  buildCampTable();
+  buildAds();
+  buildBreakdowns();
+}
+
+// ═══ CAMP TABLE ════════════════════════════════════════
+const OPEN=new Set();
+function buildCampTable(){
+  const ym=getCampKey();
+  const data=CAMPS_MES[ym]||CAMPS_MES['30']||[];
+  const tbl=document.getElementById('campContainer');
+
+  if(window.innerWidth<=768){
+    let cards='';
+    data.forEach((c,i)=>{
+      const cid=`c${ym.replace('-','')}${i}`;
+      const hasConjs=c.conjs&&c.conjs.length>0;
+      cards+=`<div class="camp-card">
+        <div class="camp-card-hd" onclick="toggleCard('${cid}')">
+          <div class="camp-card-name">${c.n}</div>
+          ${hasConjs?`<span style="color:var(--muted);font-size:12px">${OPEN.has(cid)?'▼':'▶'}</span>`:''}
+        </div>
+        <div class="camp-card-metrics">
+          <div class="camp-card-metric"><div class="lbl">Invest.</div><div class="val">${fR(c.spend)}</div></div>
+          <div class="camp-card-metric"><div class="lbl">Conversões</div><div class="val">${fN(c.leads)}</div></div>
+          <div class="camp-card-metric"><div class="lbl">CPL</div><div class="val ${cls(c.cpl)}">${fR(c.cpl)}</div></div>
+        </div>
+        ${hasConjs?`<div class="camp-card-conjs ${OPEN.has(cid)?'open':''}" id="conj-${cid}">
+          ${c.conjs.map((j,ji)=>`<div class="conj-card">
+            <div class="conj-card-name">↳ ${j.n}</div>
+            <div class="conj-card-metrics">
+              <div class="camp-card-metric"><div class="lbl">Invest.</div><div class="val">${fR(j.spend)}</div></div>
+              <div class="camp-card-metric"><div class="lbl">Conv.</div><div class="val">${fN(j.leads)}</div></div>
+              <div class="camp-card-metric"><div class="lbl">CPL</div><div class="val ${cls(j.cpl)}">${fR(j.cpl)}</div></div>
+            </div>
+          </div>`).join('')}
+        </div>`:''}
+      </div>`;
+    });
+    tbl.innerHTML=cards;
+    return;
+  }
+
+  let rows='';
+  data.forEach((c,i)=>{
+    const cid=`c${ym.replace('-','')}${i}`;
+    const hasMulti=c.conjs&&c.conjs.length>1;
+    rows+=`<tr class="camp-row" onclick="toggleC('${cid}')">
+      <td style="width:20px;text-align:center;color:var(--muted2);font-size:11px">${hasMulti?(OPEN.has(cid)?'▼':'▶'):''}</td>
+      <td style="font-weight:700;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
+      <td class="num">${fR(c.spend)}</td>
+      <td class="num">${fN(c.leads)}</td>
+      <td class="num ${cls(c.cpl)}">${fR(c.cpl)}</td>
+      <td class="num" style="color:var(--muted2)">${fImp(c)}</td>
+      <td class="num" style="color:var(--muted2)">${fClk(c)}</td>
+      <td class="num">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
+      <td class="num">${fR(c.cpm)}</td>
+    </tr>`;
+    if(c.conjs){
+      c.conjs.forEach((j,ji)=>{
+        const jid=`${cid}j${ji}`;
+        const hidden=!OPEN.has(cid)?'hidden':'';
+        rows+=`<tr class="conj-row ${hidden}" data-cid="${cid}">
+          <td style="text-align:center;color:#d1d5db;font-size:11px">↳</td>
+          <td class="conj-name">${j.n}</td>
+          <td class="num" style="color:var(--muted2)">${fR(j.spend)}</td>
+          <td class="num" style="color:var(--muted2)">${fN(j.leads)}</td>
+          <td class="num ${cls(j.cpl)}">${fR(j.cpl)}</td>
+          <td class="num" style="color:var(--muted2)">${fImp(j)}</td>
+          <td class="num" style="color:var(--muted2)">${fClk(j)}</td>
+          <td class="num">${j.ctr!=null?j.ctr.toFixed(2)+'%':'—'}</td>
+          <td class="num">${fR(j.cpm)}</td>
+        </tr>`;
+        if(j.ads){
+          j.ads.forEach((ad,ai)=>{
+            const adHidden=(!OPEN.has(cid)||!OPEN.has(jid))?'hidden':'';
+            rows+=`<tr class="conj-row ${adHidden}" data-cid="${cid}" data-jid="${jid}">
+              <td style="text-align:center;color:#e2e8f0;font-size:10px;padding-left:8px">↳↳</td>
+              <td style="padding-left:44px;font-size:11px;color:var(--muted);border-left:2px solid #e2e8f0;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ad.n}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fR(ad.spend)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fN(ad.leads)}</td>
+              <td class="num ${cls(ad.cpl)}" style="font-size:10px">${fR(ad.cpl)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fImp(ad)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fClk(ad)}</td>
+              <td class="num" style="font-size:10px">${ad.ctr!=null?ad.ctr.toFixed(2)+'%':'—'}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fR(ad.cpm)}</td>
+            </tr>`;
+          });
+        }
+      });
+    }
+  });
+
+  tbl.innerHTML=`<div class="tc"><table>
+    <thead><tr><th style="width:20px"></th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+
+}
+
+function toggleC(id){
+  const rows=document.querySelectorAll(`[data-cid="${id}"]`);
+  const isOpen=OPEN.has(id);
+  if(isOpen){OPEN.delete(id);rows.forEach(r=>r.classList.add('hidden'));}
+  else{OPEN.add(id);rows.forEach(r=>r.classList.remove('hidden'));}
+  document.querySelectorAll('.camp-row').forEach(tr=>{
+    if(tr.getAttribute('onclick')===`toggleC('${id}')`){
+      const td=tr.querySelector('td:first-child');
+      if(td)td.textContent=OPEN.has(id)?'▼':'▶';
+    }
+  });
+}
+function toggleCard(id){
+  const el=document.getElementById('conj-'+id);
+  if(!el)return;
+  const isOpen=OPEN.has(id);
+  if(isOpen){OPEN.delete(id);el.classList.remove('open');}
+  else{OPEN.add(id);el.classList.add('open');}
+}
+
+// ═══ ADS GRID ════════════════════════════════════════
+function buildAds(){
+  const aKey=mesMode||String(period);
+  const list=ADS_DATA[aKey]||ADS_DATA['30']||[];
+  const el=document.getElementById('agALL');
+  if(!el) return;
+  el.innerHTML='';
+  if(list.length===0){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:12px">Nenhum criativo disponível</div>';
+    return;
+  }
+  list.forEach(ad=>{
+    const d=document.createElement('div'); d.className='ad-card';
+    const img=ad.thumb?`<div class="ad-img-wrap"><img src="${ad.thumb}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'ad-img-placeholder\'>🖼️</div>'"></div>`:'<div class="ad-img-wrap"><div class="ad-img-placeholder">🖼️</div></div>';
+    d.innerHTML=`${img}<div class="ad-info"><div class="ad-name">${ad.n}</div><div class="ad-stats"><div><div class="as-l">Conv.</div><div class="as-v">${fN(ad.leads)}</div></div><div><div class="as-l">CTR</div><div class="as-v">${ad.ctr!=null?ad.ctr.toFixed(2)+'%':'—'}</div></div><div><div class="as-l">CPL</div><div class="as-v" style="color:${cc(ad.cpl)}">${fR(ad.cpl)}</div></div></div></div>`;
+    el.appendChild(d);
+  });
+}
+
+// ═══ DADOS GERAIS ════════════════════════════════════
+function renderGeral(){
+  const lbl=MONTHLY.lbl, totalS=MONTHLY.totalS, totalL=MONTHLY.totalL, cplG=MONTHLY.cplG;
+  const cpmG=MONTHLY.cpmG||[], ctrG=MONTHLY.ctrG||[];
+  const qlbl='Todos os meses';
+  document.getElementById('geralSub').textContent='Conversões (barras azuis) · Investimento (linha verde) · CPL (linha preta tracejada)';
+  document.getElementById('rankLbl').textContent='— '+qlbl;
+  document.getElementById('geralCampLbl').textContent='— '+qlbl;
+  document.getElementById('geralPubLbl').textContent='— '+qlbl;
+
+  const tS=totalS.reduce((a,b)=>a+b,0), tL=totalL.reduce((a,b)=>a+b,0);
+  const avgCpmG=cpmG.filter(v=>v!=null&&v>0).reduce((a,b)=>a+b,0)/(cpmG.filter(v=>v!=null&&v>0).length||1);
+  const avgCtrG=ctrG.filter(v=>v!=null&&v>0).reduce((a,b)=>a+b,0)/(ctrG.filter(v=>v!=null&&v>0).length||1);
+  document.getElementById('geralKpis').innerHTML=`
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento Total</div><div class="kpi-val">R$${(tS/1000).toFixed(1)}k</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Total Conversões</div><div class="kpi-val">${fN(tL)}</div></div>
+    <div class="kpi" style="--kc:${cc(tL>0?tS/tL:0)}"><div class="kpi-lbl">CPL Geral</div><div class="kpi-val">${fR(tL>0?tS/tL:0)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPM Médio</div><div class="kpi-val">${fR(avgCpmG)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR Médio</div><div class="kpi-val">${avgCtrG?avgCtrG.toFixed(2)+'%':'—'}</div></div>`;
+
+  // Gráfico combinado: Conversões (barras azuis) + Investimento (linha verde) + CPL (linha preta tracejada)
+  dc('chGeralMensal');
+  const gSpDs={label:'Invest.',data:totalS,borderColor:'#059669',backgroundColor:'transparent',tension:.35,pointRadius:4,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,datalabels:{display:false}};
+  const gCplDs={label:'CPL',data:cplG,borderColor:document.documentElement.getAttribute('data-theme')==='dark'?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:3,borderWidth:1.5,tension:.35,spanGaps:false,type:'line',yAxisID:'y2',datalabels:{display:showLabelsGeral,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(1):null,color:document.documentElement.getAttribute('data-theme')==='dark'?'#f9fafb':'#111827',clip:false}};
+  const gLeadsDs={label:'Conversões',data:totalL,backgroundColor:'rgba(24,119,242,.75)',borderRadius:4,type:'bar',datalabels:{display:showLabelsGeral,color:'#1877f2',font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?fN(v):null,clip:false}};
+  CH['chGeralMensal']=new Chart(document.getElementById('chGeralMensal'),{data:{labels:lbl,datasets:[gLeadsDs,gSpDs,gCplDs]},options:{...bo(),scales:{
+    x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},
+    y:{ticks:{color:TXT,font:bf},grid:{color:GRID}},
+    y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'R$'+v.toLocaleString()},grid:{display:false}},
+    y2:{position:'right',ticks:{color:document.documentElement.getAttribute('data-theme')==='dark'?'#9ca3af':'#374151',font:bf,callback:v=>'R$'+v.toFixed(1)},grid:{display:false},offset:true},
+  }}});
+
+  // CPM mensal
+  dc('chGeralCPM');
+  CH['chGeralCPM']=new Chart(document.getElementById('chGeralCPM'),{type:'line',data:{labels:lbl,datasets:[{label:'CPM',data:cpmG,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:showLabelsGeral,color:'#2563eb',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(2):null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
+
+  // CTR mensal
+  dc('chGeralCTR');
+  CH['chGeralCTR']=new Chart(document.getElementById('chGeralCTR'),{type:'line',data:{labels:lbl,datasets:[{label:'CTR',data:ctrG,borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:showLabelsGeral,color:'#7c3aed',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?v.toFixed(2)+'%':null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+
+  const withData=lbl.map((l,i)=>({l,cpl:cplG[i],leads:totalL[i]})).filter(m=>m.cpl!=null&&m.leads>0);
+  const bCPL=[...withData].sort((a,b)=>a.cpl-b.cpl).slice(0,6);
+  const bLeads=[...withData].sort((a,b)=>b.leads-a.leads).slice(0,6);
+  const mxL=Math.max(...bLeads.map(m=>m.leads),1);
+  const mnC=Math.min(...bCPL.map(m=>m.cpl),0), mxC=Math.max(...bCPL.map(m=>m.cpl),1);
+  document.getElementById('rankCPL').innerHTML=bCPL.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round((1-(m.cpl-mnC)/(mxC-mnC||1))*100)}%;background:#059669"></div></div><div class="rank-val ${cls(m.cpl)}">${fR(m.cpl)}</div></div>`).join('');
+  document.getElementById('rankLeads').innerHTML=bLeads.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round(m.leads/mxL*100)}%;background:${BL}"></div></div><div class="rank-val" style="color:${BL}">${fN(m.leads)}</div></div>`).join('');
+
+  buildGeralCampTable();
+  buildGeralPubTable();
+}
+
+function buildGeralCampTable(){
+  const map={};
+  MONTHLY.meses.forEach(ym=>{
+    (CAMPS_MES[ym]||[]).forEach(c=>{
+      if(!map[c.n]) map[c.n]={n:c.n,spend:0,leads:0,imp:0,clicks:0};
+      map[c.n].spend+=c.spend; map[c.n].leads+=c.leads;
+      // usa imp/clicks diretos se disponíveis, senão estima de cpm/ctr
+      const estImp=c.imp>0?c.imp:(c.cpm&&c.cpm>0?Math.round(c.spend/c.cpm*1000):0);
+      const estClk=c.clicks>0?c.clicks:(estImp&&c.ctr?Math.round(estImp*c.ctr/100):0);
+      map[c.n].imp+=estImp; map[c.n].clicks+=estClk;
+    });
+  });
+  const all=Object.values(map).map(c=>({...c,cpl:c.leads>0?c.spend/c.leads:null,ctr:c.imp>0?c.clicks/c.imp*100:null,cpm:c.imp>0?c.spend/c.imp*1000:null})).sort((a,b)=>b.leads-a.leads).slice(0,15);
+  document.getElementById('tGeralCamp').innerHTML=`<table>
+    <thead><tr><th>#</th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${all.map((c,i)=>`<tr>
+      <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
+      <td class="num">${fR(c.spend)}</td>
+      <td class="num">${fN(c.leads)}</td>
+      <td class="num ${cls(c.cpl)}">${fR(c.cpl)}</td>
+      <td class="num" style="color:var(--muted2)">${c.imp>0?fN(c.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${c.clicks>0?fN(c.clicks):'—'}</td>
+      <td class="num">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${fR(c.cpm)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function buildGeralPubTable(){
+  const map={};
+  MONTHLY.meses.forEach(ym=>{
+    (CAMPS_MES[ym]||[]).forEach(c=>{
+      (c.conjs||[]).forEach(j=>{
+        if(!map[j.n]) map[j.n]={n:j.n,spend:0,leads:0,imp:0,clicks:0};
+        map[j.n].spend+=j.spend; map[j.n].leads+=j.leads;
+        const estImp=j.imp>0?j.imp:(j.cpm&&j.cpm>0?Math.round(j.spend/j.cpm*1000):0);
+        const estClk=j.clicks>0?j.clicks:(estImp&&j.ctr?Math.round(estImp*j.ctr/100):0);
+        map[j.n].imp+=estImp; map[j.n].clicks+=estClk;
+      });
+    });
+  });
+  const all=Object.values(map).filter(a=>a.leads>0).map(a=>({...a,cpl:a.leads>0?a.spend/a.leads:null,ctr:a.imp>0?a.clicks/a.imp*100:null,cpm:a.imp>0?a.spend/a.imp*1000:null})).sort((a,b)=>b.leads-a.leads).slice(0,12);
+  document.getElementById('tGeralPub').innerHTML=`<table>
+    <thead><tr><th>#</th><th>Conjunto / Público</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${all.map((a,i)=>`<tr>
+      <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px">${a.n}</td>
+      <td class="num">${fR(a.spend)}</td>
+      <td class="num">${fN(a.leads)}</td>
+      <td class="num ${cls(a.cpl)}">${fR(a.cpl)}</td>
+      <td class="num" style="color:var(--muted2)">${a.imp>0?fN(a.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${a.clicks>0?fN(a.clicks):'—'}</td>
+      <td class="num">${a.ctr!=null?a.ctr.toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${fR(a.cpm)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+// ═══ BREAKDOWNS ══════════════════════════════════════
+function buildBreakdowns(){
+  const kKey=mesMode||String(period);
+  const bd=BREAKDOWN_DATA[kKey]||BREAKDOWN_DATA['30']||{};
+  buildBreakdownTable('bdAge', bd.age||[]);
+  buildBreakdownTable('bdGender', bd.gender||[]);
+  buildBreakdownTable('bdPlatform', bd.platform||[]);
+}
+function buildBreakdownTable(containerId, data){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  if(!data||data.length===0){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Sem dados para este período</div>';
+    return;
+  }
+  const mx=Math.max(...data.map(r=>r.leads||r.spend),1);
+  const hasL=data.some(r=>r.leads>0);
+  let rows='';
+  data.forEach((r,i)=>{
+    const barW=Math.round((hasL?(r.leads||0):r.spend)/mx*100);
+    rows+=`<tr>
+      <td style="color:#9ca3af;font-size:10px;width:24px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px">${r.n}</td>
+      <td style="width:80px;padding:0 12px"><div style="background:var(--bg);border-radius:3px;height:4px;overflow:hidden"><div style="width:${barW}%;height:100%;background:#2563eb;border-radius:3px"></div></div></td>
+      <td class="num">${fR2(r.spend)}</td>
+      ${hasL?`<td class="num">${r.leads>0?fN(r.leads):'—'}</td><td class="num ${cls(r.cpl)}">${fR(r.cpl)}</td>`:''}
+      <td class="num">${fR(r.cpm)}</td>
+    </tr>`;
+  });
+  const hdL=hasL?'<th class="num">Conv.</th><th class="num">CPL</th>':'';
+  el.innerHTML=`<div class="tc"><table><thead><tr><th style="width:24px">#</th><th>Segmento</th><th style="width:80px"></th><th class="num">Invest.</th>${hdL}<th class="num">CPM</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ═══ THEME ════════════════════════════════════════════
+function toggleTheme(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('themeIcon').textContent='🌙';
+    document.getElementById('themeLabel').textContent='Dark';
+    localStorage.setItem('bmq-theme','light');
+  } else {
+    document.documentElement.setAttribute('data-theme','dark');
+    document.getElementById('themeIcon').textContent='☀️';
+    document.getElementById('themeLabel').textContent='Claro';
+    localStorage.setItem('bmq-theme','dark');
+  }
+  render();
+  if(document.getElementById('page-geral').classList.contains('active')) renderGeral();
+  if(document.getElementById('page-gdash').classList.contains('active')) renderGDash();
+  if(document.getElementById('page-ggeral').classList.contains('active')) renderGGeral();
+}
+(function(){
+  const saved=localStorage.getItem('bmq-theme');
+  if(saved==='dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+    document.addEventListener('DOMContentLoaded',function(){
+      const ti=document.getElementById('themeIcon'); const tl=document.getElementById('themeLabel');
+      if(ti) ti.textContent='☀️'; if(tl) tl.textContent='Claro';
+    });
+  }
+})();
+
+function updateMobNav(p){
+  // mob-nav removido — navegação via sidebar
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+initDynamicControls();
+initGoogleControls();
+render();
+
+// ── Ocultar Google se desativado ─────────────────────────────────────────────
+(function(){
+  // Aplica nome do cliente
+  var el=document.getElementById('sidebarNome');
+  if(el) el.textContent=NOME_CLIENTE;
+  var tab=document.getElementById('pageTab');
+  if(tab) tab.textContent=NOME_CLIENTE+' — Dashboard';
+  // Atualiza badge de data com último dia dos dados
+  (function(){
+    var lastDay = (DAILY.days&&DAILY.days.length)?DAILY.days[DAILY.days.length-1]:'';
+    if(lastDay){
+      var el=document.getElementById('liveBadgeDate');
+      if(el) el.textContent='Dados até '+lastDay;
+    }
+  })();
+
+  // Atualiza textos de análise histórica dinamicamente
+  (function(){
+    // Meta: pegar primeiro e último mês de MONTHLY
+    if(MONTHLY.lbl&&MONTHLY.lbl.length){
+      var first=MONTHLY.lbl[0], last=MONTHLY.lbl[MONTHLY.lbl.length-1];
+      var el=document.getElementById('metaHistoricaRange');
+      if(el) el.textContent='Análise histórica '+first+' – '+last+' · dados reais da planilha';
+    }
+    // Google: pegar primeiro e último mês de GMONTHLY
+    if(GMONTHLY.lbl&&GMONTHLY.lbl.length){
+      var gfirst=GMONTHLY.lbl[0], glast=GMONTHLY.lbl[GMONTHLY.lbl.length-1];
+      var gel=document.getElementById('googleHistoricaRange');
+      if(gel) gel.textContent='Análise histórica '+gfirst+' – '+glast+' · dados reais';
+    }
+  })();
+  // Aplica letra do logo
+  var lb=document.getElementById('logoBox');
+  if(lb){
+    lb.textContent=LOGO_LETRA;
+    lb.style.background='linear-gradient(135deg,'+COR_ACENTO+','+COR_ACENTO+'cc)';
+  }
+  // Aplica cor de acento via CSS var
+  document.documentElement.style.setProperty('--accent', COR_ACENTO);
+  // Recalcula abg e aborder a partir da cor
+  document.documentElement.style.setProperty('--abg', COR_ACENTO+'18');
+  document.documentElement.style.setProperty('--aborder', COR_ACENTO+'44');
+  // pi-val (período ativo)
+  var pv=document.getElementById('sbPeriod');
+  if(pv) pv.style.color=COR_ACENTO;
+  // live-badge
+  document.querySelectorAll('.live-badge').forEach(function(b){
+    b.style.color=COR_ACENTO;
+    b.style.borderColor=COR_ACENTO+'44';
+    b.style.background=COR_ACENTO+'12';
+  });
+  document.querySelectorAll('.pulse').forEach(function(p){p.style.background=COR_ACENTO;});
+  document.querySelectorAll('.cf-btn.active,.stab.active,.mob-nav-btn.active').forEach(function(b){b.style.accentColor=COR_ACENTO;});
+})();
+
+(function(){
+  if(GOOGLE_ATIVO) return;
+  // Esconde grupos Google na sidebar
+  document.querySelectorAll('.sb-platform-group').forEach(g=>{
+    if(g.querySelector('.sb-platform-lbl') &&
+       g.querySelector('.sb-platform-lbl').textContent.trim()==='Google Ads')
+      g.style.display='none';
+  });
+  // Esconde botões mob nav Google
+  ['mobBtnGDash','mobBtnGGeral'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none';
+  });
+  // Esconde period bars Google
+  ['pbGDash','pbGGeral'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none!important';
+  });
+})();
+
+(function(){
+  if(META_ATIVO) return;
+  // Esconde grupos Meta na sidebar
+  document.querySelectorAll('.sb-platform-group').forEach(g=>{
+    if(g.querySelector('.sb-platform-lbl') &&
+       g.querySelector('.sb-platform-lbl').textContent.trim()==='Meta Ads')
+      g.style.display='none';
+  });
+  // Redireciona página inicial para Google
+  showPage('gdash', document.querySelector('[data-page="gdash"]'));
+  // Esconde period bars Meta
+  ['pbDash','pbGeral'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none!important';
+  });
+})();
+
+
+
+// ═══ GOOGLE ADS — ESTADO ═══════════════════════════════
+let gPeriod=30, gMesMode=null, gShowLabels=false, gGeralQ='all', gShowLabelsGG=false;
+const GCOL='#fbbc04';
+function gImp(obj){
+  if(obj.imp!=null&&obj.imp>0) return obj.imp;
+  if(obj.clicks&&obj.ctr&&obj.ctr>0) return Math.round(obj.clicks/obj.ctr*100);
+  return null;
+}
+function gCPM(obj){const imp=gImp(obj);return imp&&imp>0?obj.spend/imp*1000:null;}
+function fGImp(obj){const v=gImp(obj);return v!=null?fN(v):'—';}
+function fGCPM(obj){const v=gCPM(obj);return v!=null?fR(v):'—';} // Google yellow
+const GCOL_BAR='rgba(251,188,4,.80)';
+
+function initGoogleControls(){
+  const sel=document.getElementById('gMesSelect');
+  if(!sel)return;
+  while(sel.options.length>1)sel.remove(1);
+  const months=[...GMONTHLY.meses].reverse();
+  const lbls=[...GMONTHLY.lbl].reverse();
+  months.forEach((ym,i)=>{
+    if(!GCAMPS_MES[ym]||GCAMPS_MES[ym].length===0)return;
+    const opt=document.createElement('option');
+    opt.value=ym; opt.textContent=lbls[i];
+    sel.appendChild(opt);
+  });
+  // Geral quarter buttons
+  const pb=document.getElementById('pbGGeral');
+  if(!pb)return;
+  while(pb.children.length>1)pb.removeChild(pb.lastChild);
+}
+
+function setGPeriod(n,lbl,btn){
+  gPeriod=n; gMesMode=null;
+  document.querySelectorAll('#pbGDash .pb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sbPeriod').textContent=n===1?lbl:'Últimos '+lbl;
+  renderGDash();
+}
+function setGPeriodMes(ym,lbl,btn){
+  if(!ym)return;
+  gMesMode=ym;
+  document.querySelectorAll('#pbGDash .pb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sbPeriod').textContent=lbl;
+  renderGDash();
+}
+function setGGeralQ(q,btn){
+  gGeralQ=q;
+  document.querySelectorAll('#pbGGeral .pb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGGeral();
+}
+function toggleLabelsG(checked){gShowLabels=checked;renderGDash();}
+function toggleLabelsGG(checked){gShowLabelsGG=checked;renderGGeral();}
+
+function getGIdxs(){
+  if(gMesMode){
+    const ds=GMES_DAYS[gMesMode]||[];
+    return GDAILY.days.map((d,i)=>ds.includes(d)?i:-1).filter(i=>i>=0);
+  }
+  return GDAILY.days.map((_,i)=>i).slice(-Math.min(gPeriod,GDAILY.days.length));
+}
+function getCampKeyG(){return gMesMode||String(gPeriod);}
+
+function renderGDash(){
+  const idxs=getGIdxs();
+  const days=sl(GDAILY.days,idxs), spend=sl(GDAILY.spend,idxs), conv=sl(GDAILY.conversions,idxs);
+  const cpl=sl(GDAILY.cpl,idxs), ctr=sl(GDAILY.ctr,idxs), cpc=sl(GDAILY.cpc,idxs);
+
+  const kKey=gMesMode||String(gPeriod);
+  const K=GKPIS_PERIODO[kKey]||{};
+  const tS=K.spend!=null?K.spend:sm(spend);
+  const tC=K.conversions!=null?K.conversions:sm(conv);
+  const avgCPL=K.cpl!=null?K.cpl:(tC>0?tS/tC:0);
+  const avgCTR=K.ctr!=null?K.ctr:0;
+  const avgCPC=K.cpc!=null?K.cpc:0;
+
+  if(days.length) document.getElementById('sbDates').textContent=days[0]+(days.length>1?' → '+days[days.length-1]:'');
+
+  const gcplColor=v=>v==null?GR:v<=CONFIG.google.cplBom?'#059669':v<=CONFIG.google.cplMedio?'#d97706':'#dc2626';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+
+  document.getElementById('gKpiStrip').innerHTML=`
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento</div><div class="kpi-val" style="font-size:15px">${fR2(tS)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Conversões</div><div class="kpi-val">${Math.round(tC)}</div></div>
+    <div class="kpi" style="--kc:${gcplColor(avgCPL)}"><div class="kpi-lbl">CPL</div><div class="kpi-val">${fR(avgCPL)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR</div><div class="kpi-val">${avgCTR?avgCTR.toFixed(2)+'%':'—'}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPC Médio</div><div class="kpi-val">${fR(avgCPC)}</div></div>`;
+
+  // Main chart
+  dc('chGMain');
+  const gSpDs={label:'Invest.',data:spend,borderColor:'#059669',backgroundColor:'transparent',tension:.3,pointRadius:2,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,datalabels:{display:false}};
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gCplDs={label:'CPL',data:cpl,borderColor:isDark?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:2,borderWidth:1.5,tension:.3,spanGaps:false,type:'line',yAxisID:'y2',
+    datalabels:{display:gShowLabels,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null&&v>0?'R$'+v.toFixed(1):null,color:isDark?'#f9fafb':'#111827',clip:false}};
+  const gConvDs={label:'Conversões',data:conv,backgroundColor:GCOL_BAR,stack:'s',borderRadius:2,type:'bar',
+    datalabels:{display:gShowLabels,color:GCOL,font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?String(Math.round(v)):null,clip:false}};
+
+  CH['chGMain']=new Chart(document.getElementById('chGMain'),{data:{labels:days,datasets:[gConvDs,gSpDs,gCplDs]},options:{...bo(),scales:{
+    x:{ticks:{color:TXT,font:bf,maxTicksLimit:12},grid:{color:'rgba(0,0,0,0.04)'}},
+    y:{ticks:{color:TXT,font:bf},grid:{color:'rgba(0,0,0,0.04)'}},
+    y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'R$'+v.toLocaleString()},grid:{display:false}},
+    y2:{position:'right',ticks:{color:isDark?'#9ca3af':'#374151',font:bf,callback:v=>'R$'+v.toFixed(1)},grid:{display:false},offset:true},
+  }}});
+
+  dc('chGCTR');
+  CH['chGCTR']=new Chart(document.getElementById('chGCTR'),{type:'line',data:{labels:days,datasets:[{label:'CTR',data:ctr,borderColor:GCOL,backgroundColor:'rgba(251,188,4,.1)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:gShowLabels,color:GCOL,font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?v.toFixed(1)+'%':null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+
+  dc('chGCPC');
+  CH['chGCPC']=new Chart(document.getElementById('chGCPC'),{type:'line',data:{labels:days,datasets:[{label:'CPC',data:cpc,borderColor:'#ea4335',backgroundColor:'rgba(234,67,53,.08)',fill:true,tension:.3,pointRadius:2,borderWidth:2,datalabels:{display:gShowLabels,color:'#ea4335',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(2):null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf,maxTicksLimit:8},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
+
+  const ym=getCampKeyG();
+  const mesLblsG={'2026-03':'Mar/26','2026-02':'Fev/26','2025-12':'Dez/25','2025-11':'Nov/25','2025-10':'Out/25','2025-09':'Set/25','2025-08':'Ago/25','2025-07':'Jul/25','2025-06':'Jun/25'};
+  document.getElementById('gCampLbl').textContent='— '+(gMesMode?(mesLblsG[gMesMode]||gMesMode):`últimos ${gPeriod} dias`);
+  document.getElementById('gKwLbl').textContent='— '+(gMesMode?(mesLblsG[gMesMode]||gMesMode):`últimos ${gPeriod} dias`);
+
+  buildGCampTable(ym);
+  buildGKwTable(ym);
+  buildGBdTables(kKey);
+}
+
+// ── GOOGLE CAMP TABLE ────────────────────────────────────────────────────────
+const GOPEN=new Set();
+function buildGCampTable(ym){
+  const data=GCAMPS_MES[ym]||GCAMPS_MES['30']||[];
+  const tbl=document.getElementById('gCampContainer');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+
+  let rows='';
+  data.forEach((c,i)=>{
+    const cid=`gc${ym.replace('-','')}${i}`;
+    const hasAg=c.adgroups&&c.adgroups.length>0;
+    rows+=`<tr class="camp-row" onclick="toggleGC('${cid}')">
+      <td style="width:20px;text-align:center;color:var(--muted2);font-size:11px">${hasAg?(GOPEN.has(cid)?'▼':'▶'):''}</td>
+      <td style="font-weight:700;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
+      <td class="num">${fR(c.spend)}</td>
+      <td class="num">${fGC(c.conv)}</td>
+      <td class="num ${gcls(c.cpl)}">${fR(c.cpl)}</td>
+      <td class="num">${fR(c.cpc)}</td>
+      <td class="num" style="color:var(--muted2)">${fGImp(c)}</td>
+      <td class="num" style="color:var(--muted2)">${fN(c.clicks)}</td>
+      <td class="num">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
+      <td class="num">${fGCPM(c)}</td>
+    </tr>`;
+    if(hasAg){
+      c.adgroups.forEach((ag,agi)=>{
+        const agid=`${cid}ag${agi}`;
+        const hidden=GOPEN.has(cid)?'':'hidden';
+        const hasKw=ag.keywords&&ag.keywords.length>0;
+        rows+=`<tr class="conj-row ${hidden}" data-cid="${cid}" ${hasKw?`onclick="toggleGC('${agid}')" style="cursor:pointer"`:''}>
+          <td style="text-align:center;color:#d1d5db;font-size:11px">↳${hasKw?(GOPEN.has(agid)?'▼':'▶'):''}</td>
+          <td class="conj-name">${ag.n}</td>
+          <td class="num" style="color:var(--muted2)">${fR(ag.spend)}</td>
+          <td class="num" style="color:var(--muted2)">${fGC(ag.conv)}</td>
+          <td class="num ${gcls(ag.cpl)}">${fR(ag.cpl)}</td>
+          <td class="num" style="color:var(--muted2)">${fR(ag.cpc)}</td>
+          <td class="num" style="color:var(--muted2)">${fGImp(ag)}</td>
+          <td class="num" style="color:var(--muted2)">${fN(ag.clicks)}</td>
+          <td class="num">${ag.ctr!=null?ag.ctr.toFixed(2)+'%':'—'}</td>
+          <td class="num">${fGCPM(ag)}</td>
+        </tr>`;
+        if(hasKw){
+          ag.keywords.forEach((kw,ki)=>{
+            const kwHidden=(!GOPEN.has(cid)||!GOPEN.has(agid))?'hidden':'';
+            const matchBadge=kw.match?`<span style="font-size:8px;padding:1px 4px;border-radius:3px;background:rgba(251,188,4,.15);color:#d97706;font-weight:700;margin-left:4px">${kw.match.charAt(0)}</span>`:'';
+            rows+=`<tr class="conj-row ${kwHidden}" data-cid="${cid}" data-agid="${agid}">
+              <td style="text-align:center;color:#e2e8f0;font-size:10px">↳↳</td>
+              <td style="padding-left:44px;font-size:11px;color:var(--muted);border-left:2px solid #fde68a;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔑 ${kw.n}${matchBadge}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fR(kw.spend)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${kw.conv>0?(fGC(kw.conv)):'—'}</td>
+              <td class="num ${gcls(kw.cpl)}" style="font-size:10px">${fR(kw.cpl)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fR(kw.cpc)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">—</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fN(kw.clicks)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">—</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">—</td>
+            </tr>`;
+          });
+        }
+      });
+    }
+  });
+
+  tbl.innerHTML=`<div class="tc"><table>
+    <thead><tr><th style="width:20px"></th><th>Campanha / Grupo / Palavra-chave</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+
+}
+
+function toggleGC(id){
+  const cid_rows=document.querySelectorAll(`[data-cid="${id}"]`);
+  const agid_rows=document.querySelectorAll(`[data-agid="${id}"]`);
+  const isOpen=GOPEN.has(id);
+  if(isOpen){
+    GOPEN.delete(id);
+    cid_rows.forEach(r=>r.classList.add('hidden'));
+    agid_rows.forEach(r=>r.classList.add('hidden'));
+  } else {
+    GOPEN.add(id);
+    cid_rows.forEach(r=>r.classList.remove('hidden'));
+  }
+  document.querySelectorAll('.camp-row,.conj-row').forEach(tr=>{
+    if(tr.getAttribute('onclick')===`toggleGC('${id}')`){
+      const td=tr.querySelector('td:first-child');
+      if(td&&td.textContent.match(/[▶▼]/))td.textContent=td.textContent.replace(/[▶▼]/g,GOPEN.has(id)?'▼':'▶');
+    }
+  });
+}
+
+// ── GOOGLE KEYWORDS TABLE ────────────────────────────────────────────────────
+function buildGKwTable(ym){
+  const data=(GKEYWORDS_DATA[ym]||GKEYWORDS_DATA['30']||[]).slice(0,15);
+  const el=document.getElementById('gKwTable');
+  if(!el)return;
+  if(data.length===0){el.innerHTML='<div style="padding:12px;color:var(--muted);font-size:12px">Sem dados</div>';return;}
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+  const matchColor={'EXACT':'#4285f4','BROAD':'#34a853','PHRASE':'#fbbc04'};
+  el.innerHTML=`<table>
+    <thead><tr><th>#</th><th>Palavra-chave</th><th class="num">Tipo</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${data.map((k,i)=>{
+      const mc=matchColor[k.match]||'#9ca3af';
+      const mlbl={'EXACT':'Exata','BROAD':'Ampla','PHRASE':'Frase'}[k.match]||k.match;
+      return `<tr>
+        <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+        <td style="font-weight:600;font-size:12px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔑 ${k.n}</td>
+        <td class="num"><span style="font-size:9px;padding:2px 5px;border-radius:4px;background:${mc}22;color:${mc};font-weight:700">${mlbl||'—'}</span></td>
+        <td class="num">${fR(k.spend)}</td>
+        <td class="num">${k.conv>0?(fGC(k.conv)):'—'}</td>
+        <td class="num ${gcls(k.cpl)}">${fR(k.cpl)}</td>
+        <td class="num">${fR(k.cpc)}</td>
+        <td class="num" style="color:var(--muted2)">—</td>
+        <td class="num" style="color:var(--muted2)">${fN(k.clicks)}</td>
+        <td class="num" style="color:var(--muted2)">—</td>
+        <td class="num" style="color:var(--muted2)">—</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+// ── GOOGLE BREAKDOWNS ────────────────────────────────────────────────────────
+function buildGBdTables(kKey){
+  const bd=GBD[kKey]||GBD['30']||{};
+  buildGBdTable('gBdAge', bd.age||[]);
+  buildGBdTable('gBdGender', bd.gender||[]);
+}
+function buildGBdTable(id, data){
+  const el=document.getElementById(id);
+  if(!el)return;
+  if(!data||data.length===0){el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Sem dados para este período</div>';return;}
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+  const mx=Math.max(...data.map(r=>r.conv||r.spend),1);
+  let rows='';
+  data.forEach((r,i)=>{
+    const barW=Math.round((r.conv||0)/mx*100);
+    rows+=`<tr>
+      <td style="color:#9ca3af;font-size:10px;width:24px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px">${r.n}</td>
+      <td style="width:80px;padding:0 12px"><div style="background:var(--bg);border-radius:3px;height:4px;overflow:hidden"><div style="width:${barW}%;height:100%;background:${GCOL};border-radius:3px"></div></div></td>
+      <td class="num">${fR2(r.spend)}</td>
+      <td class="num">${r.conv>0?(fGC(r.conv)):'—'}</td>
+      <td class="num ${gcls(r.cpl)}">${fR(r.cpl)}</td>
+    </tr>`;
+  });
+  el.innerHTML=`<div class="tc"><table><thead><tr><th style="width:24px">#</th><th>Segmento</th><th style="width:80px"></th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ── GOOGLE GERAL ─────────────────────────────────────────────────────────────
+function renderGGeral(){
+  const lbl=GMONTHLY.lbl, totalS=GMONTHLY.totalS, totalConv=GMONTHLY.totalConv;
+  const cplG=GMONTHLY.cplG, cpcG=GMONTHLY.cpcG, ctrG=GMONTHLY.ctrG;
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+  const gcplColor=v=>v==null?GR:v<=CONFIG.google.cplBom?'#059669':v<=CONFIG.google.cplMedio?'#d97706':'#dc2626';
+
+  const tS=totalS.reduce((a,b)=>a+b,0), tC=totalConv.reduce((a,b)=>a+b,0);
+  document.getElementById('gRankLbl').textContent='— todos os meses';
+  document.getElementById('gGeralCampLbl').textContent='— todos os meses';
+  document.getElementById('gGeralGrpLbl').textContent='— todos os meses';
+  document.getElementById('gGeralKwLbl').textContent='— todos os meses';
+
+  const totalClicksGG=GMONTHLY.totalClicks.reduce((a,b)=>a+b,0);
+  const totalImpGG=GMONTHLY.totalImp.reduce((a,b)=>a+b,0);
+  const avgCtrGG=totalImpGG>0?totalClicksGG/totalImpGG*100:0;
+  const avgCpcGG=totalClicksGG>0?tS/totalClicksGG:0;
+  document.getElementById('gGeralKpis').innerHTML=`
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento Total</div><div class="kpi-val">R$${(tS/1000).toFixed(1)}k</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Total Conversões</div><div class="kpi-val">${Math.round(tC)}</div></div>
+    <div class="kpi" style="--kc:${gcplColor(tC>0?tS/tC:0)}"><div class="kpi-lbl">CPL Geral</div><div class="kpi-val">${fR(tC>0?tS/tC:0)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR Médio</div><div class="kpi-val">${avgCtrGG?avgCtrGG.toFixed(2)+'%':'—'}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPC Médio</div><div class="kpi-val">${fR(avgCpcGG)}</div></div>`;
+
+  // Combined chart
+  dc('chGGeralMensal');
+  const ggLeadsDs={label:'Conversões',data:totalConv,backgroundColor:GCOL_BAR,borderRadius:4,type:'bar',
+    datalabels:{display:gShowLabelsGG,color:GCOL,font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?String(Math.round(v)):null,clip:false}};
+  const ggSpDs={label:'Invest.',data:totalS,borderColor:'#059669',backgroundColor:'transparent',tension:.35,pointRadius:4,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,datalabels:{display:false}};
+  const ggCplDs={label:'CPL',data:cplG,borderColor:isDark?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:3,borderWidth:1.5,tension:.35,spanGaps:false,type:'line',yAxisID:'y2',
+    datalabels:{display:gShowLabelsGG,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(1):null,color:isDark?'#f9fafb':'#111827',clip:false}};
+  CH['chGGeralMensal']=new Chart(document.getElementById('chGGeralMensal'),{data:{labels:lbl,datasets:[ggLeadsDs,ggSpDs,ggCplDs]},options:{...bo(),scales:{
+    x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},
+    y:{ticks:{color:TXT,font:bf},grid:{color:GRID}},
+    y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'R$'+v.toLocaleString()},grid:{display:false}},
+    y2:{position:'right',ticks:{color:isDark?'#9ca3af':'#374151',font:bf,callback:v=>'R$'+v.toFixed(1)},grid:{display:false},offset:true},
+  }}});
+
+  dc('chGGeralCPC');
+  CH['chGGeralCPC']=new Chart(document.getElementById('chGGeralCPC'),{type:'line',data:{labels:lbl,datasets:[{label:'CPC',data:cpcG,borderColor:'#ea4335',backgroundColor:'rgba(234,67,53,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
+
+  dc('chGGeralCTR');
+  CH['chGGeralCTR']=new Chart(document.getElementById('chGGeralCTR'),{type:'line',data:{labels:lbl,datasets:[{label:'CTR',data:ctrG,borderColor:GCOL,backgroundColor:'rgba(251,188,4,.1)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+
+  // Rankings
+  const withData=lbl.map((l,i)=>({l,cpl:cplG[i],conv:totalConv[i]})).filter(m=>m.cpl!=null&&m.conv>0);
+  const bCPL=[...withData].sort((a,b)=>a.cpl-b.cpl).slice(0,6);
+  const bConv=[...withData].sort((a,b)=>b.conv-a.conv).slice(0,6);
+  const mxC=Math.max(...bConv.map(m=>m.conv),1);
+  const mnP=Math.min(...bCPL.map(m=>m.cpl),0),mxP=Math.max(...bCPL.map(m=>m.cpl),1);
+  document.getElementById('gRankCPL').innerHTML=bCPL.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round((1-(m.cpl-mnP)/(mxP-mnP||1))*100)}%;background:#059669"></div></div><div class="rank-val ${gcls(m.cpl)}">${fR(m.cpl)}</div></div>`).join('');
+  document.getElementById('gRankConv').innerHTML=bConv.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round(m.conv/mxC*100)}%;background:${GCOL}"></div></div><div class="rank-val" style="color:${GCOL}">${fGC(m.conv)}</div></div>`).join('');
+
+  buildGGeralCampTable();
+  buildGGeralGrpTable();
+  buildGGeralKwTable();
+}
+
+function buildGGeralCampTable(){
+  const map={};
+  GMONTHLY.meses.forEach(ym=>{
+    (GCAMPS_MES[ym]||[]).forEach(c=>{
+      if(!map[c.n])map[c.n]={n:c.n,spend:0,conv:0,clicks:0,imp:0};
+      map[c.n].spend+=c.spend; map[c.n].conv+=c.conv; map[c.n].clicks+=c.clicks;
+      const gcImp=c.imp>0?c.imp:(c.clicks&&c.ctr&&c.ctr>0?Math.round(c.clicks/c.ctr*100):0);
+      map[c.n].imp+=gcImp;
+    });
+  });
+  const all=Object.values(map).map(c=>({...c,cpl:c.conv>0?c.spend/c.conv:null,cpc:c.clicks>0?c.spend/c.clicks:null})).sort((a,b)=>b.conv-a.conv);
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+  document.getElementById('tGGeralCamp').innerHTML=`<table>
+    <thead><tr><th>#</th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${all.map((c,i)=>`<tr>
+      <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
+      <td class="num">${fR(c.spend)}</td>
+      <td class="num">${fGC(c.conv)}</td>
+      <td class="num ${gcls(c.cpl)}">${fR(c.cpl)}</td>
+      <td class="num">${fR(c.cpc)}</td>
+      <td class="num" style="color:var(--muted2)">${c.imp>0?fN(c.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${c.clicks>0?fN(c.clicks):'—'}</td>
+      <td class="num">${c.clicks>0&&c.imp>0?(c.clicks/c.imp*100).toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${c.imp>0?fR(c.spend/c.imp*1000):'—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function buildGGeralGrpTable(){
+  const map={};
+  GMONTHLY.meses.forEach(ym=>{
+    (GCAMPS_MES[ym]||[]).forEach(c=>{
+      (c.adgroups||[]).forEach(ag=>{
+        if(!map[ag.n])map[ag.n]={n:ag.n,spend:0,conv:0,clicks:0,imp:0};
+        map[ag.n].spend+=ag.spend; map[ag.n].conv+=ag.conv; map[ag.n].clicks+=ag.clicks;
+        const gaImp=ag.imp>0?ag.imp:(ag.clicks&&ag.ctr&&ag.ctr>0?Math.round(ag.clicks/ag.ctr*100):0);
+        map[ag.n].imp+=gaImp;
+      });
+    });
+  });
+  const all=Object.values(map).filter(a=>a.conv>0).map(a=>({...a,cpl:a.conv>0?a.spend/a.conv:null,cpc:a.clicks>0?a.spend/a.clicks:null})).sort((a,b)=>b.conv-a.conv).slice(0,12);
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+  document.getElementById('tGGeralGrp').innerHTML=`<table>
+    <thead><tr><th>#</th><th>Grupo de Anúncios</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${all.map((a,i)=>`<tr>
+      <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+      <td style="font-weight:600;font-size:12px">${a.n}</td>
+      <td class="num">${fR(a.spend)}</td>
+      <td class="num">${fGC(a.conv)}</td>
+      <td class="num ${gcls(a.cpl)}">${fR(a.cpl)}</td>
+      <td class="num">${fR(a.cpc)}</td>
+      <td class="num" style="color:var(--muted2)">${a.imp>0?fN(a.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${a.clicks>0?fN(a.clicks):'—'}</td>
+      <td class="num">${a.clicks>0&&a.imp>0?(a.clicks/a.imp*100).toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${a.imp>0?fR(a.spend/a.imp*1000):'—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function buildGGeralKwTable(){
+  const data=(GKEYWORDS_DATA['30']||[]);
+  // Aggregate all months
+  const map={};
+  GMONTHLY.meses.forEach(ym=>{
+    (GKEYWORDS_DATA[ym]||[]).forEach(k=>{
+      if(!map[k.n])map[k.n]={n:k.n,match:k.match,spend:0,conv:0,clicks:0};
+      map[k.n].spend+=k.spend; map[k.n].conv+=k.conv; map[k.n].clicks+=k.clicks;
+    });
+  });
+  const all=Object.values(map).filter(k=>k.conv>0).map(k=>({...k,cpl:k.conv>0?k.spend/k.conv:null,cpc:k.clicks>0?k.spend/k.clicks:null})).sort((a,b)=>b.conv-a.conv).slice(0,15);
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+  const matchColor={'EXACT':'#4285f4','BROAD':'#34a853','PHRASE':'#fbbc04'};
+  document.getElementById('tGGeralKw').innerHTML=`<table>
+    <thead><tr><th>#</th><th>Palavra-chave</th><th class="num">Tipo</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
+    <tbody>${all.map((k,i)=>{
+      const mc=matchColor[k.match]||'#9ca3af';
+      const mlbl={'EXACT':'Exata','BROAD':'Ampla','PHRASE':'Frase'}[k.match]||k.match||'—';
+      return `<tr>
+        <td style="color:#9ca3af;font-size:10px">${i+1}</td>
+        <td style="font-weight:600;font-size:12px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔑 ${k.n}</td>
+        <td class="num"><span style="font-size:9px;padding:2px 5px;border-radius:4px;background:${mc}22;color:${mc};font-weight:700">${mlbl}</span></td>
+        <td class="num">${fR(k.spend)}</td>
+        <td class="num">${fGC(k.conv)}</td>
+        <td class="num ${gcls(k.cpl)}">${fR(k.cpl)}</td>
+        <td class="num">${fR(k.cpc)}</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+</script>
+</body>
+</html>
