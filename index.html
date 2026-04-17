@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laboratório Bem Me Quer — Dashboard</title>
+<title id="pageTab">Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -119,7 +119,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .ad-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#9ca3af;}
 .ad-info{padding:8px 10px;}
 .ad-name{font-size:11px;font-weight:600;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;}
-.ad-stats{display:flex;justify-content:space-between;}
+.ad-stats{display:flex;justify-content:space-between;gap:4px;}
 .as-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 .as-v{font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
 .mes-accordion{margin-bottom:8px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
@@ -151,16 +151,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   .ranking-row{grid-template-columns:1fr!important;}
   .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;}
   .overlay.open{display:block;}
-  .content{padding:12px;}
-  .tc{overflow-x:auto;}
-  .tc table{min-width:100%;width:max-content;}
+  .content{padding:12px;overflow-x:hidden;}
+  .main{overflow-x:hidden;max-width:100vw;}
+  .page-section{max-width:100%;overflow-x:hidden;}
+  .chart-card{max-width:100%;overflow:hidden;}
+  .cw{max-width:100%!important;overflow:hidden;}
+  .rank-card{max-width:100%;overflow:hidden;}
+  .section{max-width:100%;overflow-x:hidden;}
+  .tc{overflow-x:auto;max-width:100%;}
+  .tc table{min-width:600px;width:max-content;}
+  #tGeralCamp,#tGeralPub,#tGGeralCamp,#tGGeralGrp,#tGGeralKw{overflow-x:auto;display:block;max-width:100%;}
+  #tGeralCamp table,#tGeralPub table,#tGGeralCamp table,#tGGeralGrp table,#tGGeralKw table{min-width:500px;width:max-content;border-collapse:collapse;}
   .tc thead th,.tc tbody td{padding:6px 8px;white-space:nowrap;}
+  .kpi-strip{overflow:hidden;}
+  .ads-grid{grid-template-columns:repeat(2,1fr)!important;}
 }
-@media(min-width:769px){.mob-menu{display:none;}.mob-nav{display:none;}}
-.mob-nav{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:6px 12px;gap:6px;z-index:99;}
-@media(max-width:768px){.mob-nav{display:flex;}}
-.mob-nav-btn{flex:1;padding:7px 10px;border-radius:8px;border:none;background:var(--surface2);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .15s;}
-.mob-nav-btn.active{background:#0f1523;color:#fff;}
+@media(min-width:769px){.mob-menu{display:none;}}
+
 
 .sb-platform-group{padding:4px 4px 0;}
 .sb-platform-hd{display:flex;align-items:center;gap:8px;padding:6px 10px 4px;margin-bottom:2px;}
@@ -178,8 +185,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <div class="app">
 <aside class="sb" id="sidebar">
   <div class="sb-logo">
-    <div class="logo-box">B</div>
-    <div><div class="logo-name">Bem Me Quer</div><div class="logo-sub">Analytics</div></div>
+    <div class="logo-box" id="logoBox">B</div>
+    <div><div class="logo-name" id="sidebarNome"></div><div class="logo-sub">Analytics</div></div>
   </div>
   <div class="sb-section">
     <div class="sb-platform-group">
@@ -206,7 +213,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
   <div class="sb-footer">
     <div>Última atualização</div>
-    <span>10/2004 · via planilha</span>
+    <span>--/---- · via planilha</span>
   </div>
 </aside>
 <main class="main">
@@ -214,7 +221,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div class="topbar-l">
       <button class="mob-menu" onclick="toggleSidebar()">☰</button>
       <div class="page-title" id="pageTitle">Dashboard Diário</div>
-      <div class="live-badge"><div class="pulse"></div><span id="liveBadgeDate">Dados até 10/04</span></div>
+      <div class="live-badge"><div class="pulse"></div><span id="liveBadgeDate">Dados até --/--</span></div>
     </div>
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
       <div class="period-bar" id="pbDash">
@@ -246,12 +253,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       </label>
     </div>
   </div>
-  <div class="mob-nav" id="mobNav">
-    <button class="mob-nav-btn active" id="mobBtnDash" onclick="showPage('dash',this);updateMobNav('dash')">Meta 📊</button>
-    <button class="mob-nav-btn" id="mobBtnGeral" onclick="showPage('geral',this);updateMobNav('geral')">Meta 📋</button>
-    <button class="mob-nav-btn" id="mobBtnGDash" onclick="showPage('gdash',this);updateMobNav('gdash')">G 📊</button>
-    <button class="mob-nav-btn" id="mobBtnGGeral" onclick="showPage('ggeral',this);updateMobNav('ggeral')">G 📋</button>
-  </div>
+
   <div class="content">
     <!-- DASHBOARD PAGE -->
     <div class="page-section active" id="page-dash">
@@ -305,17 +307,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
     <!-- DADOS GERAIS PAGE -->
     <div class="page-section" id="page-geral">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-        <div>
-          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px;">Dados Gerais da Conta</div>
-          <div style="font-size:12px;color:var(--muted);">Análise histórica Jan/2026 – Abr/2026 · dados reais da planilha</div>
-        </div>
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px;">Dados Gerais da Conta</div>
+        <div style="font-size:12px;color:var(--muted);" id="metaHistoricaRange">Análise histórica · dados reais da planilha</div>
+      </div>
+      <div class="kpi-strip" id="geralKpis"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted)">Gráficos do período selecionado</div>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
           <input type="checkbox" id="chkLabelsGeral" onchange="toggleLabelsGeral(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#1877f2;">
           Rótulos
         </label>
       </div>
-      <div class="kpi-strip" id="geralKpis"></div>
       <div class="chart-card" style="margin-bottom:12px;">
         <div class="cc-title">Conversões · Investimento · CPL Mensal</div>
         <div class="cc-sub" id="geralSub">Conversões (barras azuis) · Investimento (linha verde) · CPL (linha preta tracejada)</div>
@@ -402,17 +405,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
     <!-- GOOGLE GERAL PAGE -->
     <div class="page-section" id="page-ggeral">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-        <div>
-          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px;">Google Ads — Dados Gerais</div>
-          <div style="font-size:12px;color:var(--muted);">Análise histórica Jun/2025 – Mar/2026 · dados reais</div>
-        </div>
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px;">Google Ads — Dados Gerais</div>
+        <div style="font-size:12px;color:var(--muted);" id="googleHistoricaRange">Análise histórica · dados reais</div>
+      </div>
+      <div class="kpi-strip" id="gGeralKpis"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--muted)">Gráficos do período selecionado</div>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;user-select:none;">
           <input type="checkbox" id="chkLabelsGG" onchange="toggleLabelsGG(this.checked)" style="width:14px;height:14px;cursor:pointer;accent-color:#fbbc04;">
           Rótulos
         </label>
       </div>
-      <div class="kpi-strip" id="gGeralKpis"></div>
       <div class="chart-card" style="margin-bottom:12px;">
         <div class="cc-title">Conversões · Investimento · CPL Mensal</div>
         <div class="cc-sub">Conversões (barras amarelas) · Investimento (linha verde) · CPL (linha tracejada)</div>
@@ -462,18 +466,37 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 // ═══ DADOS REAIS ═══════════════════════════════════════
 const KPIS_PERIODO = {"1": {"spend": 9.6, "leads": 1, "cpl": 9.6, "ctr": 0.38, "cpm": 7.29}, "7": {"spend": 227.83, "leads": 18, "cpl": 12.66, "ctr": 0.39, "cpm": 7.28}, "14": {"spend": 449.39, "leads": 37, "cpl": 12.15, "ctr": 0.34, "cpm": 7.29}, "30": {"spend": 878.52, "leads": 87, "cpl": 10.1, "ctr": 0.37, "cpm": 7.69}, "2026-01": {"spend": 69.44, "leads": 6, "cpl": 11.57, "ctr": 0.49, "cpm": 7.79}, "2026-02": {"spend": 154.85, "leads": 7, "cpl": 22.12, "ctr": 0.39, "cpm": 8.66}, "2026-03": {"spend": 565.22, "leads": 61, "cpl": 9.27, "ctr": 0.37, "cpm": 7.93}, "2026-04": {"spend": 313.3, "leads": 26, "cpl": 12.05, "ctr": 0.37, "cpm": 7.29}};
 const BREAKDOWN_DATA = {"1": {"age": [{"n": "18-24", "spend": 0.12, "leads": 0, "cpl": null, "cpm": 5.22}, {"n": "25-34", "spend": 2.59, "leads": 1, "cpl": 2.59, "cpm": 6.73}, {"n": "35-44", "spend": 6.23, "leads": 0, "cpl": null, "cpm": 7.39}, {"n": "45-54", "spend": 0.66, "leads": 0, "cpl": null, "cpm": 10.15}], "gender": [{"n": "female", "spend": 8.58, "leads": 1, "cpl": 8.58, "cpm": 7.23}, {"n": "male", "spend": 1.02, "leads": 0, "cpl": null, "cpm": 7.91}], "platform": [{"n": "feed", "spend": 6.15, "leads": 1, "cpl": 6.15, "cpm": 8.16}, {"n": "facebook_reels", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 2.5}, {"n": "facebook_stories", "spend": 0.06, "leads": 0, "cpl": null, "cpm": 2.73}, {"n": "instagram_reels", "spend": 0.12, "leads": 0, "cpl": null, "cpm": 9.23}, {"n": "instagram_stories", "spend": 3.01, "leads": 0, "cpl": null, "cpm": 6.07}, {"n": "search", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 10.0}, {"n": "status", "spend": 0.24, "leads": 0, "cpl": null, "cpm": 11.43}]}, "7": {"age": [{"n": "18-24", "spend": 8.14, "leads": 1, "cpl": 8.14, "cpm": 5.9}, {"n": "25-34", "spend": 57.39, "leads": 3, "cpl": 19.13, "cpm": 5.95}, {"n": "35-44", "spend": 150.7, "leads": 12, "cpl": 12.56, "cpm": 8.03}, {"n": "45-54", "spend": 11.59, "leads": 2, "cpl": 5.8, "cpm": 7.87}], "gender": [{"n": "female", "spend": 202.31, "leads": 16, "cpl": 12.64, "cpm": 7.26}, {"n": "male", "spend": 24.86, "leads": 2, "cpl": 12.43, "cpm": 7.47}], "platform": [{"n": "feed", "spend": 137.35, "leads": 11, "cpl": 12.49, "cpm": 7.69}, {"n": "instagram_stories", "spend": 72.09, "leads": 6, "cpl": 12.02, "cpm": 7.06}, {"n": "facebook_stories", "spend": 6.57, "leads": 1, "cpl": 6.57, "cpm": 5.44}, {"n": "facebook_reels", "spend": 1.29, "leads": 0, "cpl": null, "cpm": 5.56}, {"n": "facebook_reels_overlay", "spend": 2.28, "leads": 0, "cpl": null, "cpm": 3.77}, {"n": "instagram_reels", "spend": 5.4, "leads": 0, "cpl": null, "cpm": 7.31}, {"n": "instream_video", "spend": 0.08, "leads": 0, "cpl": null, "cpm": 0.79}, {"n": "search", "spend": 0.14, "leads": 0, "cpl": null, "cpm": 10.77}, {"n": "status", "spend": 2.63, "leads": 0, "cpl": null, "cpm": 9.04}]}, "14": {"age": [{"n": "18-24", "spend": 12.32, "leads": 1, "cpl": 12.32, "cpm": 5.29}, {"n": "25-34", "spend": 120.08, "leads": 9, "cpl": 13.34, "cpm": 6.09}, {"n": "35-44", "spend": 293.27, "leads": 25, "cpl": 11.73, "cpm": 7.97}, {"n": "45-54", "spend": 23.69, "leads": 2, "cpl": 11.84, "cpm": 8.39}], "gender": [{"n": "female", "spend": 406.84, "leads": 34, "cpl": 11.97, "cpm": 7.3}, {"n": "male", "spend": 41.39, "leads": 3, "cpl": 13.8, "cpm": 7.11}], "platform": [{"n": "feed", "spend": 272.45, "leads": 21, "cpl": 12.97, "cpm": 8.02}, {"n": "instagram_stories", "spend": 147.59, "leads": 13, "cpl": 11.35, "cpm": 6.63}, {"n": "facebook_stories", "spend": 11.54, "leads": 2, "cpl": 5.77, "cpm": 5.16}, {"n": "instagram_reels", "spend": 8.78, "leads": 1, "cpl": 8.78, "cpm": 7.05}, {"n": "facebook_reels", "spend": 2.37, "leads": 0, "cpl": null, "cpm": 5.6}, {"n": "facebook_reels_overlay", "spend": 2.64, "leads": 0, "cpl": null, "cpm": 3.12}, {"n": "instream_video", "spend": 0.14, "leads": 0, "cpl": null, "cpm": 0.94}, {"n": "search", "spend": 0.2, "leads": 0, "cpl": null, "cpm": 8.7}, {"n": "status", "spend": 3.68, "leads": 0, "cpl": null, "cpm": 8.36}]}, "30": {"age": [{"n": "18-24", "spend": 20.74, "leads": 3, "cpl": 6.91, "cpm": 5.31}, {"n": "25-34", "spend": 238.0, "leads": 21, "cpl": 11.33, "cpm": 6.48}, {"n": "35-44", "spend": 574.42, "leads": 58, "cpl": 9.9, "cpm": 8.4}, {"n": "45-54", "spend": 45.3, "leads": 5, "cpl": 9.06, "cpm": 8.51}], "gender": [{"n": "female", "spend": 803.51, "leads": 79, "cpl": 10.17, "cpm": 7.71}, {"n": "male", "spend": 73.09, "leads": 8, "cpl": 9.14, "cpm": 7.37}], "platform": [{"n": "feed", "spend": 546.05, "leads": 50, "cpl": 10.92, "cpm": 8.64}, {"n": "instagram_stories", "spend": 294.68, "leads": 31, "cpl": 9.51, "cpm": 6.64}, {"n": "facebook_stories", "spend": 14.92, "leads": 3, "cpl": 4.97, "cpm": 5.38}, {"n": "facebook_reels", "spend": 3.36, "leads": 1, "cpl": 3.36, "cpm": 5.65}, {"n": "facebook_reels_overlay", "spend": 2.87, "leads": 1, "cpl": 2.87, "cpm": 3.11}, {"n": "instagram_reels", "spend": 11.82, "leads": 1, "cpl": 11.82, "cpm": 7.53}, {"n": "instagram_explore", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 10.0}, {"n": "instream_video", "spend": 0.2, "leads": 0, "cpl": null, "cpm": 0.98}, {"n": "search", "spend": 0.34, "leads": 0, "cpl": null, "cpm": 9.71}, {"n": "status", "spend": 4.27, "leads": 0, "cpl": null, "cpm": 7.98}]}, "2026-01": {"age": [{"n": "18-24", "spend": 2.41, "leads": 0, "cpl": null, "cpm": 6.1}, {"n": "25-34", "spend": 27.07, "leads": 3, "cpl": 9.02, "cpm": 7.32}, {"n": "35-44", "spend": 37.27, "leads": 3, "cpl": 12.42, "cpm": 8.11}, {"n": "45-54", "spend": 2.69, "leads": 0, "cpl": null, "cpm": 12.28}], "gender": [{"n": "female", "spend": 63.11, "leads": 4, "cpl": 15.78, "cpm": 7.55}, {"n": "male", "spend": 5.95, "leads": 2, "cpl": 2.98, "cpm": 11.02}], "platform": [{"n": "feed", "spend": 49.96, "leads": 3, "cpl": 16.65, "cpm": 8.59}, {"n": "instagram_stories", "spend": 17.08, "leads": 3, "cpl": 5.69, "cpm": 6.18}, {"n": "facebook_reels", "spend": 0.13, "leads": 0, "cpl": null, "cpm": 4.06}, {"n": "facebook_stories", "spend": 0.85, "leads": 0, "cpl": null, "cpm": 4.83}, {"n": "facebook_reels_overlay", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 3.33}, {"n": "instagram_explore", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 5.0}, {"n": "instagram_reels", "spend": 1.36, "leads": 0, "cpl": null, "cpm": 11.93}, {"n": "search", "spend": 0.02, "leads": 0, "cpl": null, "cpm": 20.0}, {"n": "status", "spend": 0.02, "leads": 0, "cpl": null, "cpm": 6.67}]}, "2026-02": {"age": [{"n": "18-24", "spend": 6.81, "leads": 2, "cpl": 3.4, "cpm": 6.65}, {"n": "25-34", "spend": 59.41, "leads": 4, "cpl": 14.85, "cpm": 7.44}, {"n": "35-44", "spend": 83.99, "leads": 1, "cpl": 83.99, "cpm": 9.93}, {"n": "45-54", "spend": 4.64, "leads": 0, "cpl": null, "cpm": 11.51}], "gender": [{"n": "female", "spend": 134.91, "leads": 7, "cpl": 19.27, "cpm": 8.07}, {"n": "male", "spend": 19.59, "leads": 0, "cpl": null, "cpm": 17.41}], "platform": [{"n": "instagram_stories", "spend": 41.8, "leads": 4, "cpl": 10.45, "cpm": 6.37}, {"n": "feed", "spend": 95.31, "leads": 3, "cpl": 31.77, "cpm": 10.26}, {"n": "facebook_reels_overlay", "spend": 0.37, "leads": 0, "cpl": null, "cpm": 2.47}, {"n": "facebook_reels", "spend": 0.67, "leads": 0, "cpl": null, "cpm": 4.59}, {"n": "instagram_explore", "spend": 0.04, "leads": 0, "cpl": null, "cpm": 13.33}, {"n": "facebook_stories", "spend": 5.45, "leads": 0, "cpl": null, "cpm": 5.14}, {"n": "instagram_reels", "spend": 9.26, "leads": 0, "cpl": null, "cpm": 23.87}, {"n": "instream_video", "spend": 0.08, "leads": 0, "cpl": null, "cpm": 1.14}, {"n": "search", "spend": 0.29, "leads": 0, "cpl": null, "cpm": 12.08}, {"n": "status", "spend": 1.58, "leads": 0, "cpl": null, "cpm": 11.53}]}, "2026-03": {"age": [{"n": "18-24", "spend": 10.77, "leads": 2, "cpl": 5.38, "cpm": 5.14}, {"n": "25-34", "spend": 157.71, "leads": 17, "cpl": 9.28, "cpm": 6.75}, {"n": "35-44", "spend": 368.85, "leads": 39, "cpl": 9.46, "cpm": 8.67}, {"n": "45-54", "spend": 27.84, "leads": 3, "cpl": 9.28, "cpm": 8.41}], "gender": [{"n": "female", "spend": 523.61, "leads": 55, "cpl": 9.52, "cpm": 7.98}, {"n": "male", "spend": 40.53, "leads": 6, "cpl": 6.76, "cpm": 7.27}], "platform": [{"n": "feed", "spend": 359.74, "leads": 35, "cpl": 10.28, "cpm": 9.19}, {"n": "instagram_stories", "spend": 192.72, "leads": 23, "cpl": 8.38, "cpm": 6.44}, {"n": "facebook_reels_overlay", "spend": 0.44, "leads": 1, "cpl": 0.44, "cpm": 2.35}, {"n": "facebook_reels", "spend": 1.53, "leads": 1, "cpl": 1.53, "cpm": 6.25}, {"n": "facebook_stories", "spend": 5.5, "leads": 1, "cpl": 5.5, "cpm": 5.62}, {"n": "instagram_explore", "spend": 0.01, "leads": 0, "cpl": null, "cpm": 10.0}, {"n": "instagram_reels", "spend": 4.08, "leads": 0, "cpl": null, "cpm": 8.36}, {"n": "instream_video", "spend": 0.09, "leads": 0, "cpl": null, "cpm": 1.2}, {"n": "search", "spend": 0.16, "leads": 0, "cpl": null, "cpm": 11.43}, {"n": "status", "spend": 0.95, "leads": 0, "cpl": null, "cpm": 6.25}]}, "2026-04": {"age": [{"n": "18-24", "spend": 9.97, "leads": 1, "cpl": 9.97, "cpm": 5.51}, {"n": "25-34", "spend": 80.29, "leads": 4, "cpl": 20.07, "cpm": 6.02}, {"n": "35-44", "spend": 205.57, "leads": 19, "cpl": 10.82, "cpm": 7.96}, {"n": "45-54", "spend": 17.46, "leads": 2, "cpl": 8.73, "cpm": 8.66}], "gender": [{"n": "female", "spend": 279.9, "leads": 24, "cpl": 11.66, "cpm": 7.26}, {"n": "male", "spend": 32.56, "leads": 2, "cpl": 16.28, "cpm": 7.5}], "platform": [{"n": "feed", "spend": 186.31, "leads": 15, "cpl": 12.42, "cpm": 7.75}, {"n": "instagram_stories", "spend": 101.96, "leads": 8, "cpl": 12.74, "cpm": 7.06}, {"n": "facebook_stories", "spend": 9.42, "leads": 2, "cpl": 4.71, "cpm": 5.25}, {"n": "instagram_reels", "spend": 7.74, "leads": 1, "cpl": 7.74, "cpm": 7.16}, {"n": "facebook_reels", "spend": 1.83, "leads": 0, "cpl": null, "cpm": 5.23}, {"n": "facebook_reels_overlay", "spend": 2.43, "leads": 0, "cpl": null, "cpm": 3.31}, {"n": "instream_video", "spend": 0.11, "leads": 0, "cpl": null, "cpm": 0.85}, {"n": "search", "spend": 0.18, "leads": 0, "cpl": null, "cpm": 8.57}, {"n": "status", "spend": 3.32, "leads": 0, "cpl": null, "cpm": 8.67}]}};
-const ADS_DATA = {"1": [{"n": "AD01", "leads": 1, "cpl": 9.6, "ctr": 0.38, "thumb": "imgs/190077214de17673.jpg"}], "7": [{"n": "AD02", "leads": 16, "cpl": 12.51, "ctr": 0.41, "thumb": "imgs/03ada608463fec12.jpg"}, {"n": "AD01", "leads": 2, "cpl": 13.85, "ctr": 0.25, "thumb": "imgs/190077214de17673.jpg"}], "14": [{"n": "AD02", "leads": 27, "cpl": 12.24, "ctr": 0.36, "thumb": "imgs/03ada608463fec12.jpg"}, {"n": "AD01", "leads": 10, "cpl": 11.89, "ctr": 0.28, "thumb": "imgs/190077214de17673.jpg"}], "30": [{"n": "AD01", "leads": 56, "cpl": 8.62, "ctr": 0.36, "thumb": "imgs/190077214de17673.jpg"}, {"n": "AD02", "leads": 31, "cpl": 12.77, "ctr": 0.38, "thumb": "imgs/03ada608463fec12.jpg"}], "2026-01": [{"n": "AD01", "leads": 3, "cpl": 5.51, "ctr": 0.57, "thumb": "imgs/8c4c55e57b7beb98.jpg"}, {"n": "AD02", "leads": 3, "cpl": 13.4, "ctr": 0.47, "thumb": "imgs/77b16c7195a92e7a.jpg"}, {"n": "AD03", "leads": 0, "cpl": null, "ctr": null, "thumb": "imgs/fe4189f6cbe784d2.jpg"}, {"n": "AD04", "leads": 0, "cpl": null, "ctr": 0.51, "thumb": "imgs/aa3b253496b70fa8.png"}], "2026-02": [{"n": "AD02", "leads": 4, "cpl": 23.08, "ctr": 0.35, "thumb": "imgs/77b16c7195a92e7a.jpg"}, {"n": "AD03", "leads": 2, "cpl": 23.3, "ctr": 0.55, "thumb": "imgs/fe4189f6cbe784d2.jpg"}, {"n": "AD04", "leads": 1, "cpl": 15.9, "ctr": 0.34, "thumb": "imgs/aa3b253496b70fa8.png"}], "2026-03": [{"n": "AD01", "leads": 54, "cpl": 8.43, "ctr": 0.37, "thumb": "imgs/190077214de17673.jpg"}, {"n": "AD02", "leads": 7, "cpl": 15.73, "ctr": 0.36, "thumb": "imgs/03ada608463fec12.jpg"}], "2026-04": [{"n": "AD02", "leads": 24, "cpl": 11.9, "ctr": 0.39, "thumb": "imgs/03ada608463fec12.jpg"}, {"n": "AD01", "leads": 2, "cpl": 13.85, "ctr": 0.25, "thumb": "imgs/190077214de17673.jpg"}]};
+const ADS_DATA = {"1": [{"n": "AD01", "leads": 1, "cpl": 9.6, "ctr": 0.38, "thumb": "imgs/694dba0bfcca009b.jpg"}], "7": [{"n": "AD02", "leads": 16, "cpl": 12.51, "ctr": 0.41, "thumb": "imgs/6e8f22d49cd6488b.jpg"}, {"n": "AD01", "leads": 2, "cpl": 13.85, "ctr": 0.25, "thumb": "imgs/694dba0bfcca009b.jpg"}], "14": [{"n": "AD02", "leads": 27, "cpl": 12.24, "ctr": 0.36, "thumb": "imgs/6e8f22d49cd6488b.jpg"}, {"n": "AD01", "leads": 10, "cpl": 11.89, "ctr": 0.28, "thumb": "imgs/694dba0bfcca009b.jpg"}], "30": [{"n": "AD01", "leads": 56, "cpl": 8.62, "ctr": 0.36, "thumb": "imgs/694dba0bfcca009b.jpg"}, {"n": "AD02", "leads": 31, "cpl": 12.77, "ctr": 0.38, "thumb": "imgs/6e8f22d49cd6488b.jpg"}], "2026-01": [{"n": "AD01", "leads": 3, "cpl": 5.51, "ctr": 0.57, "thumb": "imgs/18de80ce5f16d7b6.jpg"}, {"n": "AD02", "leads": 3, "cpl": 13.4, "ctr": 0.47, "thumb": "imgs/b8dced809af96a45.jpg"}, {"n": "AD03", "leads": 0, "cpl": null, "ctr": null, "thumb": "imgs/c5544115e81b3899.jpg"}, {"n": "AD04", "leads": 0, "cpl": null, "ctr": 0.51, "thumb": "imgs/ee93250c06e1f93f.png"}], "2026-02": [{"n": "AD02", "leads": 4, "cpl": 23.08, "ctr": 0.35, "thumb": "imgs/b8dced809af96a45.jpg"}, {"n": "AD03", "leads": 2, "cpl": 23.3, "ctr": 0.55, "thumb": "imgs/c5544115e81b3899.jpg"}, {"n": "AD04", "leads": 1, "cpl": 15.9, "ctr": 0.34, "thumb": "imgs/ee93250c06e1f93f.png"}], "2026-03": [{"n": "AD01", "leads": 54, "cpl": 8.43, "ctr": 0.37, "thumb": "imgs/694dba0bfcca009b.jpg"}, {"n": "AD02", "leads": 7, "cpl": 15.73, "ctr": 0.36, "thumb": "imgs/6e8f22d49cd6488b.jpg"}], "2026-04": [{"n": "AD02", "leads": 24, "cpl": 11.9, "ctr": 0.39, "thumb": "imgs/6e8f22d49cd6488b.jpg"}, {"n": "AD01", "leads": 2, "cpl": 13.85, "ctr": 0.25, "thumb": "imgs/694dba0bfcca009b.jpg"}]};
 const DAILY = {"days": ["28/01", "29/01", "30/01", "31/01", "01/02", "02/02", "03/02", "04/02", "05/02", "06/02", "07/02", "08/02", "09/02", "17/03", "18/03", "19/03", "20/03", "21/03", "22/03", "23/03", "24/03", "25/03", "26/03", "27/03", "28/03", "29/03", "30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04"], "spend": [11.53, 15.37, 16.87, 25.67, 21.06, 18.62, 27.86, 17.69, 14.41, 19.39, 18.73, 11.69, 5.4, 42.42, 51.69, 47.69, 36.9, 51.58, 20.97, 38.34, 48.92, 28.52, 29.4, 32.7, 32.15, 32.95, 28.84, 42.15, 31.92, 25.94, 27.61, 41.58, 34.46, 48.03, 40.09, 28.54, 25.53, 9.6], "leads": [3, 1, 1, 1, 0, 1, 2, 1, 2, 1, 0, 0, 0, 3, 7, 7, 7, 5, 1, 4, 7, 2, 3, 4, 1, 5, 2, 3, 0, 8, 0, 2, 3, 6, 2, 0, 4, 1], "cpl": [3.84, 15.37, 16.87, 25.67, null, 18.62, 13.93, 17.69, 7.21, 19.39, null, null, null, 14.14, 7.38, 6.81, 5.27, 10.32, 20.97, 9.59, 6.99, 14.26, 9.8, 8.18, 32.15, 6.59, 14.42, 14.05, null, 3.24, null, 20.79, 11.49, 8.01, 20.05, null, 6.38, 9.6], "ctr": [0.73, 0.35, 0.54, 0.43, 0.3, 0.22, 0.41, 0.58, 0.65, 0.42, 0.09, 0.48, 1.05, 0.37, 0.45, 0.41, 0.36, 0.39, 0.29, 0.45, 0.39, 0.28, 0.39, 0.53, 0.19, 0.4, 0.28, 0.21, 0.34, 0.45, 0.23, 0.28, 0.44, 0.5, 0.47, 0.33, 0.22, 0.38], "cpm": [7.05, 6.79, 7.65, 9.14, 6.29, 6.92, 9.47, 10.26, 10.46, 11.72, 8.79, 8.08, 9.47, 9.31, 8.94, 8.2, 8.25, 8.04, 8.54, 8.21, 8.74, 7.31, 7.14, 6.72, 6.1, 6.55, 9.05, 8.13, 7.15, 7.8, 7.04, 7.65, 7.23, 7.12, 7.83, 6.81, 6.86, 7.29]};
 const MES_DAYS = {"2026-01": ["28/01", "29/01", "30/01", "31/01"], "2026-02": ["01/02", "02/02", "03/02", "04/02", "05/02", "06/02", "07/02", "08/02", "09/02"], "2026-03": ["17/03", "18/03", "19/03", "20/03", "21/03", "22/03", "23/03", "24/03", "25/03", "26/03", "27/03", "28/03", "29/03", "30/03", "31/03"], "2026-04": ["01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04"]};
 const MONTHLY = {"meses": ["2026-01", "2026-02", "2026-03", "2026-04"], "lbl": ["Jan/26", "Fev/26", "Mar/26", "Abr/26"], "totalS": [69.44, 154.85, 565.22, 313.3], "totalL": [6, 7, 61, 26], "cplG": [11.57, 22.12, 9.27, 12.05], "cpmG": [7.79, 8.66, 7.93, 7.29], "ctrG": [0.49, 0.39, 0.37, 0.37]};
-const CAMPS_MES = {"1": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "ads": [{"n": "AD01", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=Adp5h72ADC-pj2aMOOSxhFq5Sk4E8ah6RO0IMYf2qCFb-JFPyvsLCF8z-8Qw9wocu5A&ccb=13-1&oh=06_Q3--AfZv1roE3zpZxo8YsLs-d15s-ZS3cYqtf6MVxImQEi-l&oe=69E3EC2D&_nc_sid=58080a"}]}]}], "7": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 227.83, "leads": 18, "cpl": 12.66, "cpm": 7.28, "ctr": 0.39, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 227.83, "leads": 18, "cpl": 12.66, "cpm": 7.28, "ctr": 0.39, "ads": [{"n": "AD02", "spend": 200.13, "leads": 16, "cpl": 12.51, "cpm": 7.36, "ctr": 0.41, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdpauMQMbR-6kKtXZG32V_qfxiYLqTKWoaMeaLcMU0X25arwkszXVCb-U90Ijwde2HY&ccb=13-1&oh=06_Q3--Ad5X_2tON1UOnbn18DLSH1RWUwhIOcsZTmYOfDspHGV8&oe=69E3E76C&_nc_sid=58080a"}, {"n": "AD01", "spend": 27.7, "leads": 2, "cpl": 13.85, "cpm": 6.79, "ctr": 0.25, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=Adp5h72ADC-pj2aMOOSxhFq5Sk4E8ah6RO0IMYf2qCFb-JFPyvsLCF8z-8Qw9wocu5A&ccb=13-1&oh=06_Q3--AfZv1roE3zpZxo8YsLs-d15s-ZS3cYqtf6MVxImQEi-l&oe=69E3EC2D&_nc_sid=58080a"}]}]}], "14": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 449.39, "leads": 37, "cpl": 12.15, "cpm": 7.29, "ctr": 0.34, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 449.39, "leads": 37, "cpl": 12.15, "cpm": 7.29, "ctr": 0.34, "ads": [{"n": "AD02", "spend": 330.46, "leads": 27, "cpl": 12.24, "cpm": 7.43, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdpauMQMbR-6kKtXZG32V_qfxiYLqTKWoaMeaLcMU0X25arwkszXVCb-U90Ijwde2HY&ccb=13-1&oh=06_Q3--Ad5X_2tON1UOnbn18DLSH1RWUwhIOcsZTmYOfDspHGV8&oe=69E3E76C&_nc_sid=58080a"}, {"n": "AD01", "spend": 118.93, "leads": 10, "cpl": 11.89, "cpm": 6.91, "ctr": 0.28, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=Adp5h72ADC-pj2aMOOSxhFq5Sk4E8ah6RO0IMYf2qCFb-JFPyvsLCF8z-8Qw9wocu5A&ccb=13-1&oh=06_Q3--AfZv1roE3zpZxo8YsLs-d15s-ZS3cYqtf6MVxImQEi-l&oe=69E3EC2D&_nc_sid=58080a"}]}]}], "30": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 878.52, "leads": 87, "cpl": 10.1, "cpm": 7.69, "ctr": 0.37, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 878.52, "leads": 87, "cpl": 10.1, "cpm": 7.69, "ctr": 0.37, "ads": [{"n": "AD01", "spend": 482.79, "leads": 56, "cpl": 8.62, "cpm": 7.84, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=Adp5h72ADC-pj2aMOOSxhFq5Sk4E8ah6RO0IMYf2qCFb-JFPyvsLCF8z-8Qw9wocu5A&ccb=13-1&oh=06_Q3--AfZv1roE3zpZxo8YsLs-d15s-ZS3cYqtf6MVxImQEi-l&oe=69E3EC2D&_nc_sid=58080a"}, {"n": "AD02", "spend": 395.73, "leads": 31, "cpl": 12.77, "cpm": 7.51, "ctr": 0.38, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdpauMQMbR-6kKtXZG32V_qfxiYLqTKWoaMeaLcMU0X25arwkszXVCb-U90Ijwde2HY&ccb=13-1&oh=06_Q3--Ad5X_2tON1UOnbn18DLSH1RWUwhIOcsZTmYOfDspHGV8&oe=69E3E76C&_nc_sid=58080a"}]}]}], "2026-01": [{"n": "SANTO - MENSAGEM - MENINGITE", "spend": 69.44, "leads": 6, "cpl": 11.57, "cpm": 7.79, "ctr": 0.49, "spk": [11.57], "conjs": [{"n": "CA01 - PELOTAS - PAIS ATE 5 ANOS", "spend": 69.44, "leads": 6, "cpl": 11.57, "cpm": 7.79, "ctr": 0.49, "ads": [{"n": "AD01", "spend": 16.52, "leads": 3, "cpl": 5.51, "cpm": 7.81, "ctr": 0.57, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/6809146067390192418?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJinpGVdP4gZvSkGXjYqA7s6Sk59EJx3QDYsyhP1OS_o6w9uJmmud5IS30_3Omh9aQL22LVAottOWwbDpk3vgXb8hcudzg9p9GfhcpGPKxY6fvSDL13T8YdZ1bcBL3k0-SGoHOBQH1UYVvSVNNpodE9&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdoFO57SDvjlQZPsOYTJ8pzExY4jo1rtgbBkJkrem_4Qq0dNW25ucolTAOY7N34TJsw&ccb=13-1&oh=06_Q3--AXgFO6fBwBTN0L_xn4kz9PMoxf8aksdWMM9DzMr2N1yO&oe=69E3CDF0&_nc_sid=58080a"}, {"n": "AD02", "spend": 40.19, "leads": 3, "cpl": 13.4, "cpm": 7.61, "ctr": 0.47, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdomY7Y1YrWNcUto9Dby1NALqCZtS3Vdo6i9uUFbmA-ehIuHScDhlIExZzx7WVL3qf4&ccb=13-1&oh=06_Q3--Aex7cVh8BKSrYe1X0UZSPRwnlNIyIJ9niMd0BLvkGOKQ&oe=69E3D2D4&_nc_sid=58080a"}, {"n": "AD03", "spend": 1.14, "leads": 0, "cpl": null, "cpm": 7.55, "ctr": null, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdoDVBwX9fcxsD47ScES_9Le-rg5HknG-Fhw5J_1W_5gxHf9On1uOxblTEs6nvjiraU&ccb=13-1&oh=06_Q3--AVZNhTgJk7GF4Gn3Rc02qC4Ji1CE28hCB2Aco3yRocEg&oe=69E3D3BA&_nc_sid=58080a"}, {"n": "AD04", "spend": 11.59, "leads": 0, "cpl": null, "cpm": 8.47, "ctr": 0.51, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEgj4f8&_nc_oc=AdpwyeblCLtcU9UzJJbrvP_2ktmT3wxdBLqU2gZDuZQPrt73KgSLivnHXYhqmBEUi3I&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_tpa=Q5bMBQEsW1GthQE8hiBa0Z0KA4sd6PoyY1-OiPAoewLW-65U_CCyKcf8TOH0lvW0g1V12YWuRxgBR9Wf&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af30hgskkmRjbnGoHismrBJ3gUT1AMJfS_v_J-XfZ0WCIQ&oe=69E7D35F"}]}]}], "2026-02": [{"n": "SANTO - MENSAGEM - MENINGITE", "spend": 154.85, "leads": 7, "cpl": 22.12, "cpm": 8.66, "ctr": 0.39, "spk": [11.57, 22.12], "conjs": [{"n": "CA01 - PELOTAS - PAIS ATE 5 ANOS", "spend": 154.85, "leads": 7, "cpl": 22.12, "cpm": 8.66, "ctr": 0.39, "ads": [{"n": "AD02", "spend": 92.34, "leads": 4, "cpl": 23.08, "cpm": 7.85, "ctr": 0.35, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdomY7Y1YrWNcUto9Dby1NALqCZtS3Vdo6i9uUFbmA-ehIuHScDhlIExZzx7WVL3qf4&ccb=13-1&oh=06_Q3--Aex7cVh8BKSrYe1X0UZSPRwnlNIyIJ9niMd0BLvkGOKQ&oe=69E3D2D4&_nc_sid=58080a"}, {"n": "AD03", "spend": 46.61, "leads": 2, "cpl": 23.3, "cpm": 13.49, "ctr": 0.55, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdoDVBwX9fcxsD47ScES_9Le-rg5HknG-Fhw5J_1W_5gxHf9On1uOxblTEs6nvjiraU&ccb=13-1&oh=06_Q3--AVZNhTgJk7GF4Gn3Rc02qC4Ji1CE28hCB2Aco3yRocEg&oe=69E3D3BA&_nc_sid=58080a"}, {"n": "AD04", "spend": 15.9, "leads": 1, "cpl": 15.9, "cpm": 5.97, "ctr": 0.34, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEgj4f8&_nc_oc=AdpwyeblCLtcU9UzJJbrvP_2ktmT3wxdBLqU2gZDuZQPrt73KgSLivnHXYhqmBEUi3I&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_tpa=Q5bMBQEsW1GthQE8hiBa0Z0KA4sd6PoyY1-OiPAoewLW-65U_CCyKcf8TOH0lvW0g1V12YWuRxgBR9Wf&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af30hgskkmRjbnGoHismrBJ3gUT1AMJfS_v_J-XfZ0WCIQ&oe=69E7D35F"}]}]}], "2026-03": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 565.22, "leads": 61, "cpl": 9.27, "cpm": 7.93, "ctr": 0.37, "spk": [null, null, 9.27], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 565.22, "leads": 61, "cpl": 9.27, "cpm": 7.93, "ctr": 0.37, "ads": [{"n": "AD01", "spend": 455.09, "leads": 54, "cpl": 8.43, "cpm": 7.91, "ctr": 0.37, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=Adp5h72ADC-pj2aMOOSxhFq5Sk4E8ah6RO0IMYf2qCFb-JFPyvsLCF8z-8Qw9wocu5A&ccb=13-1&oh=06_Q3--AfZv1roE3zpZxo8YsLs-d15s-ZS3cYqtf6MVxImQEi-l&oe=69E3EC2D&_nc_sid=58080a"}, {"n": "AD02", "spend": 110.13, "leads": 7, "cpl": 15.73, "cpm": 7.98, "ctr": 0.36, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdpauMQMbR-6kKtXZG32V_qfxiYLqTKWoaMeaLcMU0X25arwkszXVCb-U90Ijwde2HY&ccb=13-1&oh=06_Q3--Ad5X_2tON1UOnbn18DLSH1RWUwhIOcsZTmYOfDspHGV8&oe=69E3E76C&_nc_sid=58080a"}]}]}], "2026-04": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 313.3, "leads": 26, "cpl": 12.05, "cpm": 7.29, "ctr": 0.37, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 313.3, "leads": 26, "cpl": 12.05, "cpm": 7.29, "ctr": 0.37, "ads": [{"n": "AD02", "spend": 285.6, "leads": 24, "cpl": 11.9, "cpm": 7.34, "ctr": 0.39, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=AdpauMQMbR-6kKtXZG32V_qfxiYLqTKWoaMeaLcMU0X25arwkszXVCb-U90Ijwde2HY&ccb=13-1&oh=06_Q3--Ad5X_2tON1UOnbn18DLSH1RWUwhIOcsZTmYOfDspHGV8&oe=69E3E76C&_nc_sid=58080a"}, {"n": "AD01", "spend": 27.7, "leads": 2, "cpl": 13.85, "cpm": 6.79, "ctr": 0.25, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=5k2rLWUx_nCtgxYcSTVbKw&_nc_oc=Adp5h72ADC-pj2aMOOSxhFq5Sk4E8ah6RO0IMYf2qCFb-JFPyvsLCF8z-8Qw9wocu5A&ccb=13-1&oh=06_Q3--AfZv1roE3zpZxo8YsLs-d15s-ZS3cYqtf6MVxImQEi-l&oe=69E3EC2D&_nc_sid=58080a"}]}]}]};
+const CAMPS_MES = {"1": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "imp": 1317, "clicks": 5, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "imp": 1317, "clicks": 5, "ads": [{"n": "AD01", "spend": 9.6, "leads": 1, "cpl": 9.6, "cpm": 7.29, "ctr": 0.38, "imp": 1317, "clicks": 5, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adp8FjaXD2plLsXWa1ymODdy7zHTwNqWOtIO2cgNiYTrzJ2y8AIKzECuVMPKvxbL1VQ&ccb=13-1&oh=06_Q3--Aa7boxxL_AkkNxkT_E2EIfahu9GpcFIZNbwXiFOvsiNg&oe=69E4246D&_nc_sid=58080a"}]}]}], "7": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 227.83, "leads": 18, "cpl": 12.66, "cpm": 7.28, "ctr": 0.39, "imp": 31281, "clicks": 121, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 227.83, "leads": 18, "cpl": 12.66, "cpm": 7.28, "ctr": 0.39, "imp": 31281, "clicks": 121, "ads": [{"n": "AD02", "spend": 200.13, "leads": 16, "cpl": 12.51, "cpm": 7.36, "ctr": 0.41, "imp": 27201, "clicks": 111, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=AdreV8LInpA0DF7R8SYvqWhW64Ke4xuroEJhVPkBg6ZhpyyurDmMhxPIGICZw8WtRq4&ccb=13-1&oh=06_Q3--AXZUfSRSXBCcSpjJdYkapOJS7uQ4vDRRrJiDOFK7SgfB&oe=69E41FAC&_nc_sid=58080a"}, {"n": "AD01", "spend": 27.7, "leads": 2, "cpl": 13.85, "cpm": 6.79, "ctr": 0.25, "imp": 4080, "clicks": 10, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adp8FjaXD2plLsXWa1ymODdy7zHTwNqWOtIO2cgNiYTrzJ2y8AIKzECuVMPKvxbL1VQ&ccb=13-1&oh=06_Q3--Aa7boxxL_AkkNxkT_E2EIfahu9GpcFIZNbwXiFOvsiNg&oe=69E4246D&_nc_sid=58080a"}]}]}], "14": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 449.39, "leads": 37, "cpl": 12.15, "cpm": 7.29, "ctr": 0.34, "imp": 61666, "clicks": 210, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 449.39, "leads": 37, "cpl": 12.15, "cpm": 7.29, "ctr": 0.34, "imp": 61666, "clicks": 210, "ads": [{"n": "AD02", "spend": 330.46, "leads": 27, "cpl": 12.24, "cpm": 7.43, "ctr": 0.36, "imp": 44462, "clicks": 162, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=AdreV8LInpA0DF7R8SYvqWhW64Ke4xuroEJhVPkBg6ZhpyyurDmMhxPIGICZw8WtRq4&ccb=13-1&oh=06_Q3--AXZUfSRSXBCcSpjJdYkapOJS7uQ4vDRRrJiDOFK7SgfB&oe=69E41FAC&_nc_sid=58080a"}, {"n": "AD01", "spend": 118.93, "leads": 10, "cpl": 11.89, "cpm": 6.91, "ctr": 0.28, "imp": 17204, "clicks": 48, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adp8FjaXD2plLsXWa1ymODdy7zHTwNqWOtIO2cgNiYTrzJ2y8AIKzECuVMPKvxbL1VQ&ccb=13-1&oh=06_Q3--Aa7boxxL_AkkNxkT_E2EIfahu9GpcFIZNbwXiFOvsiNg&oe=69E4246D&_nc_sid=58080a"}]}]}], "30": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 878.52, "leads": 87, "cpl": 10.1, "cpm": 7.69, "ctr": 0.37, "imp": 114312, "clicks": 421, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 878.52, "leads": 87, "cpl": 10.1, "cpm": 7.69, "ctr": 0.37, "imp": 114312, "clicks": 421, "ads": [{"n": "AD01", "spend": 482.79, "leads": 56, "cpl": 8.62, "cpm": 7.84, "ctr": 0.36, "imp": 61607, "clicks": 222, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adp8FjaXD2plLsXWa1ymODdy7zHTwNqWOtIO2cgNiYTrzJ2y8AIKzECuVMPKvxbL1VQ&ccb=13-1&oh=06_Q3--Aa7boxxL_AkkNxkT_E2EIfahu9GpcFIZNbwXiFOvsiNg&oe=69E4246D&_nc_sid=58080a"}, {"n": "AD02", "spend": 395.73, "leads": 31, "cpl": 12.77, "cpm": 7.51, "ctr": 0.38, "imp": 52705, "clicks": 199, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=AdreV8LInpA0DF7R8SYvqWhW64Ke4xuroEJhVPkBg6ZhpyyurDmMhxPIGICZw8WtRq4&ccb=13-1&oh=06_Q3--AXZUfSRSXBCcSpjJdYkapOJS7uQ4vDRRrJiDOFK7SgfB&oe=69E41FAC&_nc_sid=58080a"}]}]}], "2026-01": [{"n": "SANTO - MENSAGEM - MENINGITE", "spend": 69.44, "leads": 6, "cpl": 11.57, "cpm": 7.79, "ctr": 0.49, "imp": 8916, "clicks": 44, "spk": [11.57], "conjs": [{"n": "CA01 - PELOTAS - PAIS ATE 5 ANOS", "spend": 69.44, "leads": 6, "cpl": 11.57, "cpm": 7.79, "ctr": 0.49, "imp": 8916, "clicks": 44, "ads": [{"n": "AD01", "spend": 16.52, "leads": 3, "cpl": 5.51, "cpm": 7.81, "ctr": 0.57, "imp": 2114, "clicks": 12, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/6809146067390192418?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJinpGVdP4gZvSkGXjYqA7s6Sk59EJx3QDYsyhP1OS_o6w9uJmmud5IS30_3Omh9aQL22LVAottOWwbDpk3vgXb8hcudzg9p9GfhcpGPKxY6fvSDL13T8YdZ1bcBL3k0-SGoHOBQH1UYVvSVNNpodE9&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=AdoB4VWUpt-gAdtPft_mk4vSwEwNoOiqeKZquE9tbOxGVECbHSAKUls5K9p4X0_szPc&ccb=13-1&oh=06_Q3--AZPnxoV0oLZtHn59KfS6uV37njwlVrk8hTedaIkqtZYM&oe=69E43E70&_nc_sid=58080a"}, {"n": "AD02", "spend": 40.19, "leads": 3, "cpl": 13.4, "cpm": 7.61, "ctr": 0.47, "imp": 5283, "clicks": 25, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Ado9H0NIgI_2uqAr48D09Q-E1SOJtmAxnSwjIS-vCTts8-_TlmChFcIYTLDoOnGpYMs&ccb=13-1&oh=06_Q3--ARSeUmr925_XPF2vuLp49BbY993P1AgrpYztgPLTZz-V&oe=69E44354&_nc_sid=58080a"}, {"n": "AD03", "spend": 1.14, "leads": 0, "cpl": null, "cpm": 7.55, "ctr": null, "imp": 151, "clicks": 0, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adobk9C6JzDPmArR8TsPTIgV5xc1eF87D5Os8_hqB4cR7aN_d36M2c8bNgin5mBwid4&ccb=13-1&oh=06_Q3--AU_ux6o93Gl9zT1s9g6gOOixLV942wz6C9lW279HAro0&oe=69E4443A&_nc_sid=58080a"}, {"n": "AD04", "spend": 11.59, "leads": 0, "cpl": null, "cpm": 8.47, "ctr": 0.51, "imp": 1368, "clicks": 7, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEAORY4&_nc_oc=Adpo3XHm16edz3VTHtcCewlmOF0Prtei7a6y0H0tHDqI3nyI2DtbOwANex1UU8jQwRQ&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_tpa=Q5bMBQFMTN4lbk5F1kV6AWoaH-8GIPxyrvT9UEkydQ3uEzrwqZ4WY_zl_40OVlMGPBFIjE2niD2w_stR&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af3EtGZ3_j5DrIe_6LsniX1mgGOTpn39cGOYhca-YSII3g&oe=69E80B9F"}]}]}], "2026-02": [{"n": "SANTO - MENSAGEM - MENINGITE", "spend": 154.85, "leads": 7, "cpl": 22.12, "cpm": 8.66, "ctr": 0.39, "imp": 17880, "clicks": 69, "spk": [11.57, 22.12], "conjs": [{"n": "CA01 - PELOTAS - PAIS ATE 5 ANOS", "spend": 154.85, "leads": 7, "cpl": 22.12, "cpm": 8.66, "ctr": 0.39, "imp": 17880, "clicks": 69, "ads": [{"n": "AD02", "spend": 92.34, "leads": 4, "cpl": 23.08, "cpm": 7.85, "ctr": 0.35, "imp": 11763, "clicks": 41, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/4996890919076448070?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIdaHZNOReN_nJ-Cd8QYOVn0tmx38-UOTnOkSiqs4c5_GjUe7u4ROMLiszoz8BtDm2VKkvFOmtlP6gj5O3Yao5YmCgABI016W2PfV_xrWucmxHcFPRffHEecCUEp7Qm-vyI5U54yJBQEPAyf9ivnejH&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Ado9H0NIgI_2uqAr48D09Q-E1SOJtmAxnSwjIS-vCTts8-_TlmChFcIYTLDoOnGpYMs&ccb=13-1&oh=06_Q3--ARSeUmr925_XPF2vuLp49BbY993P1AgrpYztgPLTZz-V&oe=69E44354&_nc_sid=58080a"}, {"n": "AD03", "spend": 46.61, "leads": 2, "cpl": 23.3, "cpm": 13.49, "ctr": 0.55, "imp": 3454, "clicks": 19, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/16176704866158242964?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIW0hhJKl_CW9ad7J5_Od3_MVdaMts86TuhERCa67yP5d1n_teTAzVxGT1jbPmEr8XgPWFIXoInDWh6Ugxk7lKa1JeT2Ra3eJw4spbopLBGYljpK5uks9R4oBPj006kWqNrhuXiF5fHjZXwoqACacEh&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adobk9C6JzDPmArR8TsPTIgV5xc1eF87D5Os8_hqB4cR7aN_d36M2c8bNgin5mBwid4&ccb=13-1&oh=06_Q3--AU_ux6o93Gl9zT1s9g6gOOixLV942wz6C9lW279HAro0&oe=69E4443A&_nc_sid=58080a"}, {"n": "AD04", "spend": 15.9, "leads": 1, "cpl": 15.9, "cpm": 5.97, "ctr": 0.34, "imp": 2663, "clicks": 9, "thumb": "https://scontent.xx.fbcdn.net/v/t45.1600-4/622551390_33643323765282916_6612325884527714870_n.png?_nc_cat=107&ccb=1-7&_nc_ohc=qqWroAkF-BcQ7kNvwEAORY4&_nc_oc=Adpo3XHm16edz3VTHtcCewlmOF0Prtei7a6y0H0tHDqI3nyI2DtbOwANex1UU8jQwRQ&_nc_zt=1&_nc_ht=scontent.xx&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_tpa=Q5bMBQFMTN4lbk5F1kV6AWoaH-8GIPxyrvT9UEkydQ3uEzrwqZ4WY_zl_40OVlMGPBFIjE2niD2w_stR&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_Af3EtGZ3_j5DrIe_6LsniX1mgGOTpn39cGOYhca-YSII3g&oe=69E80B9F"}]}]}], "2026-03": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 565.22, "leads": 61, "cpl": 9.27, "cpm": 7.93, "ctr": 0.37, "imp": 71320, "clicks": 261, "spk": [null, null, 9.27], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 565.22, "leads": 61, "cpl": 9.27, "cpm": 7.93, "ctr": 0.37, "imp": 71320, "clicks": 261, "ads": [{"n": "AD01", "spend": 455.09, "leads": 54, "cpl": 8.43, "cpm": 7.91, "ctr": 0.37, "imp": 57527, "clicks": 212, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adp8FjaXD2plLsXWa1ymODdy7zHTwNqWOtIO2cgNiYTrzJ2y8AIKzECuVMPKvxbL1VQ&ccb=13-1&oh=06_Q3--Aa7boxxL_AkkNxkT_E2EIfahu9GpcFIZNbwXiFOvsiNg&oe=69E4246D&_nc_sid=58080a"}, {"n": "AD02", "spend": 110.13, "leads": 7, "cpl": 15.73, "cpm": 7.98, "ctr": 0.36, "imp": 13793, "clicks": 49, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=AdreV8LInpA0DF7R8SYvqWhW64Ke4xuroEJhVPkBg6ZhpyyurDmMhxPIGICZw8WtRq4&ccb=13-1&oh=06_Q3--AXZUfSRSXBCcSpjJdYkapOJS7uQ4vDRRrJiDOFK7SgfB&oe=69E41FAC&_nc_sid=58080a"}]}]}], "2026-04": [{"n": "SANTO - MENSAGEM - GRIPE", "spend": 313.3, "leads": 26, "cpl": 12.05, "cpm": 7.29, "ctr": 0.37, "imp": 42992, "clicks": 160, "spk": [null, null, 9.27, 12.05], "conjs": [{"n": "CA01 - PELOTAS - LOCALIZACAO", "spend": 313.3, "leads": 26, "cpl": 12.05, "cpm": 7.29, "ctr": 0.37, "imp": 42992, "clicks": 160, "ads": [{"n": "AD02", "spend": 285.6, "leads": 24, "cpl": 11.9, "cpm": 7.34, "ctr": 0.39, "imp": 38912, "clicks": 150, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/15019997026114263130?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJyYgpRuvF1UhSWu5HPZBsytnNNiNcJMOtioGwpua4BSsNDk-JShcSfj1rZByzMIOnw3F1JaTqLpRG56rjzt2maZMvNms0tbKg_6y2NawV0asaCKL9ZjPuiN53xdSS_fjF0HbrSj5aFtFVS4yQ-KRVo&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=AdreV8LInpA0DF7R8SYvqWhW64Ke4xuroEJhVPkBg6ZhpyyurDmMhxPIGICZw8WtRq4&ccb=13-1&oh=06_Q3--AXZUfSRSXBCcSpjJdYkapOJS7uQ4vDRRrJiDOFK7SgfB&oe=69E41FAC&_nc_sid=58080a"}, {"n": "AD01", "spend": 27.7, "leads": 2, "cpl": 13.85, "cpm": 6.79, "ctr": 0.25, "imp": 4080, "clicks": 10, "thumb": "https://external.xx.fbcdn.net/emg1/v/t13/14145871028010895018?url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKwzq_SLLNeoQbWVIuo1qFJDwGmBpI5AQBeBQFcryqqYvjGujeJndZ4UZwwJW-sS3X1EGvWsDyzkVT9iL2I1iEHGWsCu84x69yQN1hxUP5k0inIx5k1fc3VnVYwIbBU_H3DjjOb04oahTlbWXXAteBS&fb_obo=1&utld=facebook.com&stp=c0.5000x0.5000f_dst-emg0_q75_tt6&edm=AOgd6ZUEAAAA&_nc_gid=TGVsR8Svep6EMG4dbTutYQ&_nc_oc=Adp8FjaXD2plLsXWa1ymODdy7zHTwNqWOtIO2cgNiYTrzJ2y8AIKzECuVMPKvxbL1VQ&ccb=13-1&oh=06_Q3--Aa7boxxL_AkkNxkT_E2EIfahu9GpcFIZNbwXiFOvsiNg&oe=69E4246D&_nc_sid=58080a"}]}]}]};
 const GDAILY = {"days": ["05/03", "06/03", "07/03", "08/03", "09/03", "10/03", "12/03", "13/03", "14/03", "15/03", "16/03", "17/03", "18/03", "19/03", "20/03", "21/03", "22/03", "23/03"], "spend": [53.44, 60.23, 9.29, 3.15, 47.47, 25.55, 18.55, 20.32, 10.83, 9.62, 60.88, 60.68, 56.11, 15.66, 0.02, 0.01, 0.01, 41.73], "conversions": [10.0, 8.0, 1.0, 0.0, 16.0, 3.0, 7.0, 14.0, 1.0, 2.0, 15.0, 9.0, 9.0, 6.0, 0.0, 0.0, 0.0, 9.0], "cpl": [5.34, 7.53, 9.29, null, 2.97, 8.52, 2.65, 1.45, 10.83, 4.81, 4.06, 6.74, 6.23, 2.61, null, null, null, 4.64], "ctr": [23.52, 31.41, 16.98, 21.05, 19.87, 20.88, 18.26, 20.9, 12.12, 19.4, 19.95, 24.86, 19.82, 22.56, 23.08, 50.0, 33.33, 17.1], "cpc": [0.45, 0.5, 0.26, 0.2, 0.38, 0.49, 0.3, 0.2, 0.45, 0.37, 0.76, 0.71, 0.5, 0.52, 0.01, 0.01, 0.01, 0.57]};
 const GKPIS_PERIODO = {"1": {"spend": 41.73, "conversions": 9.0, "cpl": 4.64, "ctr": 17.1, "cpc": 0.57}, "7": {"spend": 174.21, "conversions": 33.0, "cpl": 5.28, "ctr": 20.55, "cpc": 0.57}, "14": {"spend": 319.97, "conversions": 75.0, "cpl": 4.27, "ctr": 19.77, "cpc": 0.49}, "30": {"spend": 493.55, "conversions": 110.0, "cpl": 4.49, "ctr": 20.93, "cpc": 0.46}, "2026-03": {"spend": 493.55, "conversions": 110.0, "cpl": 4.49, "ctr": 20.93, "cpc": 0.46}};
 const GMONTHLY = {"meses": ["2026-03"], "lbl": ["Mar/26"], "totalS": [493.55], "totalConv": [110.0], "totalClicks": [1066], "totalImp": [5093], "cplG": [4.49], "cpcG": [0.46], "ctrG": [20.93]};
-const GCAMPS_MES = {"1": [{"n": "Santo-Search-Branding", "spend": 18.07, "conv": 8.0, "cpl": 2.26, "cpc": 0.3, "ctr": 31.44, "clicks": 61, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 18.07, "conv": 8.0, "cpl": 2.26, "cpc": 0.3, "ctr": 31.44, "clicks": 61, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 17.76, "conv": 8.0, "cpl": 2.22, "cpc": 0.3, "clicks": 59}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.31, "conv": 0.0, "cpl": null, "cpc": 0.16, "clicks": 2}]}]}, {"n": "Santo-Search-Servicos", "spend": 23.66, "conv": 1.0, "cpl": 23.66, "cpc": 1.97, "ctr": 5.15, "clicks": 12, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 20.43, "conv": 1.0, "cpl": 20.43, "cpc": 2.27, "ctr": 5.84, "clicks": 9, "keywords": [{"n": "vacinas em pelotas", "match": "EXACT", "spend": 3.38, "conv": 1.0, "cpl": 3.38, "cpc": 3.38, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 4.63, "conv": 0.0, "cpl": null, "cpc": 2.32, "clicks": 2}, {"n": "exames laboratoriais pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 3.4, "conv": 0.0, "cpl": null, "cpc": 1.7, "clicks": 2}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 9.02, "conv": 0.0, "cpl": null, "cpc": 2.25, "clicks": 4}]}, {"n": "laboratorio-ampla", "spend": 3.23, "conv": 0.0, "cpl": null, "cpc": 1.08, "ctr": 3.8, "clicks": 3, "keywords": [{"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio exames", "match": "EXACT", "spend": 0.32, "conv": 0.0, "cpl": null, "cpc": 0.32, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 0.73, "conv": 0.0, "cpl": null, "cpc": 0.73, "clicks": 1}]}]}], "7": [{"n": "Santo-Search-Branding", "spend": 78.42, "conv": 22.0, "cpl": 3.56, "cpc": 0.33, "ctr": 33.71, "clicks": 241, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 78.42, "conv": 22.0, "cpl": 3.56, "cpc": 0.33, "ctr": 33.71, "clicks": 241, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 78.07, "conv": 22.0, "cpl": 3.55, "cpc": 0.33, "clicks": 236}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.04, "conv": 0.0, "cpl": null, "cpc": 0.01, "clicks": 3}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.31, "conv": 0.0, "cpl": null, "cpc": 0.16, "clicks": 2}]}]}, {"n": "Santo-Search-Servicos", "spend": 95.79, "conv": 11.0, "cpl": 8.71, "cpc": 1.47, "ctr": 8.4, "clicks": 65, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 81.77, "conv": 9.0, "cpl": 9.09, "cpc": 1.57, "ctr": 9.68, "clicks": 52, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 29.63, "conv": 3.0, "cpl": 9.88, "cpc": 1.65, "clicks": 18}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 12.82, "conv": 3.0, "cpl": 4.27, "cpc": 1.83, "clicks": 7}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 20.23, "conv": 2.0, "cpl": 10.12, "cpc": 1.26, "clicks": 16}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 6.92, "conv": 0.0, "cpl": null, "cpc": 2.31, "clicks": 3}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 8.39, "conv": 0.0, "cpl": null, "cpc": 1.2, "clicks": 7}]}, {"n": "laboratorio-ampla", "spend": 14.02, "conv": 2.0, "cpl": 7.01, "cpc": 1.08, "ctr": 5.49, "clicks": 13, "keywords": [{"n": "exames de laboratorio", "match": "PHRASE", "spend": 5.92, "conv": 1.0, "cpl": 5.92, "cpc": 1.48, "clicks": 4}, {"n": "laboratorio exames", "match": "EXACT", "spend": 4.79, "conv": 1.0, "cpl": 4.8, "cpc": 1.2, "clicks": 4}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 0.03, "conv": 0.0, "cpl": null, "cpc": 0.03, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 1.1, "conv": 0.0, "cpl": null, "cpc": 0.37, "clicks": 3}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}], "14": [{"n": "Santo-Search-Branding", "spend": 150.33, "conv": 50.33, "cpl": 2.99, "cpc": 0.29, "ctr": 32.54, "clicks": 517, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 150.33, "conv": 50.33, "cpl": 2.99, "cpc": 0.29, "ctr": 32.54, "clicks": 517, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 149.58, "conv": 50.33, "cpl": 2.97, "cpc": 0.3, "clicks": 502}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.37, "conv": 0.0, "cpl": null, "cpc": 0.05, "clicks": 8}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.38, "conv": 0.0, "cpl": null, "cpc": 0.05, "clicks": 7}]}]}, {"n": "Santo-Search-Servicos", "spend": 169.64, "conv": 24.67, "cpl": 6.88, "cpc": 1.27, "ctr": 7.86, "clicks": 134, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 140.93, "conv": 19.67, "cpl": 7.17, "cpc": 1.38, "ctr": 8.29, "clicks": 102, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 55.96, "conv": 7.67, "cpl": 7.3, "cpc": 1.33, "clicks": 42}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 30.18, "conv": 6.0, "cpl": 5.03, "cpc": 2.01, "clicks": 15}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 31.52, "conv": 5.0, "cpl": 6.3, "cpc": 1.09, "clicks": 29}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 6.92, "conv": 0.0, "cpl": null, "cpc": 2.31, "clicks": 3}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 1.06, "conv": 0.0, "cpl": null, "cpc": 1.06, "clicks": 1}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 11.51, "conv": 0.0, "cpl": null, "cpc": 1.05, "clicks": 11}]}, {"n": "laboratorio-ampla", "spend": 28.71, "conv": 5.0, "cpl": 5.74, "cpc": 0.9, "ctr": 6.77, "clicks": 32, "keywords": [{"n": "exames de laboratorio", "match": "PHRASE", "spend": 11.01, "conv": 2.0, "cpl": 5.5, "cpc": 1.38, "clicks": 8}, {"n": "laboratorio exames", "match": "EXACT", "spend": 10.5, "conv": 2.0, "cpl": 5.25, "cpc": 1.05, "clicks": 10}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 0.64, "conv": 1.0, "cpl": 0.64, "cpc": 0.21, "clicks": 3}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 1.05, "conv": 0.0, "cpl": null, "cpc": 1.05, "clicks": 1}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 3.33, "conv": 0.0, "cpl": null, "cpc": 0.37, "clicks": 9}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}], "30": [{"n": "Santo-Search-Branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 230.31, "conv": 70.33, "cpl": 3.27, "cpc": 0.28, "clicks": 825}, {"n": "bem me quer exames", "match": "EXACT", "spend": 1.82, "conv": 0.0, "cpl": null, "cpc": 0.13, "clicks": 14}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 1.24, "conv": 0.0, "cpl": null, "cpc": 0.09, "clicks": 14}]}]}, {"n": "Santo-Search-Servicos", "spend": 260.18, "conv": 39.67, "cpl": 6.56, "cpc": 1.22, "ctr": 8.23, "clicks": 213, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 220.85, "conv": 31.67, "cpl": 6.97, "cpc": 1.31, "ctr": 9.02, "clicks": 169, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 77.19, "conv": 10.67, "cpl": 7.24, "cpc": 1.35, "clicks": 57}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 45.16, "conv": 9.0, "cpl": 5.02, "cpc": 1.81, "clicks": 25}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 65.19, "conv": 8.0, "cpl": 8.15, "cpc": 1.05, "clicks": 62}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 7.36, "conv": 2.0, "cpl": 3.68, "cpc": 0.92, "clicks": 8}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 12.81, "conv": 1.0, "cpl": 12.81, "cpc": 1.07, "clicks": 12}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 9.37, "conv": 0.0, "cpl": null, "cpc": 2.34, "clicks": 4}]}, {"n": "laboratorio-ampla", "spend": 39.33, "conv": 8.0, "cpl": 4.92, "cpc": 0.89, "ctr": 6.17, "clicks": 44, "keywords": [{"n": "laboratorio exames", "match": "EXACT", "spend": 11.2, "conv": 3.0, "cpl": 3.73, "cpc": 1.02, "clicks": 11}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 12.97, "conv": 2.0, "cpl": 6.48, "cpc": 1.3, "clicks": 10}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 1.5, "conv": 2.0, "cpl": 0.75, "cpc": 0.38, "clicks": 4}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 2.62, "conv": 1.0, "cpl": 2.62, "cpc": 1.31, "clicks": 2}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.33, "conv": 0.0, "cpl": null, "cpc": 1.16, "clicks": 2}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.09, "conv": 0.0, "cpl": null, "cpc": 0.08, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 8.62, "conv": 0.0, "cpl": null, "cpc": 0.62, "clicks": 14}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}], "2026-03": [{"n": "Santo-Search-Branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 230.31, "conv": 70.33, "cpl": 3.27, "cpc": 0.28, "clicks": 825}, {"n": "bem me quer exames", "match": "EXACT", "spend": 1.82, "conv": 0.0, "cpl": null, "cpc": 0.13, "clicks": 14}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 1.24, "conv": 0.0, "cpl": null, "cpc": 0.09, "clicks": 14}]}]}, {"n": "Santo-Search-Servicos", "spend": 260.18, "conv": 39.67, "cpl": 6.56, "cpc": 1.22, "ctr": 8.23, "clicks": 213, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 220.85, "conv": 31.67, "cpl": 6.97, "cpc": 1.31, "ctr": 9.02, "clicks": 169, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 77.19, "conv": 10.67, "cpl": 7.24, "cpc": 1.35, "clicks": 57}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 45.16, "conv": 9.0, "cpl": 5.02, "cpc": 1.81, "clicks": 25}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 65.19, "conv": 8.0, "cpl": 8.15, "cpc": 1.05, "clicks": 62}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 7.36, "conv": 2.0, "cpl": 3.68, "cpc": 0.92, "clicks": 8}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 12.81, "conv": 1.0, "cpl": 12.81, "cpc": 1.07, "clicks": 12}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 9.37, "conv": 0.0, "cpl": null, "cpc": 2.34, "clicks": 4}]}, {"n": "laboratorio-ampla", "spend": 39.33, "conv": 8.0, "cpl": 4.92, "cpc": 0.89, "ctr": 6.17, "clicks": 44, "keywords": [{"n": "laboratorio exames", "match": "EXACT", "spend": 11.2, "conv": 3.0, "cpl": 3.73, "cpc": 1.02, "clicks": 11}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 12.97, "conv": 2.0, "cpl": 6.48, "cpc": 1.3, "clicks": 10}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 1.5, "conv": 2.0, "cpl": 0.75, "cpc": 0.38, "clicks": 4}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 2.62, "conv": 1.0, "cpl": 2.62, "cpc": 1.31, "clicks": 2}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.33, "conv": 0.0, "cpl": null, "cpc": 1.16, "clicks": 2}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.09, "conv": 0.0, "cpl": null, "cpc": 0.08, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 8.62, "conv": 0.0, "cpl": null, "cpc": 0.62, "clicks": 14}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}]};
+const GCAMPS_MES = {"1": [{"n": "Santo-Search-Branding", "spend": 18.07, "conv": 8.0, "cpl": 2.26, "cpc": 0.3, "ctr": 31.44, "clicks": 61, "imp": 194, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 18.07, "conv": 8.0, "cpl": 2.26, "cpc": 0.3, "ctr": 31.44, "clicks": 61, "imp": 194, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 17.76, "conv": 8.0, "cpl": 2.22, "cpc": 0.3, "clicks": 59}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.31, "conv": 0.0, "cpl": null, "cpc": 0.16, "clicks": 2}]}]}, {"n": "Santo-Search-Servicos", "spend": 23.66, "conv": 1.0, "cpl": 23.66, "cpc": 1.97, "ctr": 5.15, "clicks": 12, "imp": 233, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 20.43, "conv": 1.0, "cpl": 20.43, "cpc": 2.27, "ctr": 5.84, "clicks": 9, "imp": 154, "keywords": [{"n": "vacinas em pelotas", "match": "EXACT", "spend": 3.38, "conv": 1.0, "cpl": 3.38, "cpc": 3.38, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 4.63, "conv": 0.0, "cpl": null, "cpc": 2.32, "clicks": 2}, {"n": "exames laboratoriais pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 3.4, "conv": 0.0, "cpl": null, "cpc": 1.7, "clicks": 2}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 9.02, "conv": 0.0, "cpl": null, "cpc": 2.25, "clicks": 4}]}, {"n": "laboratorio-ampla", "spend": 3.23, "conv": 0.0, "cpl": null, "cpc": 1.08, "ctr": 3.8, "clicks": 3, "imp": 79, "keywords": [{"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio exames", "match": "EXACT", "spend": 0.32, "conv": 0.0, "cpl": null, "cpc": 0.32, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 0.73, "conv": 0.0, "cpl": null, "cpc": 0.73, "clicks": 1}]}]}], "7": [{"n": "Santo-Search-Branding", "spend": 78.42, "conv": 22.0, "cpl": 3.56, "cpc": 0.33, "ctr": 33.71, "clicks": 241, "imp": 715, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 78.42, "conv": 22.0, "cpl": 3.56, "cpc": 0.33, "ctr": 33.71, "clicks": 241, "imp": 715, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 78.07, "conv": 22.0, "cpl": 3.55, "cpc": 0.33, "clicks": 236}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.04, "conv": 0.0, "cpl": null, "cpc": 0.01, "clicks": 3}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.31, "conv": 0.0, "cpl": null, "cpc": 0.16, "clicks": 2}]}]}, {"n": "Santo-Search-Servicos", "spend": 95.79, "conv": 11.0, "cpl": 8.71, "cpc": 1.47, "ctr": 8.4, "clicks": 65, "imp": 774, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 81.77, "conv": 9.0, "cpl": 9.09, "cpc": 1.57, "ctr": 9.68, "clicks": 52, "imp": 537, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 29.63, "conv": 3.0, "cpl": 9.88, "cpc": 1.65, "clicks": 18}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 12.82, "conv": 3.0, "cpl": 4.27, "cpc": 1.83, "clicks": 7}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 20.23, "conv": 2.0, "cpl": 10.12, "cpc": 1.26, "clicks": 16}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 6.92, "conv": 0.0, "cpl": null, "cpc": 2.31, "clicks": 3}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 8.39, "conv": 0.0, "cpl": null, "cpc": 1.2, "clicks": 7}]}, {"n": "laboratorio-ampla", "spend": 14.02, "conv": 2.0, "cpl": 7.01, "cpc": 1.08, "ctr": 5.49, "clicks": 13, "imp": 237, "keywords": [{"n": "exames de laboratorio", "match": "PHRASE", "spend": 5.92, "conv": 1.0, "cpl": 5.92, "cpc": 1.48, "clicks": 4}, {"n": "laboratorio exames", "match": "EXACT", "spend": 4.79, "conv": 1.0, "cpl": 4.8, "cpc": 1.2, "clicks": 4}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 0.03, "conv": 0.0, "cpl": null, "cpc": 0.03, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 1.1, "conv": 0.0, "cpl": null, "cpc": 0.37, "clicks": 3}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}], "14": [{"n": "Santo-Search-Branding", "spend": 150.33, "conv": 50.33, "cpl": 2.99, "cpc": 0.29, "ctr": 32.54, "clicks": 517, "imp": 1589, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 150.33, "conv": 50.33, "cpl": 2.99, "cpc": 0.29, "ctr": 32.54, "clicks": 517, "imp": 1589, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 149.58, "conv": 50.33, "cpl": 2.97, "cpc": 0.3, "clicks": 502}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.37, "conv": 0.0, "cpl": null, "cpc": 0.05, "clicks": 8}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.38, "conv": 0.0, "cpl": null, "cpc": 0.05, "clicks": 7}]}]}, {"n": "Santo-Search-Servicos", "spend": 169.64, "conv": 24.67, "cpl": 6.88, "cpc": 1.27, "ctr": 7.86, "clicks": 134, "imp": 1704, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 140.93, "conv": 19.67, "cpl": 7.17, "cpc": 1.38, "ctr": 8.29, "clicks": 102, "imp": 1231, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 55.96, "conv": 7.67, "cpl": 7.3, "cpc": 1.33, "clicks": 42}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 30.18, "conv": 6.0, "cpl": 5.03, "cpc": 2.01, "clicks": 15}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 31.52, "conv": 5.0, "cpl": 6.3, "cpc": 1.09, "clicks": 29}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 6.92, "conv": 0.0, "cpl": null, "cpc": 2.31, "clicks": 3}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 1.06, "conv": 0.0, "cpl": null, "cpc": 1.06, "clicks": 1}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 11.51, "conv": 0.0, "cpl": null, "cpc": 1.05, "clicks": 11}]}, {"n": "laboratorio-ampla", "spend": 28.71, "conv": 5.0, "cpl": 5.74, "cpc": 0.9, "ctr": 6.77, "clicks": 32, "imp": 473, "keywords": [{"n": "exames de laboratorio", "match": "PHRASE", "spend": 11.01, "conv": 2.0, "cpl": 5.5, "cpc": 1.38, "clicks": 8}, {"n": "laboratorio exames", "match": "EXACT", "spend": 10.5, "conv": 2.0, "cpl": 5.25, "cpc": 1.05, "clicks": 10}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 0.64, "conv": 1.0, "cpl": 0.64, "cpc": 0.21, "clicks": 3}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 1.05, "conv": 0.0, "cpl": null, "cpc": 1.05, "clicks": 1}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 3.33, "conv": 0.0, "cpl": null, "cpc": 0.37, "clicks": 9}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}], "30": [{"n": "Santo-Search-Branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "imp": 2506, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "imp": 2506, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 230.31, "conv": 70.33, "cpl": 3.27, "cpc": 0.28, "clicks": 825}, {"n": "bem me quer exames", "match": "EXACT", "spend": 1.82, "conv": 0.0, "cpl": null, "cpc": 0.13, "clicks": 14}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 1.24, "conv": 0.0, "cpl": null, "cpc": 0.09, "clicks": 14}]}]}, {"n": "Santo-Search-Servicos", "spend": 260.18, "conv": 39.67, "cpl": 6.56, "cpc": 1.22, "ctr": 8.23, "clicks": 213, "imp": 2587, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 220.85, "conv": 31.67, "cpl": 6.97, "cpc": 1.31, "ctr": 9.02, "clicks": 169, "imp": 1874, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 77.19, "conv": 10.67, "cpl": 7.24, "cpc": 1.35, "clicks": 57}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 45.16, "conv": 9.0, "cpl": 5.02, "cpc": 1.81, "clicks": 25}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 65.19, "conv": 8.0, "cpl": 8.15, "cpc": 1.05, "clicks": 62}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 7.36, "conv": 2.0, "cpl": 3.68, "cpc": 0.92, "clicks": 8}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 12.81, "conv": 1.0, "cpl": 12.81, "cpc": 1.07, "clicks": 12}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 9.37, "conv": 0.0, "cpl": null, "cpc": 2.34, "clicks": 4}]}, {"n": "laboratorio-ampla", "spend": 39.33, "conv": 8.0, "cpl": 4.92, "cpc": 0.89, "ctr": 6.17, "clicks": 44, "imp": 713, "keywords": [{"n": "laboratorio exames", "match": "EXACT", "spend": 11.2, "conv": 3.0, "cpl": 3.73, "cpc": 1.02, "clicks": 11}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 12.97, "conv": 2.0, "cpl": 6.48, "cpc": 1.3, "clicks": 10}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 1.5, "conv": 2.0, "cpl": 0.75, "cpc": 0.38, "clicks": 4}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 2.62, "conv": 1.0, "cpl": 2.62, "cpc": 1.31, "clicks": 2}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.33, "conv": 0.0, "cpl": null, "cpc": 1.16, "clicks": 2}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.09, "conv": 0.0, "cpl": null, "cpc": 0.08, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 8.62, "conv": 0.0, "cpl": null, "cpc": 0.62, "clicks": 14}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}], "2026-03": [{"n": "Santo-Search-Branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "imp": 2506, "spk": [3.32], "adgroups": [{"n": "branding", "spend": 233.37, "conv": 70.33, "cpl": 3.32, "cpc": 0.27, "ctr": 34.04, "clicks": 853, "imp": 2506, "keywords": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 230.31, "conv": 70.33, "cpl": 3.27, "cpc": 0.28, "clicks": 825}, {"n": "bem me quer exames", "match": "EXACT", "spend": 1.82, "conv": 0.0, "cpl": null, "cpc": 0.13, "clicks": 14}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 1.24, "conv": 0.0, "cpl": null, "cpc": 0.09, "clicks": 14}]}]}, {"n": "Santo-Search-Servicos", "spend": 260.18, "conv": 39.67, "cpl": 6.56, "cpc": 1.22, "ctr": 8.23, "clicks": 213, "imp": 2587, "spk": [6.56], "adgroups": [{"n": "laboratorio-frase+exata", "spend": 220.85, "conv": 31.67, "cpl": 6.97, "cpc": 1.31, "ctr": 9.02, "clicks": 169, "imp": 1874, "keywords": [{"n": "laboratorio pelotas", "match": "EXACT", "spend": 77.19, "conv": 10.67, "cpl": 7.24, "cpc": 1.35, "clicks": 57}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 45.16, "conv": 9.0, "cpl": 5.02, "cpc": 1.81, "clicks": 25}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 65.19, "conv": 8.0, "cpl": 8.15, "cpc": 1.05, "clicks": 62}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 7.36, "conv": 2.0, "cpl": 3.68, "cpc": 0.92, "clicks": 8}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 12.81, "conv": 1.0, "cpl": 12.81, "cpc": 1.07, "clicks": 12}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 9.37, "conv": 0.0, "cpl": null, "cpc": 2.34, "clicks": 4}]}, {"n": "laboratorio-ampla", "spend": 39.33, "conv": 8.0, "cpl": 4.92, "cpc": 0.89, "ctr": 6.17, "clicks": 44, "imp": 713, "keywords": [{"n": "laboratorio exames", "match": "EXACT", "spend": 11.2, "conv": 3.0, "cpl": 3.73, "cpc": 1.02, "clicks": 11}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 12.97, "conv": 2.0, "cpl": 6.48, "cpc": 1.3, "clicks": 10}, {"n": "laboratorio de analises pelotas", "match": "PHRASE", "spend": 1.5, "conv": 2.0, "cpl": 0.75, "cpc": 0.38, "clicks": 4}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 2.62, "conv": 1.0, "cpl": 2.62, "cpc": 1.31, "clicks": 2}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.33, "conv": 0.0, "cpl": null, "cpc": 1.16, "clicks": 2}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 0.09, "conv": 0.0, "cpl": null, "cpc": 0.08, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 8.62, "conv": 0.0, "cpl": null, "cpc": 0.62, "clicks": 14}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 0.0, "conv": 0.0, "cpl": null, "cpc": null, "clicks": 0}]}]}]};
 const GMES_DAYS = {"2026-03": ["05/03", "06/03", "07/03", "08/03", "09/03", "10/03", "12/03", "13/03", "14/03", "15/03", "16/03", "17/03", "18/03", "19/03", "20/03", "21/03", "22/03", "23/03"]};
 const GKEYWORDS_DATA = {"1": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 17.76, "conv": 8.0, "cpl": 2.22, "cpc": 0.3, "clicks": 59}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 3.38, "conv": 1.0, "cpl": 3.38, "cpc": 3.38, "clicks": 1}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 4.63, "conv": 0.0, "cpl": null, "cpc": 2.32, "clicks": 2}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.31, "conv": 0.0, "cpl": null, "cpc": 0.16, "clicks": 2}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 3.4, "conv": 0.0, "cpl": null, "cpc": 1.7, "clicks": 2}, {"n": "laboratorio exames", "match": "EXACT", "spend": 0.32, "conv": 0.0, "cpl": null, "cpc": 0.32, "clicks": 1}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 9.75, "conv": 0.0, "cpl": null, "cpc": 1.95, "clicks": 5}], "7": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 78.07, "conv": 22.0, "cpl": 3.55, "cpc": 0.33, "clicks": 236}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 30.73, "conv": 3.0, "cpl": 10.24, "cpc": 1.46, "clicks": 21}, {"n": "vacinas em pelotas", "match": "EXACT", "spend": 12.82, "conv": 3.0, "cpl": 4.27, "cpc": 1.83, "clicks": 7}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 20.26, "conv": 2.0, "cpl": 10.13, "cpc": 1.19, "clicks": 17}, {"n": "laboratorio exames", "match": "EXACT", "spend": 4.79, "conv": 1.0, "cpl": 4.8, "cpc": 1.2, "clicks": 4}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 5.92, "conv": 1.0, "cpl": 5.92, "cpc": 1.48, "clicks": 4}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.04, "conv": 0.0, "cpl": null, "cpc": 0.01, "clicks": 3}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 6.92, "conv": 0.0, "cpl": null, "cpc": 2.31, "clicks": 3}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.31, "conv": 0.0, "cpl": null, "cpc": 0.16, "clicks": 2}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 8.39, "conv": 0.0, "cpl": null, "cpc": 1.2, "clicks": 7}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}], "14": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 149.58, "conv": 50.33, "cpl": 2.97, "cpc": 0.3, "clicks": 502}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 59.29, "conv": 7.67, "cpl": 7.73, "cpc": 1.16, "clicks": 51}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 32.16, "conv": 6.0, "cpl": 5.36, "cpc": 1.01, "clicks": 32}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 30.18, "conv": 6.0, "cpl": 5.03, "cpc": 2.01, "clicks": 15}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 11.01, "conv": 2.0, "cpl": 5.5, "cpc": 1.38, "clicks": 8}, {"n": "laboratorio exames", "match": "EXACT", "spend": 10.5, "conv": 2.0, "cpl": 5.25, "cpc": 1.05, "clicks": 10}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 1.06, "conv": 0.0, "cpl": null, "cpc": 1.06, "clicks": 1}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 1.05, "conv": 0.0, "cpl": null, "cpc": 1.05, "clicks": 1}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 0.38, "conv": 0.0, "cpl": null, "cpc": 0.05, "clicks": 7}, {"n": "bem me quer exames", "match": "EXACT", "spend": 0.37, "conv": 0.0, "cpl": null, "cpc": 0.05, "clicks": 8}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 6.92, "conv": 0.0, "cpl": null, "cpc": 2.31, "clicks": 3}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 11.51, "conv": 0.0, "cpl": null, "cpc": 1.05, "clicks": 11}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.18, "conv": 0.0, "cpl": null, "cpc": 2.18, "clicks": 1}], "30": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 230.31, "conv": 70.33, "cpl": 3.27, "cpc": 0.28, "clicks": 825}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 85.81, "conv": 10.67, "cpl": 8.04, "cpc": 1.21, "clicks": 71}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 66.69, "conv": 10.0, "cpl": 6.67, "cpc": 1.01, "clicks": 66}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 45.16, "conv": 9.0, "cpl": 5.02, "cpc": 1.81, "clicks": 25}, {"n": "laboratorio exames", "match": "EXACT", "spend": 11.2, "conv": 3.0, "cpl": 3.73, "cpc": 1.02, "clicks": 11}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 7.45, "conv": 2.0, "cpl": 3.72, "cpc": 0.83, "clicks": 9}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 12.97, "conv": 2.0, "cpl": 6.48, "cpc": 1.3, "clicks": 10}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 12.81, "conv": 1.0, "cpl": 12.81, "cpc": 1.07, "clicks": 12}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 2.62, "conv": 1.0, "cpl": 2.62, "cpc": 1.31, "clicks": 2}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 9.37, "conv": 0.0, "cpl": null, "cpc": 2.34, "clicks": 4}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 1.24, "conv": 0.0, "cpl": null, "cpc": 0.09, "clicks": 14}, {"n": "bem me quer exames", "match": "EXACT", "spend": 1.82, "conv": 0.0, "cpl": null, "cpc": 0.13, "clicks": 14}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.33, "conv": 0.0, "cpl": null, "cpc": 1.16, "clicks": 2}], "2026-03": [{"n": "laboratorio bem me quer", "match": "EXACT", "spend": 230.31, "conv": 70.33, "cpl": 3.27, "cpc": 0.28, "clicks": 825}, {"n": "laboratorio pelotas", "match": "EXACT", "spend": 85.81, "conv": 10.67, "cpl": 8.04, "cpc": 1.21, "clicks": 71}, {"n": "laboratorio de analises pelotas", "match": "EXACT", "spend": 66.69, "conv": 10.0, "cpl": 6.67, "cpc": 1.01, "clicks": 66}, {"n": "vacinas em pelotas", "match": "PHRASE", "spend": 45.16, "conv": 9.0, "cpl": 5.02, "cpc": 1.81, "clicks": 25}, {"n": "laboratorio exames", "match": "EXACT", "spend": 11.2, "conv": 3.0, "cpl": 3.73, "cpc": 1.02, "clicks": 11}, {"n": "exames laboratoriais pelotas", "match": "PHRASE", "spend": 7.45, "conv": 2.0, "cpl": 3.72, "cpc": 0.83, "clicks": 9}, {"n": "exames de laboratorio", "match": "PHRASE", "spend": 12.97, "conv": 2.0, "cpl": 6.48, "cpc": 1.3, "clicks": 10}, {"n": "laboratorio de exames pelotas", "match": "EXACT", "spend": 12.81, "conv": 1.0, "cpl": 12.81, "cpc": 1.07, "clicks": 12}, {"n": "vacinação pelotas", "match": "EXACT", "spend": 3.78, "conv": 1.0, "cpl": 3.78, "cpc": 3.78, "clicks": 1}, {"n": "exame de sangue em pelotas", "match": "PHRASE", "spend": 2.62, "conv": 1.0, "cpl": 2.62, "cpc": 1.31, "clicks": 2}, {"n": "exames de sangue pelotas", "match": "EXACT", "spend": 9.37, "conv": 0.0, "cpl": null, "cpc": 2.34, "clicks": 4}, {"n": "bem me quer laboratorio", "match": "EXACT", "spend": 1.24, "conv": 0.0, "cpl": null, "cpc": 0.09, "clicks": 14}, {"n": "bem me quer exames", "match": "EXACT", "spend": 1.82, "conv": 0.0, "cpl": null, "cpc": 0.13, "clicks": 14}, {"n": "laboratorio analises clinicas", "match": "EXACT", "spend": 2.33, "conv": 0.0, "cpl": null, "cpc": 1.16, "clicks": 2}]};
 const GBD = {"1": {"age": [{"n": "18-24", "spend": 3.44, "conv": 0.0, "cpl": null}, {"n": "25-34", "spend": 6.38, "conv": 2.0, "cpl": 3.19}, {"n": "35-44", "spend": 13.96, "conv": 3.0, "cpl": 4.65}, {"n": "45-54", "spend": 4.1, "conv": 4.0, "cpl": 1.02}, {"n": "55-64", "spend": 5.37, "conv": 0.0, "cpl": null}, {"n": "65+", "spend": 5.0, "conv": 0.0, "cpl": null}], "gender": [{"n": "female", "spend": 32.57, "conv": 7.0, "cpl": 4.65}, {"n": "male", "spend": 5.69, "conv": 2.0, "cpl": 2.85}]}, "7": {"age": [{"n": "18-24", "spend": 5.41, "conv": 0.0, "cpl": null}, {"n": "25-34", "spend": 45.32, "conv": 9.0, "cpl": 5.04}, {"n": "35-44", "spend": 48.15, "conv": 11.0, "cpl": 4.38}, {"n": "45-54", "spend": 26.7, "conv": 7.0, "cpl": 3.81}, {"n": "55-64", "spend": 10.93, "conv": 1.0, "cpl": 10.93}, {"n": "65+", "spend": 12.7, "conv": 2.0, "cpl": 6.35}], "gender": [{"n": "female", "spend": 122.0, "conv": 28.0, "cpl": 4.36}, {"n": "male", "spend": 27.22, "conv": 2.0, "cpl": 13.61}]}, "14": {"age": [{"n": "18-24", "spend": 14.12, "conv": 3.0, "cpl": 4.71}, {"n": "25-34", "spend": 88.31, "conv": 21.0, "cpl": 4.21}, {"n": "35-44", "spend": 77.35, "conv": 20.0, "cpl": 3.87}, {"n": "45-54", "spend": 46.17, "conv": 17.0, "cpl": 2.72}, {"n": "55-64", "spend": 32.41, "conv": 6.0, "cpl": 5.4}, {"n": "65+", "spend": 20.11, "conv": 3.0, "cpl": 6.7}], "gender": [{"n": "female", "spend": 213.09, "conv": 52.0, "cpl": 4.1}, {"n": "male", "spend": 65.38, "conv": 18.0, "cpl": 3.63}]}, "30": {"age": [{"n": "18-24", "spend": 31.72, "conv": 6.0, "cpl": 5.29}, {"n": "25-34", "spend": 184.33, "conv": 35.0, "cpl": 5.27}, {"n": "35-44", "spend": 157.84, "conv": 39.0, "cpl": 4.05}, {"n": "45-54", "spend": 105.75, "conv": 32.0, "cpl": 3.3}, {"n": "55-64", "spend": 74.27, "conv": 9.0, "cpl": 8.25}, {"n": "65+", "spend": 43.13, "conv": 8.0, "cpl": 5.39}], "gender": [{"n": "female", "spend": 456.27, "conv": 95.0, "cpl": 4.8}, {"n": "male", "spend": 138.44, "conv": 34.0, "cpl": 4.07}]}, "2025-06": {"age": [{"n": "18-24", "spend": 7.79, "conv": 0.0, "cpl": null}, {"n": "25-34", "spend": 61.59, "conv": 0.0, "cpl": null}, {"n": "35-44", "spend": 126.21, "conv": 2.0, "cpl": 63.11}, {"n": "45-54", "spend": 42.75, "conv": 3.0, "cpl": 14.25}, {"n": "55-64", "spend": 41.71, "conv": 1.0, "cpl": 41.71}], "gender": [{"n": "female", "spend": 167.97, "conv": 3.0, "cpl": 55.99}, {"n": "male", "spend": 112.08, "conv": 3.0, "cpl": 37.36}]}, "2025-07": {"age": [{"n": "18-24", "spend": 82.48, "conv": 6.0, "cpl": 13.75}, {"n": "25-34", "spend": 200.06, "conv": 8.0, "cpl": 25.01}, {"n": "35-44", "spend": 117.46, "conv": 4.0, "cpl": 29.37}, {"n": "45-54", "spend": 185.56, "conv": 12.0, "cpl": 15.46}, {"n": "55-64", "spend": 123.17, "conv": 2.0, "cpl": 61.59}, {"n": "65+", "spend": 87.79, "conv": 3.0, "cpl": 29.26}], "gender": [{"n": "female", "spend": 425.67, "conv": 18.0, "cpl": 23.65}, {"n": "male", "spend": 370.86, "conv": 17.0, "cpl": 21.82}]}, "2025-08": {"age": [{"n": "18-24", "spend": 87.02, "conv": 5.0, "cpl": 17.4}, {"n": "25-34", "spend": 196.44, "conv": 6.0, "cpl": 32.74}, {"n": "35-44", "spend": 194.88, "conv": 5.0, "cpl": 38.98}, {"n": "45-54", "spend": 132.17, "conv": 2.0, "cpl": 66.09}, {"n": "55-64", "spend": 179.07, "conv": 5.0, "cpl": 35.81}, {"n": "65+", "spend": 142.11, "conv": 3.0, "cpl": 47.37}], "gender": [{"n": "female", "spend": 483.29, "conv": 20.0, "cpl": 24.16}, {"n": "male", "spend": 451.69, "conv": 6.0, "cpl": 75.28}]}, "2025-09": {"age": [{"n": "18-24", "spend": 85.95, "conv": 3.0, "cpl": 28.65}, {"n": "25-34", "spend": 222.08, "conv": 1.0, "cpl": 222.08}, {"n": "35-44", "spend": 273.83, "conv": 7.0, "cpl": 39.12}, {"n": "45-54", "spend": 190.95, "conv": 0.0, "cpl": null}, {"n": "55-64", "spend": 99.64, "conv": 1.0, "cpl": 99.64}, {"n": "65+", "spend": 150.89, "conv": 0.0, "cpl": null}], "gender": [{"n": "female", "spend": 566.99, "conv": 10.0, "cpl": 56.7}, {"n": "male", "spend": 455.96, "conv": 2.0, "cpl": 227.98}]}, "2025-10": {"age": [{"n": "18-24", "spend": 40.85, "conv": 2.0, "cpl": 20.42}, {"n": "25-34", "spend": 235.03, "conv": 1.69, "cpl": 139.28}, {"n": "35-44", "spend": 290.27, "conv": 1.0, "cpl": 290.27}, {"n": "45-54", "spend": 240.15, "conv": 3.0, "cpl": 80.05}, {"n": "55-64", "spend": 127.97, "conv": 0.0, "cpl": null}, {"n": "65+", "spend": 54.01, "conv": 0.0, "cpl": null}], "gender": [{"n": "female", "spend": 499.66, "conv": 6.69, "cpl": 74.71}, {"n": "male", "spend": 489.58, "conv": 1.0, "cpl": 489.58}]}, "2025-11": {"age": [{"n": "18-24", "spend": 84.52, "conv": 2.0, "cpl": 42.26}, {"n": "25-34", "spend": 258.34, "conv": 2.0, "cpl": 129.17}, {"n": "35-44", "spend": 165.46, "conv": 4.5, "cpl": 36.77}, {"n": "45-54", "spend": 128.01, "conv": 0.0, "cpl": null}, {"n": "55-64", "spend": 204.27, "conv": 0.0, "cpl": null}, {"n": "65+", "spend": 131.62, "conv": 0.0, "cpl": null}], "gender": [{"n": "male", "spend": 481.29, "conv": 4.5, "cpl": 106.95}, {"n": "female", "spend": 490.93, "conv": 4.0, "cpl": 122.73}]}, "2025-12": {"age": [{"n": "18-24", "spend": 49.81, "conv": 1.0, "cpl": 49.81}, {"n": "25-34", "spend": 78.92, "conv": 0.0, "cpl": null}, {"n": "35-44", "spend": 190.83, "conv": 9.0, "cpl": 21.2}, {"n": "45-54", "spend": 166.08, "conv": 4.0, "cpl": 41.52}, {"n": "55-64", "spend": 118.58, "conv": 0.0, "cpl": null}, {"n": "65+", "spend": 171.49, "conv": 0.0, "cpl": null}], "gender": [{"n": "female", "spend": 395.03, "conv": 13.0, "cpl": 30.39}, {"n": "male", "spend": 380.68, "conv": 1.0, "cpl": 380.68}]}, "2026-02": {"age": [{"n": "18-24", "spend": 41.25, "conv": 4.0, "cpl": 10.31}, {"n": "25-34", "spend": 192.92, "conv": 13.0, "cpl": 14.84}, {"n": "35-44", "spend": 185.12, "conv": 26.0, "cpl": 7.12}, {"n": "45-54", "spend": 144.9, "conv": 18.0, "cpl": 8.05}, {"n": "55-64", "spend": 70.04, "conv": 8.0, "cpl": 8.75}, {"n": "65+", "spend": 29.92, "conv": 2.0, "cpl": 14.96}], "gender": [{"n": "female", "spend": 481.04, "conv": 58.0, "cpl": 8.29}, {"n": "male", "spend": 180.16, "conv": 13.0, "cpl": 13.86}]}, "2026-03": {"age": [{"n": "18-24", "spend": 21.19, "conv": 6.0, "cpl": 3.53}, {"n": "25-34", "spend": 151.49, "conv": 30.0, "cpl": 5.05}, {"n": "35-44", "spend": 118.6, "conv": 32.0, "cpl": 3.71}, {"n": "45-54", "spend": 86.68, "conv": 24.0, "cpl": 3.61}, {"n": "55-64", "spend": 50.21, "conv": 7.0, "cpl": 7.17}, {"n": "65+", "spend": 34.96, "conv": 8.0, "cpl": 4.37}], "gender": [{"n": "female", "spend": 358.06, "conv": 76.0, "cpl": 4.71}, {"n": "male", "spend": 105.69, "conv": 31.0, "cpl": 3.41}]}};
+
+
+// ═══ CONFIG DO CLIENTE ════════════════════════════════
+const CONFIG = {
+  meta: {
+    cplBom:   11,   // CPL ≤ este valor → verde
+    cplMedio: 16,   // CPL ≤ este valor → amarelo (acima → vermelho)
+  },
+  google: {
+    cplBom:   11,   // CPL ≤ este valor → verde
+    cplMedio: 16,   // CPL ≤ este valor → amarelo (acima → vermelho)
+  },
+};
+
+const GOOGLE_ATIVO=true; // controlado pelo gerador.py
+const META_ATIVO=true; // controlado pelo gerador.py
+const LOGO_LETRA='B'; // controlado pelo gerador.py
+const COR_ACENTO='#00bfd9'; // controlado pelo gerador.py
+const NOME_CLIENTE='Laboratório Bem Me Quer'; // controlado pelo gerador.py
 
 // ═══ ESTADO ════════════════════════════════════════════
 let period=30,mesMode=null,showLabels=false,showLabelsGeral=false,geralQ='all';
@@ -506,15 +529,20 @@ function getChartColors(){
 const bf={family:"'DM Sans',sans-serif",size:10};
 function sm(a){return a.reduce((s,v)=>(s||0)+(v||0),0);}
 function av(a){const v=a.filter(x=>x!=null&&x>0);return v.length?v.reduce((s,x)=>s+x,0)/v.length:0;}
-function cc(v){return v==null?GR:v<=11?'#059669':v<=15?'#d97706':'#dc2626';}
-function cls(v){return v==null?'':v<=11?'cg':v<=15?'cw2':'cr';}
+function cc(v){return v==null?GR:v<=CONFIG.meta.cplBom?'#059669':v<=CONFIG.meta.cplMedio?'#d97706':'#dc2626';}
+function cls(v){return v==null?'':v<=CONFIG.meta.cplBom?'cg':v<=CONFIG.meta.cplMedio?'cw2':'cr';}
 function fR(v){if(v==null||isNaN(v))return '—';return 'R$'+Number(v).toFixed(2).replace('.',',');}
 function fR2(v){if(v==null||isNaN(v))return '—';return 'R$'+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fN(v){return Number(v).toLocaleString('pt-BR');}
+function fGC(v){return v==null||v===0?'—':String(Math.round(v));}
+function calcImp(obj){return obj.imp!=null?obj.imp:(obj.cpm&&obj.cpm>0?Math.round(obj.spend/obj.cpm*1000):null);}
+function calcClicks(obj){const imp=calcImp(obj);return obj.clicks!=null?obj.clicks:(imp&&obj.ctr?Math.round(imp*obj.ctr/100):null);}
+function fImp(obj){const v=calcImp(obj);return v!=null?fN(v):'—';}
+function fClk(obj){const v=calcClicks(obj);return v!=null?fN(v):'—';}
 function getDlColor(){return document.documentElement.getAttribute('data-theme')==='dark'?'#ffffff':'#111827';}
 function bo(){
   const cc2=getChartColors();
-  return{responsive:true,maintainAspectRatio:false,resizeDelay:50,plugins:{legend:{labels:{color:cc2.txt,font:bf,boxWidth:9,padding:10}},tooltip:{backgroundColor:cc2.tooltip,borderColor:'rgba(255,255,255,.08)',borderWidth:1,titleFont:{size:10},bodyFont:{size:10}},datalabels:{display:false}},scales:{x:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}},y:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}}}};}
+  return{responsive:true,maintainAspectRatio:false,resizeDelay:50,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:cc2.txt,font:bf,boxWidth:9,padding:10}},tooltip:{backgroundColor:cc2.tooltip,borderColor:'rgba(255,255,255,.08)',borderWidth:1,titleFont:{size:10},bodyFont:{size:10},mode:'index',intersect:false},datalabels:{display:false}},scales:{x:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}},y:{ticks:{color:cc2.txt,font:bf},grid:{color:cc2.grid}}}};}
 function dc(id){if(CH[id]){CH[id].destroy();delete CH[id];}}
 
 function showPage(p,btn){
@@ -533,13 +561,17 @@ function showPage(p,btn){
   if(p==='ggeral') renderGGeral();
   updateMobNav(p);
   if(window.innerWidth<=768) closeSidebar();
+  // Forçar resize dos charts após a página ficar visível
+  setTimeout(()=>{
+    Object.values(CH).forEach(ch=>{try{ch.resize();}catch(e){}});
+  }, 50);
 }
 
 function setPeriod(n,lbl,btn){
   period=n; mesMode=null;
   document.querySelectorAll('#pbDash .pb').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('sbPeriod').textContent='Últimos '+lbl;
+  document.getElementById('sbPeriod').textContent=n===1?lbl:'Últimos '+lbl;
   render();
 }
 function setPeriodMes(ym,lbl,btn){
@@ -673,9 +705,10 @@ function buildCampTable(){
       <td class="num">${fR(c.spend)}</td>
       <td class="num">${fN(c.leads)}</td>
       <td class="num ${cls(c.cpl)}">${fR(c.cpl)}</td>
+      <td class="num" style="color:var(--muted2)">${fImp(c)}</td>
+      <td class="num" style="color:var(--muted2)">${fClk(c)}</td>
+      <td class="num">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
       <td class="num">${fR(c.cpm)}</td>
-      <td class="num" style="color:${(c.ctr||0)>=2?'#059669':(c.ctr||0)>=1?'#d97706':'#9ca3af'}">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
-      <td><canvas id="spk-${cid}" width="72" height="28"></canvas></td>
     </tr>`;
     if(c.conjs){
       c.conjs.forEach((j,ji)=>{
@@ -687,9 +720,10 @@ function buildCampTable(){
           <td class="num" style="color:var(--muted2)">${fR(j.spend)}</td>
           <td class="num" style="color:var(--muted2)">${fN(j.leads)}</td>
           <td class="num ${cls(j.cpl)}">${fR(j.cpl)}</td>
-          <td class="num" style="color:var(--muted2)">${fR(j.cpm)}</td>
-          <td class="num" style="color:${(j.ctr||0)>=2?'#059669':(j.ctr||0)>=1?'#d97706':'#9ca3af'}">${j.ctr!=null?j.ctr.toFixed(2)+'%':'—'}</td>
-          <td></td>
+          <td class="num" style="color:var(--muted2)">${fImp(j)}</td>
+          <td class="num" style="color:var(--muted2)">${fClk(j)}</td>
+          <td class="num">${j.ctr!=null?j.ctr.toFixed(2)+'%':'—'}</td>
+          <td class="num">${fR(j.cpm)}</td>
         </tr>`;
         if(j.ads){
           j.ads.forEach((ad,ai)=>{
@@ -700,9 +734,10 @@ function buildCampTable(){
               <td class="num" style="color:var(--muted2);font-size:10px">${fR(ad.spend)}</td>
               <td class="num" style="color:var(--muted2);font-size:10px">${fN(ad.leads)}</td>
               <td class="num ${cls(ad.cpl)}" style="font-size:10px">${fR(ad.cpl)}</td>
-              <td class="num" style="color:var(--muted2);font-size:10px">${fR(ad.cpm)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fImp(ad)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fClk(ad)}</td>
               <td class="num" style="font-size:10px">${ad.ctr!=null?ad.ctr.toFixed(2)+'%':'—'}</td>
-              <td></td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fR(ad.cpm)}</td>
             </tr>`;
           });
         }
@@ -711,25 +746,9 @@ function buildCampTable(){
   });
 
   tbl.innerHTML=`<div class="tc"><table>
-    <thead><tr><th style="width:20px"></th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPM</th><th class="num">CTR</th><th style="width:80px">Tendência CPL</th></tr></thead>
+    <thead><tr><th style="width:20px"></th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${rows}</tbody></table></div>`;
 
-  function drawSpk(id, spkData){
-    const cv=document.getElementById(id);
-    if(!cv||!spkData) return;
-    const vals=spkData.filter(v=>v!=null);
-    if(vals.length<1) return;
-    const plotData=vals.length===1?[vals[0],vals[0]]:spkData;
-    const plotLabels=vals.length===1?[0,1]:spkData.map((_,j)=>j);
-    const last=vals[vals.length-1], first=vals[0];
-    const col=last<=first?'#059669':'#dc2626';
-    new Chart(cv,{type:'line',data:{labels:plotLabels,datasets:[{data:plotData,borderColor:col,backgroundColor:col==='#059669'?'rgba(5,150,105,.1)':'rgba(220,38,38,.1)',fill:true,tension:.35,pointRadius:plotData.map(v=>v!=null?2:0),pointBackgroundColor:col,borderWidth:1.5,spanGaps:false,datalabels:{display:false}}]},
-      options:{responsive:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false},datalabels:{display:false}},scales:{x:{display:false},y:{display:false,min:Math.min(...vals)*.8,max:Math.max(...vals)*1.2}}}});
-  }
-  data.forEach((c,i)=>{
-    const cid=`c${ym.replace('-','')}${i}`;
-    drawSpk(`spk-${cid}`, c.spk);
-  });
 }
 
 function toggleC(id){
@@ -766,7 +785,7 @@ function buildAds(){
   list.forEach(ad=>{
     const d=document.createElement('div'); d.className='ad-card';
     const img=ad.thumb?`<div class="ad-img-wrap"><img src="${ad.thumb}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'ad-img-placeholder\'>🖼️</div>'"></div>`:'<div class="ad-img-wrap"><div class="ad-img-placeholder">🖼️</div></div>';
-    d.innerHTML=`${img}<div class="ad-info"><div class="ad-name">${ad.n}</div><div class="ad-stats"><div><div class="as-l">Conv.</div><div class="as-v">${fN(ad.leads)}</div></div><div><div class="as-l">CPL</div><div class="as-v" style="color:${cc(ad.cpl)}">${fR(ad.cpl)}</div></div></div></div>`;
+    d.innerHTML=`${img}<div class="ad-info"><div class="ad-name">${ad.n}</div><div class="ad-stats"><div><div class="as-l">Conv.</div><div class="as-v">${fN(ad.leads)}</div></div><div><div class="as-l">CTR</div><div class="as-v">${ad.ctr!=null?ad.ctr.toFixed(2)+'%':'—'}</div></div><div><div class="as-l">CPL</div><div class="as-v" style="color:${cc(ad.cpl)}">${fR(ad.cpl)}</div></div></div></div>`;
     el.appendChild(d);
   });
 }
@@ -782,11 +801,14 @@ function renderGeral(){
   document.getElementById('geralPubLbl').textContent='— '+qlbl;
 
   const tS=totalS.reduce((a,b)=>a+b,0), tL=totalL.reduce((a,b)=>a+b,0);
+  const avgCpmG=cpmG.filter(v=>v!=null&&v>0).reduce((a,b)=>a+b,0)/(cpmG.filter(v=>v!=null&&v>0).length||1);
+  const avgCtrG=ctrG.filter(v=>v!=null&&v>0).reduce((a,b)=>a+b,0)/(ctrG.filter(v=>v!=null&&v>0).length||1);
   document.getElementById('geralKpis').innerHTML=`
     <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento Total</div><div class="kpi-val">R$${(tS/1000).toFixed(1)}k</div></div>
     <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Total Conversões</div><div class="kpi-val">${fN(tL)}</div></div>
     <div class="kpi" style="--kc:${cc(tL>0?tS/tL:0)}"><div class="kpi-lbl">CPL Geral</div><div class="kpi-val">${fR(tL>0?tS/tL:0)}</div></div>
-    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Meses Ativos</div><div class="kpi-val">${lbl.length}</div></div>`;
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPM Médio</div><div class="kpi-val">${fR(avgCpmG)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR Médio</div><div class="kpi-val">${avgCtrG?avgCtrG.toFixed(2)+'%':'—'}</div></div>`;
 
   // Gráfico combinado: Conversões (barras azuis) + Investimento (linha verde) + CPL (linha preta tracejada)
   dc('chGeralMensal');
@@ -802,11 +824,11 @@ function renderGeral(){
 
   // CPM mensal
   dc('chGeralCPM');
-  CH['chGeralCPM']=new Chart(document.getElementById('chGeralCPM'),{type:'line',data:{labels:lbl,datasets:[{label:'CPM',data:cpmG,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
+  CH['chGeralCPM']=new Chart(document.getElementById('chGeralCPM'),{type:'line',data:{labels:lbl,datasets:[{label:'CPM',data:cpmG,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:showLabelsGeral,color:'#2563eb',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(2):null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID},min:0}}}});
 
   // CTR mensal
   dc('chGeralCTR');
-  CH['chGeralCTR']=new Chart(document.getElementById('chGeralCTR'),{type:'line',data:{labels:lbl,datasets:[{label:'CTR',data:ctrG,borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:false}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
+  CH['chGeralCTR']=new Chart(document.getElementById('chGeralCTR'),{type:'line',data:{labels:lbl,datasets:[{label:'CTR',data:ctrG,borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,spanGaps:false,datalabels:{display:showLabelsGeral,color:'#7c3aed',font:{size:9,weight:'bold'},anchor:'top',align:'top',offset:2,formatter:v=>v!=null?v.toFixed(2)+'%':null}}]},options:{...bo(),scales:{x:{ticks:{color:TXT,font:bf},grid:{color:GRID}},y:{ticks:{color:TXT,font:bf,callback:v=>v+'%'},grid:{color:GRID},min:0}}}});
 
   const withData=lbl.map((l,i)=>({l,cpl:cplG[i],leads:totalL[i]})).filter(m=>m.cpl!=null&&m.leads>0);
   const bCPL=[...withData].sort((a,b)=>a.cpl-b.cpl).slice(0,6);
@@ -824,19 +846,27 @@ function buildGeralCampTable(){
   const map={};
   MONTHLY.meses.forEach(ym=>{
     (CAMPS_MES[ym]||[]).forEach(c=>{
-      if(!map[c.n]) map[c.n]={n:c.n,spend:0,leads:0};
+      if(!map[c.n]) map[c.n]={n:c.n,spend:0,leads:0,imp:0,clicks:0};
       map[c.n].spend+=c.spend; map[c.n].leads+=c.leads;
+      // usa imp/clicks diretos se disponíveis, senão estima de cpm/ctr
+      const estImp=c.imp>0?c.imp:(c.cpm&&c.cpm>0?Math.round(c.spend/c.cpm*1000):0);
+      const estClk=c.clicks>0?c.clicks:(estImp&&c.ctr?Math.round(estImp*c.ctr/100):0);
+      map[c.n].imp+=estImp; map[c.n].clicks+=estClk;
     });
   });
-  const all=Object.values(map).map(c=>({...c,cpl:c.leads>0?c.spend/c.leads:null})).sort((a,b)=>b.leads-a.leads).slice(0,15);
+  const all=Object.values(map).map(c=>({...c,cpl:c.leads>0?c.spend/c.leads:null,ctr:c.imp>0?c.clicks/c.imp*100:null,cpm:c.imp>0?c.spend/c.imp*1000:null})).sort((a,b)=>b.leads-a.leads).slice(0,15);
   document.getElementById('tGeralCamp').innerHTML=`<table>
-    <thead><tr><th>#</th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th></tr></thead>
+    <thead><tr><th>#</th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${all.map((c,i)=>`<tr>
       <td style="color:#9ca3af;font-size:10px">${i+1}</td>
       <td style="font-weight:600;font-size:12px;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
       <td class="num">${fR(c.spend)}</td>
       <td class="num">${fN(c.leads)}</td>
       <td class="num ${cls(c.cpl)}">${fR(c.cpl)}</td>
+      <td class="num" style="color:var(--muted2)">${c.imp>0?fN(c.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${c.clicks>0?fN(c.clicks):'—'}</td>
+      <td class="num">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${fR(c.cpm)}</td>
     </tr>`).join('')}</tbody></table>`;
 }
 
@@ -845,20 +875,27 @@ function buildGeralPubTable(){
   MONTHLY.meses.forEach(ym=>{
     (CAMPS_MES[ym]||[]).forEach(c=>{
       (c.conjs||[]).forEach(j=>{
-        if(!map[j.n]) map[j.n]={n:j.n,spend:0,leads:0};
+        if(!map[j.n]) map[j.n]={n:j.n,spend:0,leads:0,imp:0,clicks:0};
         map[j.n].spend+=j.spend; map[j.n].leads+=j.leads;
+        const estImp=j.imp>0?j.imp:(j.cpm&&j.cpm>0?Math.round(j.spend/j.cpm*1000):0);
+        const estClk=j.clicks>0?j.clicks:(estImp&&j.ctr?Math.round(estImp*j.ctr/100):0);
+        map[j.n].imp+=estImp; map[j.n].clicks+=estClk;
       });
     });
   });
-  const all=Object.values(map).filter(a=>a.leads>0).map(a=>({...a,cpl:a.leads>0?a.spend/a.leads:null})).sort((a,b)=>b.leads-a.leads).slice(0,12);
+  const all=Object.values(map).filter(a=>a.leads>0).map(a=>({...a,cpl:a.leads>0?a.spend/a.leads:null,ctr:a.imp>0?a.clicks/a.imp*100:null,cpm:a.imp>0?a.spend/a.imp*1000:null})).sort((a,b)=>b.leads-a.leads).slice(0,12);
   document.getElementById('tGeralPub').innerHTML=`<table>
-    <thead><tr><th>#</th><th>Conjunto / Público</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th></tr></thead>
+    <thead><tr><th>#</th><th>Conjunto / Público</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${all.map((a,i)=>`<tr>
       <td style="color:#9ca3af;font-size:10px">${i+1}</td>
       <td style="font-weight:600;font-size:12px">${a.n}</td>
       <td class="num">${fR(a.spend)}</td>
       <td class="num">${fN(a.leads)}</td>
       <td class="num ${cls(a.cpl)}">${fR(a.cpl)}</td>
+      <td class="num" style="color:var(--muted2)">${a.imp>0?fN(a.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${a.clicks>0?fN(a.clicks):'—'}</td>
+      <td class="num">${a.ctr!=null?a.ctr.toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${fR(a.cpm)}</td>
     </tr>`).join('')}</tbody></table>`;
 }
 
@@ -926,10 +963,7 @@ function toggleTheme(){
 })();
 
 function updateMobNav(p){
-  ['Dash','Geral','GDash','GGeral'].forEach(k=>{
-    const el=document.getElementById('mobBtn'+k);
-    if(el)el.classList.toggle('active',p===k.toLowerCase());
-  });
+  // mob-nav removido — navegação via sidebar
 }
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
@@ -944,10 +978,111 @@ initDynamicControls();
 initGoogleControls();
 render();
 
+// ── Ocultar Google se desativado ─────────────────────────────────────────────
+(function(){
+  // Aplica nome do cliente
+  var el=document.getElementById('sidebarNome');
+  if(el) el.textContent=NOME_CLIENTE;
+  var tab=document.getElementById('pageTab');
+  if(tab) tab.textContent=NOME_CLIENTE+' — Dashboard';
+  // Atualiza badge de data com último dia dos dados
+  (function(){
+    var lastDay = (DAILY.days&&DAILY.days.length)?DAILY.days[DAILY.days.length-1]:'';
+    if(lastDay){
+      var el=document.getElementById('liveBadgeDate');
+      if(el) el.textContent='Dados até '+lastDay;
+    }
+  })();
+
+  // Atualiza textos de análise histórica dinamicamente
+  (function(){
+    // Meta: pegar primeiro e último mês de MONTHLY
+    if(MONTHLY.lbl&&MONTHLY.lbl.length){
+      var first=MONTHLY.lbl[0], last=MONTHLY.lbl[MONTHLY.lbl.length-1];
+      var el=document.getElementById('metaHistoricaRange');
+      if(el) el.textContent='Análise histórica '+first+' – '+last+' · dados reais da planilha';
+    }
+    // Google: pegar primeiro e último mês de GMONTHLY
+    if(GMONTHLY.lbl&&GMONTHLY.lbl.length){
+      var gfirst=GMONTHLY.lbl[0], glast=GMONTHLY.lbl[GMONTHLY.lbl.length-1];
+      var gel=document.getElementById('googleHistoricaRange');
+      if(gel) gel.textContent='Análise histórica '+gfirst+' – '+glast+' · dados reais';
+    }
+  })();
+  // Aplica letra do logo
+  var lb=document.getElementById('logoBox');
+  if(lb){
+    lb.textContent=LOGO_LETRA;
+    lb.style.background='linear-gradient(135deg,'+COR_ACENTO+','+COR_ACENTO+'cc)';
+  }
+  // Aplica cor de acento via CSS var
+  document.documentElement.style.setProperty('--accent', COR_ACENTO);
+  // Recalcula abg e aborder a partir da cor
+  document.documentElement.style.setProperty('--abg', COR_ACENTO+'18');
+  document.documentElement.style.setProperty('--aborder', COR_ACENTO+'44');
+  // pi-val (período ativo)
+  var pv=document.getElementById('sbPeriod');
+  if(pv) pv.style.color=COR_ACENTO;
+  // live-badge
+  document.querySelectorAll('.live-badge').forEach(function(b){
+    b.style.color=COR_ACENTO;
+    b.style.borderColor=COR_ACENTO+'44';
+    b.style.background=COR_ACENTO+'12';
+  });
+  document.querySelectorAll('.pulse').forEach(function(p){p.style.background=COR_ACENTO;});
+  document.querySelectorAll('.cf-btn.active,.stab.active,.mob-nav-btn.active').forEach(function(b){b.style.accentColor=COR_ACENTO;});
+})();
+
+(function(){
+  if(GOOGLE_ATIVO) return;
+  // Esconde grupos Google na sidebar
+  document.querySelectorAll('.sb-platform-group').forEach(g=>{
+    if(g.querySelector('.sb-platform-lbl') &&
+       g.querySelector('.sb-platform-lbl').textContent.trim()==='Google Ads')
+      g.style.display='none';
+  });
+  // Esconde botões mob nav Google
+  ['mobBtnGDash','mobBtnGGeral'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none';
+  });
+  // Esconde period bars Google
+  ['pbGDash','pbGGeral'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none!important';
+  });
+})();
+
+(function(){
+  if(META_ATIVO) return;
+  // Esconde grupos Meta na sidebar
+  document.querySelectorAll('.sb-platform-group').forEach(g=>{
+    if(g.querySelector('.sb-platform-lbl') &&
+       g.querySelector('.sb-platform-lbl').textContent.trim()==='Meta Ads')
+      g.style.display='none';
+  });
+  // Redireciona página inicial para Google
+  showPage('gdash', document.querySelector('[data-page="gdash"]'));
+  // Esconde period bars Meta
+  ['pbDash','pbGeral'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none!important';
+  });
+})();
+
+
 
 // ═══ GOOGLE ADS — ESTADO ═══════════════════════════════
 let gPeriod=30, gMesMode=null, gShowLabels=false, gGeralQ='all', gShowLabelsGG=false;
-const GCOL='#fbbc04'; // Google yellow
+const GCOL='#fbbc04';
+function gImp(obj){
+  if(obj.imp!=null&&obj.imp>0) return obj.imp;
+  if(obj.clicks&&obj.ctr&&obj.ctr>0) return Math.round(obj.clicks/obj.ctr*100);
+  return null;
+}
+function gCPM(obj){const imp=gImp(obj);return imp&&imp>0?obj.spend/imp*1000:null;}
+function fGImp(obj){const v=gImp(obj);return v!=null?fN(v):'—';}
+function fGCPM(obj){const v=gCPM(obj);return v!=null?fR(v):'—';} // Google yellow
 const GCOL_BAR='rgba(251,188,4,.80)';
 
 function initGoogleControls(){
@@ -972,7 +1107,7 @@ function setGPeriod(n,lbl,btn){
   gPeriod=n; gMesMode=null;
   document.querySelectorAll('#pbGDash .pb').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('sbPeriod').textContent='Últimos '+lbl;
+  document.getElementById('sbPeriod').textContent=n===1?lbl:'Últimos '+lbl;
   renderGDash();
 }
 function setGPeriodMes(ym,lbl,btn){
@@ -1015,12 +1150,12 @@ function renderGDash(){
 
   if(days.length) document.getElementById('sbDates').textContent=days[0]+(days.length>1?' → '+days[days.length-1]:'');
 
-  const gcplColor=v=>v==null?GR:v<=10?'#059669':v<=30?'#d97706':'#dc2626';
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
+  const gcplColor=v=>v==null?GR:v<=CONFIG.google.cplBom?'#059669':v<=CONFIG.google.cplMedio?'#d97706':'#dc2626';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
 
   document.getElementById('gKpiStrip').innerHTML=`
     <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento</div><div class="kpi-val" style="font-size:15px">${fR2(tS)}</div></div>
-    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Conversões</div><div class="kpi-val">${tC%1===0?fN(tC):tC.toFixed(1)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Conversões</div><div class="kpi-val">${Math.round(tC)}</div></div>
     <div class="kpi" style="--kc:${gcplColor(avgCPL)}"><div class="kpi-lbl">CPL</div><div class="kpi-val">${fR(avgCPL)}</div></div>
     <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR</div><div class="kpi-val">${avgCTR?avgCTR.toFixed(2)+'%':'—'}</div></div>
     <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPC Médio</div><div class="kpi-val">${fR(avgCPC)}</div></div>`;
@@ -1032,7 +1167,7 @@ function renderGDash(){
   const gCplDs={label:'CPL',data:cpl,borderColor:isDark?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:2,borderWidth:1.5,tension:.3,spanGaps:false,type:'line',yAxisID:'y2',
     datalabels:{display:gShowLabels,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null&&v>0?'R$'+v.toFixed(1):null,color:isDark?'#f9fafb':'#111827',clip:false}};
   const gConvDs={label:'Conversões',data:conv,backgroundColor:GCOL_BAR,stack:'s',borderRadius:2,type:'bar',
-    datalabels:{display:gShowLabels,color:GCOL,font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?(v%1===0?fN(v):v.toFixed(1)):null,clip:false}};
+    datalabels:{display:gShowLabels,color:GCOL,font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?String(Math.round(v)):null,clip:false}};
 
   CH['chGMain']=new Chart(document.getElementById('chGMain'),{data:{labels:days,datasets:[gConvDs,gSpDs,gCplDs]},options:{...bo(),scales:{
     x:{ticks:{color:TXT,font:bf,maxTicksLimit:12},grid:{color:'rgba(0,0,0,0.04)'}},
@@ -1063,7 +1198,7 @@ function buildGCampTable(ym){
   const data=GCAMPS_MES[ym]||GCAMPS_MES['30']||[];
   const tbl=document.getElementById('gCampContainer');
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
 
   let rows='';
   data.forEach((c,i)=>{
@@ -1073,11 +1208,13 @@ function buildGCampTable(ym){
       <td style="width:20px;text-align:center;color:var(--muted2);font-size:11px">${hasAg?(GOPEN.has(cid)?'▼':'▶'):''}</td>
       <td style="font-weight:700;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
       <td class="num">${fR(c.spend)}</td>
-      <td class="num">${c.conv%1===0?fN(c.conv):c.conv.toFixed(1)}</td>
+      <td class="num">${fGC(c.conv)}</td>
       <td class="num ${gcls(c.cpl)}">${fR(c.cpl)}</td>
       <td class="num">${fR(c.cpc)}</td>
-      <td class="num" style="color:${(c.ctr||0)>=5?'#059669':(c.ctr||0)>=2?'#d97706':'#9ca3af'}">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
-      <td><canvas id="gspk-${cid}" width="72" height="28"></canvas></td>
+      <td class="num" style="color:var(--muted2)">${fGImp(c)}</td>
+      <td class="num" style="color:var(--muted2)">${fN(c.clicks)}</td>
+      <td class="num">${c.ctr!=null?c.ctr.toFixed(2)+'%':'—'}</td>
+      <td class="num">${fGCPM(c)}</td>
     </tr>`;
     if(hasAg){
       c.adgroups.forEach((ag,agi)=>{
@@ -1088,11 +1225,13 @@ function buildGCampTable(ym){
           <td style="text-align:center;color:#d1d5db;font-size:11px">↳${hasKw?(GOPEN.has(agid)?'▼':'▶'):''}</td>
           <td class="conj-name">${ag.n}</td>
           <td class="num" style="color:var(--muted2)">${fR(ag.spend)}</td>
-          <td class="num" style="color:var(--muted2)">${ag.conv%1===0?fN(ag.conv):ag.conv.toFixed(1)}</td>
+          <td class="num" style="color:var(--muted2)">${fGC(ag.conv)}</td>
           <td class="num ${gcls(ag.cpl)}">${fR(ag.cpl)}</td>
           <td class="num" style="color:var(--muted2)">${fR(ag.cpc)}</td>
-          <td class="num" style="color:${(ag.ctr||0)>=5?'#059669':(ag.ctr||0)>=2?'#d97706':'#9ca3af'}">${ag.ctr!=null?ag.ctr.toFixed(2)+'%':'—'}</td>
-          <td></td>
+          <td class="num" style="color:var(--muted2)">${fGImp(ag)}</td>
+          <td class="num" style="color:var(--muted2)">${fN(ag.clicks)}</td>
+          <td class="num">${ag.ctr!=null?ag.ctr.toFixed(2)+'%':'—'}</td>
+          <td class="num">${fGCPM(ag)}</td>
         </tr>`;
         if(hasKw){
           ag.keywords.forEach((kw,ki)=>{
@@ -1102,11 +1241,13 @@ function buildGCampTable(ym){
               <td style="text-align:center;color:#e2e8f0;font-size:10px">↳↳</td>
               <td style="padding-left:44px;font-size:11px;color:var(--muted);border-left:2px solid #fde68a;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔑 ${kw.n}${matchBadge}</td>
               <td class="num" style="color:var(--muted2);font-size:10px">${fR(kw.spend)}</td>
-              <td class="num" style="color:var(--muted2);font-size:10px">${kw.conv>0?(kw.conv%1===0?fN(kw.conv):kw.conv.toFixed(1)):'—'}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${kw.conv>0?(fGC(kw.conv)):'—'}</td>
               <td class="num ${gcls(kw.cpl)}" style="font-size:10px">${fR(kw.cpl)}</td>
               <td class="num" style="color:var(--muted2);font-size:10px">${fR(kw.cpc)}</td>
-              <td class="num" style="color:var(--muted2);font-size:10px">${fN(kw.clicks)} cliques</td>
-              <td></td>
+              <td class="num" style="color:var(--muted2);font-size:10px">—</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">${fN(kw.clicks)}</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">—</td>
+              <td class="num" style="color:var(--muted2);font-size:10px">—</td>
             </tr>`;
           });
         }
@@ -1115,22 +1256,9 @@ function buildGCampTable(ym){
   });
 
   tbl.innerHTML=`<div class="tc"><table>
-    <thead><tr><th style="width:20px"></th><th>Campanha / Grupo / Palavra-chave</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">CTR / Cliques</th><th style="width:80px">Tendência CPL</th></tr></thead>
+    <thead><tr><th style="width:20px"></th><th>Campanha / Grupo / Palavra-chave</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${rows}</tbody></table></div>`;
 
-  // Sparklines
-  data.forEach((c,i)=>{
-    const cid=`gc${ym.replace('-','')}${i}`;
-    const cv=document.getElementById(`gspk-${cid}`);
-    if(!cv||!c.spk)return;
-    const vals=c.spk.filter(v=>v!=null);
-    if(vals.length<1)return;
-    const plotData=vals.length===1?[vals[0],vals[0]]:c.spk;
-    const last=vals[vals.length-1],first=vals[0];
-    const col=last<=first?'#059669':'#dc2626';
-    new Chart(cv,{type:'line',data:{labels:plotData.map((_,j)=>j),datasets:[{data:plotData,borderColor:col,backgroundColor:col==='#059669'?'rgba(5,150,105,.1)':'rgba(220,38,38,.1)',fill:true,tension:.35,pointRadius:plotData.map(v=>v!=null?2:0),pointBackgroundColor:col,borderWidth:1.5,spanGaps:false,datalabels:{display:false}}]},
-      options:{responsive:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false},datalabels:{display:false}},scales:{x:{display:false},y:{display:false,min:Math.min(...vals)*.8,max:Math.max(...vals)*1.2}}}});
-  });
 }
 
 function toggleGC(id){
@@ -1159,10 +1287,10 @@ function buildGKwTable(ym){
   const el=document.getElementById('gKwTable');
   if(!el)return;
   if(data.length===0){el.innerHTML='<div style="padding:12px;color:var(--muted);font-size:12px">Sem dados</div>';return;}
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
   const matchColor={'EXACT':'#4285f4','BROAD':'#34a853','PHRASE':'#fbbc04'};
   el.innerHTML=`<table>
-    <thead><tr><th>#</th><th>Palavra-chave</th><th class="num">Tipo</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Cliques</th></tr></thead>
+    <thead><tr><th>#</th><th>Palavra-chave</th><th class="num">Tipo</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${data.map((k,i)=>{
       const mc=matchColor[k.match]||'#9ca3af';
       const mlbl={'EXACT':'Exata','BROAD':'Ampla','PHRASE':'Frase'}[k.match]||k.match;
@@ -1171,10 +1299,13 @@ function buildGKwTable(ym){
         <td style="font-weight:600;font-size:12px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔑 ${k.n}</td>
         <td class="num"><span style="font-size:9px;padding:2px 5px;border-radius:4px;background:${mc}22;color:${mc};font-weight:700">${mlbl||'—'}</span></td>
         <td class="num">${fR(k.spend)}</td>
-        <td class="num">${k.conv>0?(k.conv%1===0?fN(k.conv):k.conv.toFixed(1)):'—'}</td>
+        <td class="num">${k.conv>0?(fGC(k.conv)):'—'}</td>
         <td class="num ${gcls(k.cpl)}">${fR(k.cpl)}</td>
         <td class="num">${fR(k.cpc)}</td>
-        <td class="num" style="color:var(--muted)">${fN(k.clicks)}</td>
+        <td class="num" style="color:var(--muted2)">—</td>
+        <td class="num" style="color:var(--muted2)">${fN(k.clicks)}</td>
+        <td class="num" style="color:var(--muted2)">—</td>
+        <td class="num" style="color:var(--muted2)">—</td>
       </tr>`;
     }).join('')}</tbody></table>`;
 }
@@ -1189,7 +1320,7 @@ function buildGBdTable(id, data){
   const el=document.getElementById(id);
   if(!el)return;
   if(!data||data.length===0){el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Sem dados para este período</div>';return;}
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
   const mx=Math.max(...data.map(r=>r.conv||r.spend),1);
   let rows='';
   data.forEach((r,i)=>{
@@ -1199,7 +1330,7 @@ function buildGBdTable(id, data){
       <td style="font-weight:600;font-size:12px">${r.n}</td>
       <td style="width:80px;padding:0 12px"><div style="background:var(--bg);border-radius:3px;height:4px;overflow:hidden"><div style="width:${barW}%;height:100%;background:${GCOL};border-radius:3px"></div></div></td>
       <td class="num">${fR2(r.spend)}</td>
-      <td class="num">${r.conv>0?(r.conv%1===0?fN(r.conv):r.conv.toFixed(1)):'—'}</td>
+      <td class="num">${r.conv>0?(fGC(r.conv)):'—'}</td>
       <td class="num ${gcls(r.cpl)}">${fR(r.cpl)}</td>
     </tr>`;
   });
@@ -1211,8 +1342,8 @@ function renderGGeral(){
   const lbl=GMONTHLY.lbl, totalS=GMONTHLY.totalS, totalConv=GMONTHLY.totalConv;
   const cplG=GMONTHLY.cplG, cpcG=GMONTHLY.cpcG, ctrG=GMONTHLY.ctrG;
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
-  const gcplColor=v=>v==null?GR:v<=10?'#059669':v<=30?'#d97706':'#dc2626';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
+  const gcplColor=v=>v==null?GR:v<=CONFIG.google.cplBom?'#059669':v<=CONFIG.google.cplMedio?'#d97706':'#dc2626';
 
   const tS=totalS.reduce((a,b)=>a+b,0), tC=totalConv.reduce((a,b)=>a+b,0);
   document.getElementById('gRankLbl').textContent='— todos os meses';
@@ -1220,16 +1351,21 @@ function renderGGeral(){
   document.getElementById('gGeralGrpLbl').textContent='— todos os meses';
   document.getElementById('gGeralKwLbl').textContent='— todos os meses';
 
+  const totalClicksGG=GMONTHLY.totalClicks.reduce((a,b)=>a+b,0);
+  const totalImpGG=GMONTHLY.totalImp.reduce((a,b)=>a+b,0);
+  const avgCtrGG=totalImpGG>0?totalClicksGG/totalImpGG*100:0;
+  const avgCpcGG=totalClicksGG>0?tS/totalClicksGG:0;
   document.getElementById('gGeralKpis').innerHTML=`
     <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Investimento Total</div><div class="kpi-val">R$${(tS/1000).toFixed(1)}k</div></div>
-    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Total Conversões</div><div class="kpi-val">${tC%1===0?fN(tC):tC.toFixed(1)}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Total Conversões</div><div class="kpi-val">${Math.round(tC)}</div></div>
     <div class="kpi" style="--kc:${gcplColor(tC>0?tS/tC:0)}"><div class="kpi-lbl">CPL Geral</div><div class="kpi-val">${fR(tC>0?tS/tC:0)}</div></div>
-    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">Meses Ativos</div><div class="kpi-val">${lbl.length}</div></div>`;
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CTR Médio</div><div class="kpi-val">${avgCtrGG?avgCtrGG.toFixed(2)+'%':'—'}</div></div>
+    <div class="kpi" style="--kc:#334155"><div class="kpi-lbl">CPC Médio</div><div class="kpi-val">${fR(avgCpcGG)}</div></div>`;
 
   // Combined chart
   dc('chGGeralMensal');
   const ggLeadsDs={label:'Conversões',data:totalConv,backgroundColor:GCOL_BAR,borderRadius:4,type:'bar',
-    datalabels:{display:gShowLabelsGG,color:GCOL,font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?(v%1===0?fN(v):v.toFixed(1)):null,clip:false}};
+    datalabels:{display:gShowLabelsGG,color:GCOL,font:{size:9,weight:'bold'},anchor:'end',align:'top',offset:2,formatter:v=>v>0?String(Math.round(v)):null,clip:false}};
   const ggSpDs={label:'Invest.',data:totalS,borderColor:'#059669',backgroundColor:'transparent',tension:.35,pointRadius:4,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,datalabels:{display:false}};
   const ggCplDs={label:'CPL',data:cplG,borderColor:isDark?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:3,borderWidth:1.5,tension:.35,spanGaps:false,type:'line',yAxisID:'y2',
     datalabels:{display:gShowLabelsGG,font:{size:9,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(1):null,color:isDark?'#f9fafb':'#111827',clip:false}};
@@ -1253,7 +1389,7 @@ function renderGGeral(){
   const mxC=Math.max(...bConv.map(m=>m.conv),1);
   const mnP=Math.min(...bCPL.map(m=>m.cpl),0),mxP=Math.max(...bCPL.map(m=>m.cpl),1);
   document.getElementById('gRankCPL').innerHTML=bCPL.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round((1-(m.cpl-mnP)/(mxP-mnP||1))*100)}%;background:#059669"></div></div><div class="rank-val ${gcls(m.cpl)}">${fR(m.cpl)}</div></div>`).join('');
-  document.getElementById('gRankConv').innerHTML=bConv.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round(m.conv/mxC*100)}%;background:${GCOL}"></div></div><div class="rank-val" style="color:${GCOL}">${m.conv%1===0?fN(m.conv):m.conv.toFixed(1)}</div></div>`).join('');
+  document.getElementById('gRankConv').innerHTML=bConv.map((m,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${m.l}</div><div class="rank-bar"><div class="rank-bar-f" style="width:${Math.round(m.conv/mxC*100)}%;background:${GCOL}"></div></div><div class="rank-val" style="color:${GCOL}">${fGC(m.conv)}</div></div>`).join('');
 
   buildGGeralCampTable();
   buildGGeralGrpTable();
@@ -1264,21 +1400,27 @@ function buildGGeralCampTable(){
   const map={};
   GMONTHLY.meses.forEach(ym=>{
     (GCAMPS_MES[ym]||[]).forEach(c=>{
-      if(!map[c.n])map[c.n]={n:c.n,spend:0,conv:0,clicks:0};
+      if(!map[c.n])map[c.n]={n:c.n,spend:0,conv:0,clicks:0,imp:0};
       map[c.n].spend+=c.spend; map[c.n].conv+=c.conv; map[c.n].clicks+=c.clicks;
+      const gcImp=c.imp>0?c.imp:(c.clicks&&c.ctr&&c.ctr>0?Math.round(c.clicks/c.ctr*100):0);
+      map[c.n].imp+=gcImp;
     });
   });
   const all=Object.values(map).map(c=>({...c,cpl:c.conv>0?c.spend/c.conv:null,cpc:c.clicks>0?c.spend/c.clicks:null})).sort((a,b)=>b.conv-a.conv);
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
   document.getElementById('tGGeralCamp').innerHTML=`<table>
-    <thead><tr><th>#</th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th></tr></thead>
+    <thead><tr><th>#</th><th>Campanha</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${all.map((c,i)=>`<tr>
       <td style="color:#9ca3af;font-size:10px">${i+1}</td>
       <td style="font-weight:600;font-size:12px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.n}</td>
       <td class="num">${fR(c.spend)}</td>
-      <td class="num">${c.conv%1===0?fN(c.conv):c.conv.toFixed(1)}</td>
+      <td class="num">${fGC(c.conv)}</td>
       <td class="num ${gcls(c.cpl)}">${fR(c.cpl)}</td>
       <td class="num">${fR(c.cpc)}</td>
+      <td class="num" style="color:var(--muted2)">${c.imp>0?fN(c.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${c.clicks>0?fN(c.clicks):'—'}</td>
+      <td class="num">${c.clicks>0&&c.imp>0?(c.clicks/c.imp*100).toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${c.imp>0?fR(c.spend/c.imp*1000):'—'}</td>
     </tr>`).join('')}</tbody></table>`;
 }
 
@@ -1287,22 +1429,28 @@ function buildGGeralGrpTable(){
   GMONTHLY.meses.forEach(ym=>{
     (GCAMPS_MES[ym]||[]).forEach(c=>{
       (c.adgroups||[]).forEach(ag=>{
-        if(!map[ag.n])map[ag.n]={n:ag.n,spend:0,conv:0,clicks:0};
+        if(!map[ag.n])map[ag.n]={n:ag.n,spend:0,conv:0,clicks:0,imp:0};
         map[ag.n].spend+=ag.spend; map[ag.n].conv+=ag.conv; map[ag.n].clicks+=ag.clicks;
+        const gaImp=ag.imp>0?ag.imp:(ag.clicks&&ag.ctr&&ag.ctr>0?Math.round(ag.clicks/ag.ctr*100):0);
+        map[ag.n].imp+=gaImp;
       });
     });
   });
   const all=Object.values(map).filter(a=>a.conv>0).map(a=>({...a,cpl:a.conv>0?a.spend/a.conv:null,cpc:a.clicks>0?a.spend/a.clicks:null})).sort((a,b)=>b.conv-a.conv).slice(0,12);
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
   document.getElementById('tGGeralGrp').innerHTML=`<table>
-    <thead><tr><th>#</th><th>Grupo de Anúncios</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th></tr></thead>
+    <thead><tr><th>#</th><th>Grupo de Anúncios</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${all.map((a,i)=>`<tr>
       <td style="color:#9ca3af;font-size:10px">${i+1}</td>
       <td style="font-weight:600;font-size:12px">${a.n}</td>
       <td class="num">${fR(a.spend)}</td>
-      <td class="num">${a.conv%1===0?fN(a.conv):a.conv.toFixed(1)}</td>
+      <td class="num">${fGC(a.conv)}</td>
       <td class="num ${gcls(a.cpl)}">${fR(a.cpl)}</td>
       <td class="num">${fR(a.cpc)}</td>
+      <td class="num" style="color:var(--muted2)">${a.imp>0?fN(a.imp):'—'}</td>
+      <td class="num" style="color:var(--muted2)">${a.clicks>0?fN(a.clicks):'—'}</td>
+      <td class="num">${a.clicks>0&&a.imp>0?(a.clicks/a.imp*100).toFixed(2)+'%':'—'}</td>
+      <td class="num" style="color:var(--muted2)">${a.imp>0?fR(a.spend/a.imp*1000):'—'}</td>
     </tr>`).join('')}</tbody></table>`;
 }
 
@@ -1317,10 +1465,10 @@ function buildGGeralKwTable(){
     });
   });
   const all=Object.values(map).filter(k=>k.conv>0).map(k=>({...k,cpl:k.conv>0?k.spend/k.conv:null,cpc:k.clicks>0?k.spend/k.clicks:null})).sort((a,b)=>b.conv-a.conv).slice(0,15);
-  const gcls=v=>v==null?'':v<=10?'cg':v<=30?'cw2':'cr';
+  const gcls=v=>v==null?'':v<=CONFIG.google.cplBom?'cg':v<=CONFIG.google.cplMedio?'cw2':'cr';
   const matchColor={'EXACT':'#4285f4','BROAD':'#34a853','PHRASE':'#fbbc04'};
   document.getElementById('tGGeralKw').innerHTML=`<table>
-    <thead><tr><th>#</th><th>Palavra-chave</th><th class="num">Tipo</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th></tr></thead>
+    <thead><tr><th>#</th><th>Palavra-chave</th><th class="num">Tipo</th><th class="num">Invest.</th><th class="num">Conv.</th><th class="num">CPL</th><th class="num">CPC</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPM</th></tr></thead>
     <tbody>${all.map((k,i)=>{
       const mc=matchColor[k.match]||'#9ca3af';
       const mlbl={'EXACT':'Exata','BROAD':'Ampla','PHRASE':'Frase'}[k.match]||k.match||'—';
@@ -1329,7 +1477,7 @@ function buildGGeralKwTable(){
         <td style="font-weight:600;font-size:12px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔑 ${k.n}</td>
         <td class="num"><span style="font-size:9px;padding:2px 5px;border-radius:4px;background:${mc}22;color:${mc};font-weight:700">${mlbl}</span></td>
         <td class="num">${fR(k.spend)}</td>
-        <td class="num">${k.conv%1===0?fN(k.conv):k.conv.toFixed(1)}</td>
+        <td class="num">${fGC(k.conv)}</td>
         <td class="num ${gcls(k.cpl)}">${fR(k.cpl)}</td>
         <td class="num">${fR(k.cpc)}</td>
       </tr>`;
