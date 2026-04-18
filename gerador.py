@@ -266,16 +266,24 @@ def meta_ads_period(p, img_dir):
     df_t = p[p["thumb"].notna()&(p["thumb"].astype(str)!="")&(p["thumb"].astype(str)!="nan")].copy()
     if df_t.empty:
         return []
-    agg = df_t.groupby(["ad","thumb"]).agg(
+    agg = df_t.groupby(["ad","adset","campaign","thumb"]).agg(
         leads=("leads","sum"), spend=("spend","sum"),
         impressions=("impressions","sum"), link_clicks=("link_clicks","sum")
     ).reset_index().sort_values("leads", ascending=False)
     agg["cpl"] = (agg["spend"]/agg["leads"]).where(agg["leads"]>0).round(2)
     agg["ctr"] = (agg["link_clicks"]/agg["impressions"]*100).where(agg["impressions"]>0).round(2)
     result = []
-    for _, r in agg.drop_duplicates("ad").iterrows():
+    for _, r in agg.iterrows():
         local = download_thumb(str(r["thumb"]), img_dir)
-        result.append({"n":str(r["ad"]),"leads":int(r["leads"]),"cpl":safe(r["cpl"]),"ctr":safe(r["ctr"]),"thumb":local})
+        result.append({
+            "n": str(r["ad"]),
+            "camp": str(r["campaign"]),
+            "adset": str(r["adset"]),
+            "leads": int(r["leads"]),
+            "cpl": safe(r["cpl"]),
+            "ctr": safe(r["ctr"]),
+            "thumb": local
+        })
     return result
 
 
@@ -701,7 +709,7 @@ def inject_all(template_path,
 
 def main():
     print("=" * 60)
-    print("Dashboard Meta")
+    print("Dashboard")
     print("=" * 60)
 
     # ── META ──────────────────────────────────────────────────
@@ -794,6 +802,39 @@ def main():
 
     Path(OUTPUT_FILE).write_text(html, encoding="utf-8")
     print(f"  ✓ {OUTPUT_FILE} gerado ({len(html)//1024}KB)")
+
+    # ── GERAR data.json (painel da agência) ───────────────────
+    def kpi_snapshot(kpis, n):
+        k = kpis.get(str(n), {})
+        return {"spend": k.get("spend"), "leads": k.get("leads"), "cpl": k.get("cpl")}
+
+    data_json = {
+        "cliente":    NOME_CLIENTE,
+        "cor":        COR_ACENTO,
+        "letra":      LOGO_LETRA,
+        "atualizado": date.today().strftime("%d/%m/%Y"),
+        "meta": {
+            "cplBom":   META_CPL_BOM,
+            "cplMedio": META_CPL_MEDIO,
+            "d1":  kpi_snapshot(m_kpis, 1),
+            "d7":  kpi_snapshot(m_kpis, 7),
+            "d14": kpi_snapshot(m_kpis, 14),
+            "d30": kpi_snapshot(m_kpis, 30),
+        },
+        "google": {
+            "ativo": GOOGLE_ADS,
+            "cplBom":   GOOGLE_CPL_BOM,
+            "cplMedio": GOOGLE_CPL_MEDIO,
+            "d1":  kpi_snapshot(g_kpis, 1),
+            "d7":  kpi_snapshot(g_kpis, 7),
+            "d14": kpi_snapshot(g_kpis, 14),
+            "d30": kpi_snapshot(g_kpis, 30),
+        }
+    }
+    Path("data.json").write_text(
+        json.dumps(data_json, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(f"  ✓ data.json gerado")
     print("=" * 60)
 
 
