@@ -1,0 +1,55 @@
+{
+  "cliente": "Laboratório Bem Me Quer",
+  "cor": "#00bfd9",
+  "letra": "B",
+  "atualizado": "18/04/2026",
+  "meta": {
+    "cplBom": 11,
+    "cplMedio": 16,
+    "d1": {
+      "spend": 9.6,
+      "leads": 1,
+      "cpl": 9.6
+    },
+    "d7": {
+      "spend": 227.83,
+      "leads": 18,
+      "cpl": 12.66
+    },
+    "d14": {
+      "spend": 449.39,
+      "leads": 37,
+      "cpl": 12.15
+    },
+    "d30": {
+      "spend": 878.52,
+      "leads": 87,
+      "cpl": 10.1
+    }
+  },
+  "google": {
+    "ativo": true,
+    "cplBom": 11,
+    "cplMedio": 16,
+    "d1": {
+      "spend": 41.73,
+      "leads": null,
+      "cpl": 4.64
+    },
+    "d7": {
+      "spend": 174.21,
+      "leads": null,
+      "cpl": 5.28
+    },
+    "d14": {
+      "spend": 319.97,
+      "leads": null,
+      "cpl": 4.27
+    },
+    "d30": {
+      "spend": 468.51,
+      "leads": null,
+      "cpl": 4.5
+    }
+  }
+}
