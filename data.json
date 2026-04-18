@@ -33,22 +33,22 @@
     "cplMedio": 16,
     "d1": {
       "spend": 41.73,
-      "leads": null,
+      "leads": 9.0,
       "cpl": 4.64
     },
     "d7": {
       "spend": 174.21,
-      "leads": null,
+      "leads": 33.0,
       "cpl": 5.28
     },
     "d14": {
       "spend": 319.97,
-      "leads": null,
+      "leads": 75.0,
       "cpl": 4.27
     },
     "d30": {
       "spend": 468.51,
-      "leads": null,
+      "leads": 104.0,
       "cpl": 4.5
     }
   }
