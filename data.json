@@ -2,7 +2,7 @@
   "cliente": "Laboratório Bem Me Quer",
   "cor": "#00bfd9",
   "letra": "B",
-  "atualizado": "20/04/2026",
+  "atualizado": "21/04/2026",
   "meta": {
     "cplBom": 11,
     "cplMedio": 16,
@@ -47,9 +47,9 @@
       "cpl": 4.27
     },
     "d30": {
-      "spend": 440.11,
-      "leads": 100.0,
-      "cpl": 4.4
+      "spend": 387.06,
+      "leads": 94.0,
+      "cpl": 4.12
     }
   }
 }
