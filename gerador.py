@@ -67,12 +67,34 @@ def r2(v):
 
 
 # ── IMAGENS ───────────────────────────────────────────────────────────────────
+import re, pathlib
+from urllib.parse import urlparse as _urlparse
+_THUMBS_USADAS=set(); _THUMB_DIRS=set()
+def _thumb_key(url):
+    """Nome estável da miniatura: host + caminho do arquivo, sem a query assinada da Meta
+    (ela muda todo dia e, com hash da URL inteira, a pasta imgs/ crescia sem parar)."""
+    try:
+        p=_urlparse(url)
+        if re.search(r"\.(jpe?g|png|webp|gif)$", p.path, re.I): return p.netloc+p.path
+    except Exception: pass
+    return url
+def _limpar_thumbs():
+    """Apaga miniaturas (<hash16>.jpg/png) que nenhum anúncio usa mais."""
+    if not _THUMBS_USADAS: return
+    n=0
+    for dd in _THUMB_DIRS:
+        for f in pathlib.Path(dd).glob("*"):
+            if f.is_file() and re.fullmatch(r"[0-9a-f]{16}\.(jpg|png)", f.name) and f.name not in _THUMBS_USADAS:
+                f.unlink(); n+=1
+    print(f"  imgs/: {len(_THUMBS_USADAS)} em uso | {n} antigas apagadas")
+
 def download_thumb(url, img_dir):
     if not url or str(url) == "nan":
         return ""
     try:
         ext = ".png" if ".png" in url.lower() else ".jpg"
-        fname = hashlib.md5(url.encode()).hexdigest()[:16] + ext
+        fname = hashlib.md5(_thumb_key(url).encode()).hexdigest()[:16] + ext
+        _THUMBS_USADAS.add(fname); _THUMB_DIRS.add(str(img_dir))
         fpath = img_dir / fname
         if not fpath.exists():
             r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
@@ -827,3 +849,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    _limpar_thumbs()
